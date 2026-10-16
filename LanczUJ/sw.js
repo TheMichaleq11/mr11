@@ -1,9 +1,9 @@
 // Zmień numer wersji przy każdej zmianie strony, żeby telefon pobrał nową wersję.
-const CACHE = "obiady-uj-v11";
+const CACHE = "obiady-uj-v12";
 const FILES = [
-  "/", "/logo.svg", "/manifest.webmanifest",
+  "/", "/app.js", "/logo.svg", "/manifest.webmanifest",
   "/fonts/marcellus-latin.woff2", "/fonts/marcellus-latin-ext.woff2",
-  "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png", "/icons/favicon-32.png"
+  "/icons/touch-180.png", "/icons/app-192.png", "/icons/app-512.png", "/icons/favicon-32.png"
 ];
 
 self.addEventListener("install", (e) => {
@@ -18,28 +18,49 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+function store(req, res) {
+  if (res && res.ok && res.type === "basic") {
+    const copy = res.clone();
+    caches.open(CACHE).then((c) => c.put(req, copy));
+  }
+  return res;
+}
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin !== location.origin) return;
 
   // Strona: najpierw sieć (świeża wersja), bez internetu – kopia z telefonu.
   if (req.mode === "navigate") {
     e.respondWith(
       fetch(req)
-        .then((res) => { caches.open(CACHE).then((c) => c.put("/", res.clone())); return res; })
-        .catch(() => caches.match("/"))
+        .then((res) => store("/", res))
+        .catch(() => caches.match("/").then((hit) => hit || Response.error()))
+    );
+    return;
+  }
+
+  // Skrypt strony: najpierw sieć, żeby zmiany godzin były od razu widoczne.
+  if (url.pathname === "/app.js") {
+    e.respondWith(
+      fetch(req)
+        .then((res) => store("/app.js", res))
+        .catch(() => caches.match("/app.js").then((hit) => hit || Response.error()))
     );
     return;
   }
 
   // Pliki (czcionki, ikony, logo): z pamięci, w tle odświeżane.
   e.respondWith(
-    caches.match(req).then((hit) => {
-      const net = fetch(req).then((res) => {
-        if (res.ok) caches.open(CACHE).then((c) => c.put(req, res.clone()));
-        return res;
-      }).catch(() => hit);
-      return hit || net;
+    caches.match(req, { ignoreSearch: true }).then((hit) => {
+      const net = fetch(req).then((res) => store(req, res));
+      if (hit) {
+        e.waitUntil(net.catch(() => {}));
+        return hit;
+      }
+      return net.catch(() => Response.error());
     })
   );
 });
