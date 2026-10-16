@@ -3,7 +3,7 @@ const CACHE = "obiady-uj-v10";
 const FILES = [
   "/", "/logo.svg", "/manifest.webmanifest",
   "/fonts/marcellus-latin.woff2", "/fonts/marcellus-latin-ext.woff2",
-  "/icons/icon-192.png?v=2", "/icons/icon-512.png?v=2", "/icons/apple-touch-icon.png?v=2", "/icons/favicon-32.png?v=2"
+  "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png", "/icons/favicon-32.png"
 ];
 
 self.addEventListener("install", (e) => {
