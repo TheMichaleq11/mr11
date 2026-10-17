@@ -1,5 +1,5 @@
 // Zmień numer wersji przy każdej zmianie strony, żeby telefon pobrał nową wersję.
-const CACHE = "obiady-uj-v12";
+const CACHE = "obiady-uj-v13";
 const FILES = [
   "/", "/app.js", "/logo.svg", "/manifest.webmanifest",
   "/fonts/marcellus-latin.woff2", "/fonts/marcellus-latin-ext.woff2",
@@ -42,7 +42,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Skrypt strony: najpierw sieć, żeby zmiany godzin były od razu widoczne.
+  // Skrypt strony: najpierw sieć, żeby zmiany były od razu widoczne.
   if (url.pathname === "/app.js") {
     e.respondWith(
       fetch(req)
