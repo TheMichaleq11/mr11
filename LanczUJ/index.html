@@ -27,7 +27,7 @@
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 :root{
   --bg:#012b52; --fg:#ffffff; --soft:rgba(255,255,255,.68); --line:rgba(255,255,255,.18);
-  --press:rgba(255,255,255,.08); --gold:#e3c26a; --ok:#7fd99a; --no:#ff9a9a;
+  --press:rgba(255,255,255,.08); --gold:#e3c26a;
   --font:"Marcellus","Optima","Candara","Noto Serif",Georgia,serif;
   color-scheme:dark;
 }
@@ -42,9 +42,8 @@ body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(
   padding-right:max(20px, env(safe-area-inset-right, 0px))}
 .logo{display:block;width:300px;max-width:82%;height:auto;margin:0 auto}
 .head{text-align:center}
-h1{font:400 clamp(30px,8.5vw,46px)/1.1 var(--font);letter-spacing:.08em;text-transform:uppercase;margin:32px 0 10px;text-wrap:balance}
+h1{font:400 clamp(30px,8.5vw,46px)/1.1 var(--font);letter-spacing:.08em;text-transform:uppercase;margin:32px 0 32px;text-wrap:balance}
 h1::after{content:"";display:block;width:48px;height:1px;background:var(--gold);margin:16px auto 0}
-.sub{margin:0 auto 32px;max-width:30ch;color:var(--soft);letter-spacing:.02em;text-wrap:balance}
 ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--fg)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;
   padding:16px 8px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;
@@ -56,10 +55,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .name{font-size:22px;line-height:1.2;letter-spacing:.03em;overflow-wrap:anywhere}
 .fac{font-size:14px;line-height:1.35;color:var(--soft);letter-spacing:.02em}
 .hrs{font-size:13px;line-height:1.35;color:var(--gold);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.st{display:flex;align-items:center;gap:6px;min-height:1.35em;font-size:13px;line-height:1.35;letter-spacing:.04em}
-.st:empty{visibility:hidden}
-.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
-.st.open{color:var(--ok)} .st.closed{color:var(--no)}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .go{flex:none;font-size:14px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--gold);padding-bottom:2px;white-space:nowrap}
 .off .go{border-color:transparent;color:var(--soft);text-transform:none;letter-spacing:.02em}
@@ -71,7 +66,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .foot{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-align:center;display:flex;flex-direction:column;gap:6px}
 .by{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
 .by span{color:var(--gold)}
-.note{margin:0;font-size:12px;color:var(--soft);opacity:.75;letter-spacing:.02em}
 @media (max-width:380px){.name{font-size:19px}.go{font-size:12px}.row{padding-inline:4px;gap:12px}}
 @media (min-width:760px){
   body{font-size:18px}
@@ -89,39 +83,38 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <header class="head">
   <img class="logo" src="/logo.svg" width="2506" height="1080" alt="Uniwersytet Jagielloński w Krakowie">
   <h1>Obiady na kampusie</h1>
-  <p class="sub">Lokale z dopłatą LanczUJ. Kliknij, żeby zobaczyć dzisiejsze menu.</p>
   </header>
   <ul>
       <li><a class="row" href="https://www.facebook.com/profile.php?id=61553312006806" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Bistro by Jelonek</span><span class="fac">Wydział Zarządzania i Komunikacji Społecznej</span><span class="st"></span><span class="hrs" data-open="07:00" data-close="17:00">Pn–Pt 7:00–17:00</span></span>
+        <span class="n"><span class="name">Bistro by Jelonek</span><span class="fac">Wydział Zarządzania i Komunikacji Społecznej</span><span class="hrs">Pn–Pt 7:00–17:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><a class="row" href="https://www.facebook.com/bistroswietlica" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Bistro Świetlica</span><span class="fac">Wydział Matematyki i Informatyki</span><span class="st"></span><span class="hrs" data-open="09:00" data-close="16:00">Pn–Pt 9:00–16:00</span></span>
+        <span class="n"><span class="name">Bistro Świetlica</span><span class="fac">Wydział Matematyki i Informatyki</span><span class="hrs">Pn–Pt 9:00–16:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><div class="row off">
-        <span class="n"><span class="name">Bistro 11</span><span class="fac">Wydział Fizyki, Astronomii i Informatyki Stosowanej</span><span class="st"></span><span class="hrs" data-open="08:00" data-close="16:00">Pn–Pt 8:00–16:00</span></span>
+        <span class="n"><span class="name">Bistro 11</span><span class="fac">Wydział Fizyki, Astronomii i Informatyki Stosowanej</span><span class="hrs">Pn–Pt 8:00–16:00</span></span>
         <span class="go">brak strony</span>
       </div></li>
       <li><a class="row" href="https://www.facebook.com/neonbistro" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Neon Bistro</span><span class="fac">Wydział Chemii</span><span class="st"></span><span class="hrs" data-open="07:00" data-close="18:00">Pn–Pt 7:00–18:00</span></span>
+        <span class="n"><span class="name">Neon Bistro</span><span class="fac">Wydział Chemii</span><span class="hrs">Pn–Pt 7:00–18:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><a class="row" href="https://www.facebook.com/gronostajowa7" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Gronostajowa 7 Pizza &amp; Pasta</span><span class="fac">Wydział Biologii</span><span class="st"></span><span class="hrs" data-open="08:00" data-close="18:00">Pn–Pt 8:00–18:00</span></span>
+        <span class="n"><span class="name">Gronostajowa 7 Pizza &amp; Pasta</span><span class="fac">Wydział Biologii</span><span class="hrs">Pn–Pt 8:00–18:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><a class="row" href="https://www.bistro4mat.pl/category/bistro-biochemia/" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Bistro4mat</span><span class="fac">Wydział Biochemii, Biofizyki i Biotechnologii</span><span class="st"></span><span class="hrs" data-open="09:00" data-close="15:30">Pn–Pt 9:00–15:30</span></span>
+        <span class="n"><span class="name">Bistro4mat</span><span class="fac">Wydział Biochemii, Biofizyki i Biotechnologii</span><span class="hrs">Pn–Pt 9:00–15:30</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><a class="row" href="https://www.bistro4mat.pl/category/wydzial-zoologii/" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">Bistro4mat</span><span class="fac">Instytut Zoologii, Wydział Biologii</span><span class="st"></span><span class="hrs" data-open="09:00" data-close="15:30">Pn–Pt 9:00–15:30</span></span>
+        <span class="n"><span class="name">Bistro4mat</span><span class="fac">Instytut Zoologii, Wydział Biologii</span><span class="hrs">Pn–Pt 9:00–15:30</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
       <li><a class="row" href="https://www.facebook.com/share/1DzG9kpdDW/" target="_blank" rel="noopener noreferrer">
-        <span class="n"><span class="name">U Pacmana</span><span class="fac">Wydział Studiów Międzynarodowych i Politycznych</span><span class="st"></span><span class="hrs" data-open="11:30" data-close="16:00">Pn–Pt 11:30–16:00</span></span>
+        <span class="n"><span class="name">U Pacmana</span><span class="fac">Wydział Studiów Międzynarodowych i Politycznych</span><span class="hrs">Pn–Pt 11:30–16:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
   </ul>
@@ -135,7 +128,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   </section>
   <footer class="foot">
     <p class="by">Powered by <span>Michał Rosiek</span></p>
-    <p class="note">Prywatna ściągawka, nie jest oficjalną stroną UJ.</p>
   </footer>
 </main>
 </body>
