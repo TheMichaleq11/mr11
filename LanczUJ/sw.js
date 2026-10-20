@@ -1,5 +1,5 @@
 // Zmień numer wersji przy każdej zmianie strony, żeby telefon pobrał nową wersję.
-const CACHE = "obiady-uj-v15";
+const CACHE = "obiady-uj-v16";
 const FILES = [
   "/", "/app.js", "/logo.svg", "/manifest.webmanifest",
   "/fonts/marcellus-latin.woff2", "/fonts/marcellus-latin-ext.woff2",

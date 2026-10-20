@@ -58,9 +58,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .go{flex:none;font-size:14px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--gold);padding-bottom:2px;white-space:nowrap}
 .off .go{border-color:transparent;color:var(--soft);text-transform:none;letter-spacing:.02em}
-.div{display:flex;align-items:center;gap:14px;margin:30px 0 6px;color:var(--gold);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
-.div::before,.div::after{content:"";flex:1;height:1px;background:var(--gold);opacity:.7}
-.off-list{border-top:0}
+.sec{font:400 clamp(20px,5.6vw,26px)/1.15 var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center;margin:48px 0 20px;text-wrap:balance}
+.sec::after{content:"";display:block;width:36px;height:1px;background:var(--gold);margin:14px auto 0}
 .pay{margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .lab{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pay p{margin:0}
@@ -119,8 +118,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
       </a></li>
   </ul>
-  <p class="div" role="separator">Poza kampusem</p>
-  <ul class="off-list">
+  <h2 class="sec">Poza kampusem</h2>
+  <ul>
       <li><a class="row" href="https://www.facebook.com/share/1DzG9kpdDW/" target="_blank" rel="noopener noreferrer">
         <span class="n"><span class="name">U Pacmana</span><span class="fac">Wydział Studiów Międzynarodowych i Politycznych</span><span class="hrs">Pn–Pt 11:30–16:00</span></span>
         <span class="go">Menu<span class="vh"> (otwiera się w nowej karcie)</span></span>
