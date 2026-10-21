@@ -437,8 +437,8 @@ a{color:inherit}
     const off=t.classList.contains('anchor')?0:80;
     const to=Math.max(0,Math.min(t.getBoundingClientRect().top+scrollY-off,document.documentElement.scrollHeight-innerHeight));
     if(reduce){scrollTo(0,to);return;}
-    const from=scrollY,d=to-from,dur=Math.min(1800,Math.max(700,600+Math.abs(d)*.12)),t0=performance.now();
-    const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+    const from=scrollY,d=to-from,dur=Math.min(3400,Math.max(1500,1300+Math.abs(d)*.2)),t0=performance.now();
+    const ease=x=>-(Math.cos(Math.PI*x)-1)/2; // łagodny start i hamowanie
     const go=now=>{const k=Math.min(1,(now-t0)/dur);scrollTo(0,from+d*ease(k));jump=k<1?requestAnimationFrame(go):null;};
     jump=requestAnimationFrame(go);
     history.replaceState(null,'','#'+id);
