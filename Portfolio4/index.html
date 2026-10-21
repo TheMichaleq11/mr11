@@ -345,7 +345,13 @@ a{color:inherit}
   const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
   const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
   const vh=()=>innerHeight;
-  function prog(el){const r=el.getBoundingClientRect();return clamp(-r.top/(r.height-vh()));}
+  const geo=new Map();
+  function remember(){[...document.querySelectorAll('.scene,#s7')].forEach(el=>{const r=el.getBoundingClientRect();geo.set(el,{top:r.top+scrollY,h:el.offsetHeight});});}
+  remember();addEventListener('load',remember);addEventListener('resize',remember);
+  if(window.ResizeObserver) new ResizeObserver(()=>remember()).observe(document.body);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(remember);
+  window.__geo=geo;
+  function prog(el,yy){const g=geo.get(el);if(!g)return 0;return clamp(((yy===undefined?scrollY:yy)-g.top)/(g.h-vh()));}
 
   // projekty
   const P=[
@@ -383,37 +389,43 @@ a{color:inherit}
   let marqW=0,trackW=0;
   const measure=()=>{marqW=marq.scrollWidth;trackW=track.scrollWidth;};
   measure();addEventListener('resize',measure);addEventListener('load',measure);
+  const last={};
+  let sy=scrollY; // wygładzona pozycja przewijania — ruch dogania palec miękko zamiast skakać
   function frame(){
-    const y=scrollY, H=vh(), W=innerWidth;
-    const p2=prog(s2),p3=prog(s3),p4=prog(s4),p5=prog(s5); // wszystkie odczyty układu przed zapisami
+    const y=sy, H=vh(), W=innerWidth;
+    const p2=prog(s2,y),p3=prog(s3,y),p4=prog(s4,y),p5=prog(s5,y);
+    const ch=(k,v)=>{v=Math.round(v*2000)/2000;if(last[k]===v)return false;last[k]=v;return true;};
+    const hp0=clamp(y/(H*.9));
     // hero: karta odpływa w dół, paski postępu się wypełniają
-    const hp=clamp(y/(H*.9));
-    live.style.transform=`translateY(${hp*90}px) rotate(${hp*-3}deg)`;
-    progs.forEach((p,i)=>p.style.setProperty('--p',clamp(hp*4-i).toFixed(2)));
+    const hp=hp0;
+    if(ch('h',hp)){live.style.transform=`translateY(${hp*90}px) rotate(${hp*-3}deg)`;
+    progs.forEach((p,i)=>p.style.setProperty('--p',clamp(hp*4-i).toFixed(2)));}
 
     // 2: wielki tekst w lewo, karty obracają się
-    marq.style.transform=`translate3d(${((W*.15)-p2*(marqW-W*.6)).toFixed(1)}px,-50%,0)`;
+    if(ch('2',p2)){marq.style.transform=`translate3d(${((W*.15)-p2*(marqW-W*.6)).toFixed(1)}px,-50%,0)`;
     phones.forEach(ph=>{const r=+ph.dataset.r;const a=ease(clamp(p2*1.4));
-      ph.style.transform=`translateY(${(1-a)*(120+r*r*60)}px) rotateY(${r*(28-24*a)}deg) rotateZ(${r*(8-5*a)}deg) translateZ(${-Math.abs(r)*60}px)`;});
+      ph.style.transform=`translateY(${(1-a)*(120+r*r*60)}px) rotateY(${r*(28-24*a)}deg) rotateZ(${r*(8-5*a)}deg) translateZ(${-Math.abs(r)*60}px)`;});}
 
     // 3: słowa rozjeżdżają się, gwiazda rośnie, liczby wjeżdżają
-    w1.style.transform=`translateX(${-p3*W*.05}px)`;
+    if(ch('3',p3)){w1.style.transform=`translateX(${-p3*W*.05}px)`;
     w2.style.transform=`translateX(${p3*W*.05}px)`;
     const sc=.6+ease(clamp(p3*1.3))*1.6;
     spark.style.transform=`translate(-50%,-50%) rotate(${p3*180}deg) scale(${sc})`;
     copy3.style.opacity=clamp(1-p3*2.2);
-    stats.forEach((s,i)=>{const t=clamp(p3*3-.6-i*.35);s.style.opacity=t;s.style.transform=`translateY(${(1-t)*30}px)`;});
+    stats.forEach((s,i)=>{const t=clamp(p3*3-.6-i*.35);s.style.opacity=t;s.style.transform=`translateY(${(1-t)*30}px)`;});}
 
     // 4: poziomy pas
-    const max=trackW-W+32;
+    if(ch('4',p4)){const max=trackW-W+32;
     track.style.transform=`translate3d(${(-p4*Math.max(0,max)).toFixed(1)}px,0,0)`;
-    bar4.style.transform=`scaleX(${p4})`;
+    bar4.style.transform=`scaleX(${p4})`;}
 
     // 5: kafelki parallax
-    tiles.forEach((t,i)=>{const sp=+t.dataset.sp;const dir=i%2?1:-1;
+    if(ch('5',p5))tiles.forEach((t,i)=>{const sp=+t.dataset.sp;const dir=i%2?1:-1;
       t.style.transform=`translate(${dir*(p5-.5)*80*sp}px,${(.5-p5)*H*.6*sp}px) rotate(${dir*(p5-.5)*10}deg)`;});
   }
-  if(!reduce){ let tk=false; const on=()=>{if(!tk){tk=true;requestAnimationFrame(()=>{frame();tk=false;});}}; addEventListener('scroll',on,{passive:true}); addEventListener('resize',on); frame(); }
+  if(!reduce){ let run=false;
+    const step=()=>{const d=scrollY-sy;sy=Math.abs(d)<.5?scrollY:sy+d*.22;frame();if(sy!==scrollY)requestAnimationFrame(step);else run=false;};
+    const on=()=>{if(!run){run=true;requestAnimationFrame(step);}}; addEventListener('scroll',on,{passive:true}); addEventListener('resize',()=>{for(const k in last)delete last[k];on();}); frame(); }
 
   // kopiowanie
   const btn=document.getElementById('copyMail');
@@ -450,9 +462,11 @@ a{color:inherit}
   cv.parentElement.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=(e.clientX-r.left)/r.width-.5;my=(e.clientY-r.top)/r.height-.5;});
   cv.parentElement.addEventListener('pointerleave',()=>{mx=0;my=0;});
   let visible=true; new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(cv);
+  let lastT=0;
   function draw(now){
     requestAnimationFrame(draw);
     if(!visible) return;
+    if(now-lastT<15.5) return; lastT=now;
     const t=reduce?2:(now-t0)/1000;
     ctx.clearRect(0,0,W,H);
     ctx.globalCompositeOperation='lighter';
@@ -512,7 +526,7 @@ const mob=innerWidth<820;
 
 try{
   const renderer=new THREE.WebGLRenderer({antialias:false,alpha:true,powerPreference:'high-performance'});
-  const PR=Math.min(devicePixelRatio,mob?1.25:1.5);
+  const PR=Math.min(devicePixelRatio,(mob||innerWidth*innerHeight>1.6e6)?1.25:1.5);
   renderer.setPixelRatio(PR);
   host.appendChild(renderer.domElement);
   const scene=new THREE.Scene();
@@ -525,8 +539,8 @@ try{
     vertexShader:`attribute float aSize;attribute float aAlpha;varying float vA;varying vec3 vC;uniform float uTime;uniform float uPR;uniform float uScale;
       void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;
       float tw=.72+.28*sin(uTime*2.6+position.x*53.+position.y*37.+position.z*29.);
-      gl_PointSize=aSize*uPR*uScale*(13./-mv.z);vA=aAlpha*tw;vC=color;}`,
-    fragmentShader:`varying float vA;varying vec3 vC;void main(){float d=length(gl_PointCoord-.5);float a=smoothstep(.5,0.,d);a*=a;gl_FragColor=vec4(vC,a*vA);}`});
+      gl_PointSize=aSize*uPR*uScale*(9.5/-mv.z);vA=aAlpha*tw;vC=color;}`,
+    fragmentShader:`varying float vA;varying vec3 vC;void main(){vec2 q=gl_PointCoord-.5;float d2=dot(q,q);if(d2>.25)discard;float a=1.-d2*4.;a*=a;gl_FragColor=vec4(vC,min(1.,a*vA*1.35));}`});
 
   function cloud(n){const g=new THREE.BufferGeometry();const o={g,pos:new Float32Array(n*3),col:new Float32Array(n*3),size:new Float32Array(n),alpha:new Float32Array(n)};
     g.setAttribute('position',new THREE.BufferAttribute(o.pos,3));g.setAttribute('color',new THREE.BufferAttribute(o.col,3));g.setAttribute('aSize',new THREE.BufferAttribute(o.size,1));g.setAttribute('aAlpha',new THREE.BufferAttribute(o.alpha,1));
@@ -539,7 +553,7 @@ try{
   const RMAX=prof(1), CAP=1.06;
 
   // ---- szkło, wieczka i słupki z drobinek
-  const NS=mob?2200:5200, NC=mob?2600:6400, NP=mob?900:2200;
+  const NS=mob?1600:3200, NC=mob?1700:3600, NP=mob?600:1300;
   const frame=cloud(NS+NC*2+NP);
   let k=0;
   for(let i=0;i<NS;i++,k++){const y=rnd(-1,1),r=prof(Math.abs(y))*rnd(.99,1.02),th=rnd(0,6.283);frame.pos.set([Math.cos(th)*r,y,Math.sin(th)*r],k*3);frame.size[k]=rnd(.6,1.2);frame.alpha[k]=rnd(.14,.34);ice(frame,k,.9);}
@@ -573,7 +587,9 @@ try{
   flare.scale.set(.75,.19,1);rig.add(flare);
 
   // ---- rozmiar
-  function size(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;
+  function size(){const w=host.clientWidth,h=host.clientHeight;
+    const pr=Math.min(PR,Math.sqrt(1.6e6/Math.max(1,w*h)));renderer.setPixelRatio(pr);uni.uPR.value=pr;
+    renderer.setSize(w,h,false);cam.aspect=w/h;
     const fit=2.45/(2*Math.tan(THREE.MathUtils.degToRad(15)));const zH=fit/.8, zW=2.3/(2*Math.tan(THREE.MathUtils.degToRad(15))*cam.aspect)/.95;
     cam.position.set(0,0,Math.max(zH,zW));cam.updateProjectionMatrix();uni.uScale.value=h/900;}
   size();addEventListener('resize',size);
@@ -595,13 +611,15 @@ try{
   let visible=false;new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(host);
   let shown=0, sp=0, phase='flow', pt=0, flipA=0; // flow -> hold -> flip -> flow...
   const clock=new THREE.Clock();
-  function prog(){const r=sec.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight));}
+  function prog(){const g=window.__geo&&window.__geo.get(sec);if(!g){const r=sec.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight));}return clamp((scrollY-g.top)/(g.h-innerHeight));}
   let near=false;new IntersectionObserver(es=>near=es[0].isIntersecting,{rootMargin:'50% 0px'}).observe(sec);
   const lastC=[-1,-1,-1];
 
-  (function loop(){
+  let lastF=0;
+  (function loop(now){
     requestAnimationFrame(loop);
     if(!near&&!visible) return;
+    if(now-lastF<15.5) return; lastF=now;
     const p=reduce?.4:prog();
     // etapy tekstu (zapis tylko przy zmianie)
     const idx=p<.33?0:p<.66?1:2;
