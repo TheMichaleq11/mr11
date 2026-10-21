@@ -158,8 +158,8 @@ a{color:inherit}
 .s6 .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
 .mailbox{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;font-family:var(--fm);font-size:14px;color:rgba(255,255,255,.85)}
 .mailbox code{user-select:all;-webkit-user-select:all;background:rgba(0,0,0,.2);padding:8px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.15);overflow-wrap:anywhere}
-#gl{position:relative;width:100%;aspect-ratio:1/1;max-height:640px;justify-self:center}
-#gl canvas{width:100%!important;height:100%!important;display:block}
+#gl{position:relative;width:100%;aspect-ratio:4/5;max-height:680px;justify-self:center}
+#gl canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block}
 #gl .fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(120px,18vw,240px);font-weight:800;letter-spacing:-.06em;color:rgba(255,255,255,.12);-webkit-text-stroke:2px rgba(255,255,255,.75)}
 @media (max-width:860px){.s6 .panel{grid-template-columns:1fr}#gl{max-width:420px;order:-1}}
 
@@ -448,65 +448,71 @@ a{color:inherit}
 })();
 </script>
 
-<script type="module">
-import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-const host=document.getElementById('gl');
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-try{
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.15;
-  host.appendChild(renderer.domElement);
-  const scene=new THREE.Scene();
-  const pm=new THREE.PMREMGenerator(renderer);
-  scene.environment=pm.fromScene(new RoomEnvironment(),0.02).texture;
-  const cam=new THREE.PerspectiveCamera(32,1,.1,100);cam.position.set(0,0,9);
+<script>
+// klepsydra z ziarenek: piasek przesypuje się w miarę przewijania sekcji kontaktu
+(function(){
+  const host=document.getElementById('gl'); if(!host) return;
+  const fb=document.getElementById('fb'); if(fb) fb.remove();
+  const cv=document.createElement('canvas'); host.appendChild(cv);
+  const ctx=cv.getContext('2d');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,DPR=1;
+  function size(){DPR=Math.min(devicePixelRatio||1,2);W=host.clientWidth;H=host.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+  size(); addEventListener('resize',size);
 
-  // tło wewnątrz sceny, żeby szkło miało co załamywać: granatowa tarcza i jasne pasy
-  const back=new THREE.Group();scene.add(back);back.position.z=-2.2;
-  const disc=new THREE.Mesh(new THREE.CircleGeometry(3.1,96),new THREE.MeshBasicMaterial({color:0x2A4C86,toneMapped:false}));back.add(disc);
-  const ring=new THREE.Mesh(new THREE.RingGeometry(3.06,3.1,128),new THREE.MeshBasicMaterial({color:0x8FA9D8,toneMapped:false}));back.add(ring);
-  const bars=[];
-  for(let i=0;i<6;i++){const m=new THREE.Mesh(new THREE.CircleGeometry(.5+Math.random()*.5,48),new THREE.MeshBasicMaterial({color:i%2?0xFFFFFF:0xBFD3FF,toneMapped:false}));m.position.set(0,-1.6+i*.64,.01);m.scale.set(1.5,.09,1);m.userData={o:Math.random()*6,s:.25+Math.random()*.5};back.add(m);bars.push(m);}
+  const prof=u=>.055+.6*Math.pow(Math.sin(Math.min(u,1)*Math.PI*.55),1.25); // promień bańki w funkcji |y|
+  const RMAX=prof(1);
+  const N=innerWidth<700?5200:9000;
+  function sample(y0,y1){for(;;){const y=y0+Math.random()*(y1-y0);const r=prof(Math.abs(y))*.93;if(Math.random()>(r/RMAX)**2)continue;const rho=Math.sqrt(Math.random())*r;return {y,rho,r,th:Math.random()*6.283,tw:Math.random()*6.283};}}
+  // góra: pierwsze odpływają ziarna z wierzchu, środek szybciej (lejek)
+  const top=Array.from({length:N},()=>{const g=sample(.04,.86);g.k=g.y-.45*(1-g.rho/g.r)*.35;return g;}).sort((a,b)=>a.k-b.k);
+  // dół: kopiec rośnie od środka
+  const bot=Array.from({length:N},()=>{const g=sample(-.97,-.06);g.k=g.y+.42*(g.rho/RMAX);return g;}).sort((a,b)=>a.k-b.k);
+  const stream=Array.from({length:240},()=>({y:Math.random(),x:(Math.random()-.5)*.03,v:.6+Math.random()*.6,th:Math.random()*6.283}));
 
-  const glass=new THREE.MeshPhysicalMaterial({color:0xFFFFFF,metalness:0,roughness:0,transmission:1,thickness:.9,ior:1.5,clearcoat:1,clearcoatRoughness:0,iridescence:.25,iridescenceIOR:1.3,attenuationColor:new THREE.Color(0xDCE8FF),attenuationDistance:6,specularIntensity:1,envMapIntensity:2});
-  const edge=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.85});
-  const group=new THREE.Group();group.scale.setScalar(.82);scene.add(group);
+  const sec=document.getElementById('kontakt');
+  let shown=0, visible=false;
+  new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(host);
+  const t0=performance.now();
+  function target(){const r=sec.getBoundingClientRect();const vh=innerHeight;return Math.min(1,Math.max(0,(vh*.85-r.top)/(vh*.95)));}
 
-  new FontLoader().load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',font=>{
-    const geo=new TextGeometry('MR',{font,size:2,height:.9,curveSegments:10,bevelEnabled:true,bevelThickness:.14,bevelSize:.07,bevelSegments:6});
-    geo.center();
-    const mesh=new THREE.Mesh(geo,glass);group.add(mesh);
-    const lines=new THREE.LineSegments(new THREE.EdgesGeometry(geo,35),edge);group.add(lines);
-    const fb=document.getElementById('fb'); if(fb) fb.remove();
-    size();
-  });
-
-  const l1=new THREE.DirectionalLight(0xffffff,2.2);l1.position.set(3,4,5);scene.add(l1);
-  const l2=new THREE.PointLight(0x9DB8F0,30,30);l2.position.set(-4,-2,4);scene.add(l2);
-
-  function size(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.position.z=w<420?10.5:9;cam.updateProjectionMatrix();}
-  size();addEventListener('resize',size);
-  let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;});
-  let visible=false;new IntersectionObserver(es=>{visible=es[0].isIntersecting;}).observe(host);
-  const clock=new THREE.Clock();
-  (function loop(){
-    requestAnimationFrame(loop);
+  function draw(now){
+    requestAnimationFrame(draw);
     if(!visible) return;
-    const t=reduce?1.2:clock.getElapsedTime();
-    const ty=Math.sin(t*.45)*.42+mx*.9, tx=Math.sin(t*.32)*.12+my*.5;
-    group.rotation.y+=(ty-group.rotation.y)*.06;
-    group.rotation.x+=(tx-group.rotation.x)*.06;
-    group.position.y=Math.sin(t*.8)*.12;
-    bars.forEach(b=>{b.position.x=Math.sin(t*b.userData.s+b.userData.o)*1.9;});
-    ring.rotation.z=t*.1; back.rotation.z=Math.sin(t*.2)*.08;
-    renderer.render(scene,cam);
-  })();
-}catch(e){ /* zostaje statyczna wersja zapasowa */ }
+    const t=(now-t0)/1000;
+    const goal=reduce?.5:target();
+    shown+=(goal-shown)*.06;
+    const m=Math.floor(shown*N);
+    ctx.clearRect(0,0,W,H);
+    const S=Math.min(H*.4,W*.5), cx=W/2, cy=H/2;
+    const rot=reduce?0:t*.25;
+    const P=(x,y,z)=>{const f=3.2/(3.2-z);return [cx+x*S*f,cy-y*S*f,f];};
+
+    // szkło: obrys bańki, wieczka, słupki
+    ctx.lineWidth=1.2;
+    for(const side of[-1,1]){ctx.strokeStyle='rgba(220,232,255,.32)';ctx.beginPath();
+      for(let k=0;k<=80;k++){const y=-1+k/40;const [X,Y]=P(side*prof(Math.abs(y)),y,0);k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.stroke();}
+    for(const y of[1.02,-1.02]){ctx.fillStyle='rgba(205,220,250,.10)';ctx.strokeStyle='rgba(220,232,255,.45)';ctx.beginPath();ctx.ellipse(cx,cy-y*S,S*.82,S*.1,0,0,6.283);ctx.fill();ctx.stroke();}
+    for(let k=0;k<3;k++){const a=rot*.4+k*2.094;const x=Math.cos(a)*.78,z=Math.sin(a)*.78;const [X1,Y1]=P(x,1.02,z),[X2,Y2]=P(x,-1.02,z);
+      ctx.strokeStyle=`rgba(220,232,255,${.18+.22*(z+1)/2})`;ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(X1,Y1);ctx.lineTo(X2,Y2);ctx.stroke();}
+
+    // ziarna
+    const dot=(g,yo)=>{const a=g.th+rot;const x=Math.cos(a)*g.rho,z=Math.sin(a)*g.rho;const [X,Y,f]=P(x,g.y+(yo||0),z);
+      const b=(.55+.45*(z/RMAX+1)/2)*(.8+.2*Math.sin(t*3+g.tw));ctx.fillStyle=`rgba(236,242,255,${b})`;const s=1.4*f;ctx.fillRect(X,Y,s,s);};
+    for(let i=0;i<N-m;i++) dot(top[i]);
+    for(let i=0;i<m;i++) dot(bot[i]);
+
+    // strużka przez przewężenie
+    const heap=m?bot[m-1].k:-.97;
+    if(shown<.995){
+      ctx.fillStyle='rgba(245,248,255,.9)';
+      for(const p of stream){p.y-=p.v*.012*(reduce?0:1);if(p.y<0)p.y+=1;const y=.02-(1-p.y)*(.02-heap)*(1)+0;const yy=.02-(.02-heap)*(1-p.y);
+        const a=p.th+rot;const [X,Y,f]=P(Math.cos(a)*Math.abs(p.x),yy,Math.sin(a)*Math.abs(p.x));ctx.fillRect(X,Y,1.3*f,1.3*f);}
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,S*.16);g.addColorStop(0,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,S*.16,0,6.283);ctx.fill();
+    }
+  }
+  requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
