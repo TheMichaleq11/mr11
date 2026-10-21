@@ -556,6 +556,7 @@ try{
   const botS=Array.from({length:N},()=>{const g=sample(-.98,-.1);g.k=g.y+.5*(g.rho/RMAX);return g;}).sort((a,b)=>a.k-b.k);
   const sand=cloud(N);
   const vel=new Float32Array(N*3), st=new Uint8Array(N);
+  const P0=sand.pos;
   for(let i=0;i<N;i++){const g=topS[i];sand.pos.set([g.x,g.y,g.z],i*3);sand.size[i]=rnd(.8,1.9);sand.alpha[i]=rnd(.35,.85);ice(sand,i,1,true);}
 
   // ---- pył wokół
@@ -590,7 +591,7 @@ try{
   const kf=p=>{for(let i=1;i<KF.length;i++){if(p<=KF[i][0]){const a=KF[i-1],b=KF[i],t=sstep(a[0],b[0],p);return [a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t,a[3]+(b[3]-a[3])*t];}}const l=KF[KF.length-1];return [l[1],l[2],l[3]];};
 
   let visible=false;new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(host);
-  let shown=0, sp=0;
+  let shown=0, sp=0, phase='flow', pt=0, flipA=0; // flow -> hold -> flip -> flow...
   const clock=new THREE.Clock();
   function prog(){const r=sec.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight));}
 
@@ -605,13 +606,19 @@ try{
     const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;uni.uTime.value=t;
     sp+=(p-sp)*.08;
     const [x,tilt,sc]=kf(sp);
-    rig.position.x=x;rig.rotation.z=tilt;rig.scale.setScalar(sc);rig.position.y=-.04+Math.sin(t*.6)*.02;
+    rig.position.x=x;rig.rotation.z=tilt+flipA;rig.scale.setScalar(sc);rig.position.y=-.04+Math.sin(t*.6)*.02;
     if(!drag){vY*=.95;rotY+=vY+(reduce?0:.0016);}
     spin.rotation.set(.08,rotY,0);
     rig.updateMatrixWorld();
 
-    const goal=reduce?.4:sstep(.04,.9,p);
-    shown+=(goal-shown)*.07;
+    // nieskończony cykl: piasek sypie się stałym tempem, po przesypaniu klepsydra się odwraca
+    if(reduce){shown=.45;}
+    else if(phase==='flow'){shown=Math.min(1,shown+dt/26);if(shown>=1){phase='hold';pt=0;}}
+    else if(phase==='hold'){pt+=dt;if(pt>1.4){phase='flip';pt=0;}}
+    else if(phase==='flip'){pt+=dt;const e=sstep(0,1.5,pt);flipA=e*Math.PI;
+      if(pt>=1.5){ // po obrocie: dół staje się górą — odbijamy pozycje i zaczynamy od nowa
+        for(let i=0;i<N;i++){const j=i*3;P0[j]=-P0[j];P0[j+1]=-P0[j+1];vel[j]=vel[j+1]=vel[j+2]=0;st[i]=0;}
+        flipA=0;shown=0;phase='flow';rig.rotation.z=tilt;rig.updateMatrixWorld();}}
     const m=Math.round(shown*N);
 
     let px=99,py=99,pz=99;
