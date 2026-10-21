@@ -36,12 +36,12 @@ body{font-family:var(--f);font-size:17px;line-height:1.55;-webkit-font-smoothing
 img{max-width:100%;display:block}
 a{color:inherit}
 .gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.btn{display:inline-flex;align-items:center;gap:8px;font:500 15px/1 var(--f);padding:13px 18px;border-radius:999px;text-decoration:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 15px/1 var(--f);padding:13px 18px;border-radius:999px;text-decoration:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;}
 .btn.w{background:#fff;color:#111;border-color:#fff}
 .btn:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #fff;outline-offset:3px}
 
 /* nav */
-.nav{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:rgba(20,18,28,.62);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);max-width:calc(100% - 24px)}
+.nav{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:rgba(14,26,50,.9);border:1px solid rgba(255,255,255,.1);max-width:calc(100% - 24px)}
 .nav .star{width:30px;height:30px;display:grid;place-items:center;color:#fff}
 .nav a.l{font-size:13px;color:#D6D3DE;text-decoration:none;padding:7px 11px;border-radius:999px;white-space:nowrap}
 .nav a.l:hover{background:rgba(255,255,255,.08)}
@@ -53,7 +53,7 @@ a{color:inherit}
 .panel{position:relative;border-radius:28px;overflow:hidden;min-height:min(860px,96svh);
   background:radial-gradient(120% 80% at 70% 105%,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 50%),radial-gradient(90% 70% at 15% 0%,#162B55 0%,rgba(22,43,85,0) 60%),linear-gradient(180deg,var(--v2) 0%,var(--v1) 70%,#3A5F9E 100%);
   display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:24px;padding:110px clamp(22px,5vw,72px) 56px}
-.panel::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E");mix-blend-mode:overlay;pointer-events:none}
+.panel::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");pointer-events:none}
 .hero h1{margin:0;font-size:clamp(46px,7.6vw,104px);font-weight:500;letter-spacing:-.045em;line-height:.95}
 .hero h1 span{display:block;color:rgba(255,255,255,.52)}
 .hero p{margin:28px 0 0;max-width:38ch;color:rgba(255,255,255,.78);font-size:17px}
@@ -62,7 +62,7 @@ a{color:inherit}
 .trust .dots{display:flex}
 .trust .dots i{width:22px;height:22px;border-radius:50%;border:2px solid #1F3A6B;margin-left:-7px;display:block}
 .trust .dots i:first-child{margin-left:0}
-.live{position:relative;justify-self:center;width:min(340px,100%);border-radius:22px;padding:14px;background:rgba(10,22,48,.4);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 80px -30px rgba(5,12,30,.8);will-change:transform}
+.live{position:relative;justify-self:center;width:min(340px,100%);border-radius:22px;padding:14px;background:rgba(16,32,64,.82);border:1px solid rgba(255,255,255,.18);box-shadow:0 40px 80px -30px rgba(5,12,30,.8);will-change:transform}
 .live .bar{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.85)}
 .live .bar b{font-weight:500;display:flex;align-items:center;gap:6px}
 .live .bar b i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(74,222,128,.2)}
@@ -130,9 +130,9 @@ a{color:inherit}
 .track{display:flex;gap:18px;padding-left:max(16px,calc((100vw - 1200px)/2));will-change:transform}
 .pc{flex:none;width:clamp(270px,34vw,460px);display:flex;flex-direction:column;gap:12px;text-decoration:none}
 .pc .vis{aspect-ratio:4/3;border-radius:20px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
-.pc .vis::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 45%,rgba(255,255,255,.35),transparent 70%);mix-blend-mode:soft-light}
+.pc .vis::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 45%,rgba(255,255,255,.35),transparent 70%);opacity:.35}
 .pc .vis .g{position:absolute;inset:auto 0 -6% 0;text-align:center;font-size:clamp(90px,12vw,170px);font-weight:700;letter-spacing:-.06em;color:rgba(255,255,255,.12);line-height:1}
-.pc .vis .st{position:absolute;top:14px;right:14px;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;gap:6px;align-items:center}
+.pc .vis .st{position:absolute;top:14px;right:14px;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.35);display:flex;gap:6px;align-items:center}
 .pc .vis .st i{width:6px;height:6px;border-radius:50%;background:var(--s)}
 .pc .meta{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .pc h3{margin:0;font-size:clamp(24px,2.6vw,34px);font-weight:500;letter-spacing:-.03em}
@@ -380,21 +380,23 @@ a{color:inherit}
   const w1=document.getElementById('w1'),w2=document.getElementById('w2'),spark=document.getElementById('spark'),stats=[...document.querySelectorAll('#stats div')],copy3=document.getElementById('copy3');
   const bar4=document.getElementById('bar4'),live=document.getElementById('live'),progs=[...document.querySelectorAll('#prog i')];
 
+  let marqW=0,trackW=0;
+  const measure=()=>{marqW=marq.scrollWidth;trackW=track.scrollWidth;};
+  measure();addEventListener('resize',measure);addEventListener('load',measure);
   function frame(){
     const y=scrollY, H=vh(), W=innerWidth;
+    const p2=prog(s2),p3=prog(s3),p4=prog(s4),p5=prog(s5); // wszystkie odczyty układu przed zapisami
     // hero: karta odpływa w dół, paski postępu się wypełniają
     const hp=clamp(y/(H*.9));
     live.style.transform=`translateY(${hp*90}px) rotate(${hp*-3}deg)`;
     progs.forEach((p,i)=>p.style.setProperty('--p',clamp(hp*4-i).toFixed(2)));
 
     // 2: wielki tekst w lewo, karty obracają się
-    const p2=prog(s2);
-    marq.style.transform=`translate(${(W*.15)-p2*(marq.scrollWidth-W*.6)}px,-50%)`;
+    marq.style.transform=`translate3d(${((W*.15)-p2*(marqW-W*.6)).toFixed(1)}px,-50%,0)`;
     phones.forEach(ph=>{const r=+ph.dataset.r;const a=ease(clamp(p2*1.4));
       ph.style.transform=`translateY(${(1-a)*(120+r*r*60)}px) rotateY(${r*(28-24*a)}deg) rotateZ(${r*(8-5*a)}deg) translateZ(${-Math.abs(r)*60}px)`;});
 
     // 3: słowa rozjeżdżają się, gwiazda rośnie, liczby wjeżdżają
-    const p3=prog(s3);
     w1.style.transform=`translateX(${-p3*W*.05}px)`;
     w2.style.transform=`translateX(${p3*W*.05}px)`;
     const sc=.6+ease(clamp(p3*1.3))*1.6;
@@ -403,13 +405,11 @@ a{color:inherit}
     stats.forEach((s,i)=>{const t=clamp(p3*3-.6-i*.35);s.style.opacity=t;s.style.transform=`translateY(${(1-t)*30}px)`;});
 
     // 4: poziomy pas
-    const p4=prog(s4);
-    const max=track.scrollWidth-W+32;
-    track.style.transform=`translateX(${-p4*Math.max(0,max)}px)`;
+    const max=trackW-W+32;
+    track.style.transform=`translate3d(${(-p4*Math.max(0,max)).toFixed(1)}px,0,0)`;
     bar4.style.transform=`scaleX(${p4})`;
 
     // 5: kafelki parallax
-    const p5=prog(s5);
     tiles.forEach((t,i)=>{const sp=+t.dataset.sp;const dir=i%2?1:-1;
       t.style.transform=`translate(${dir*(p5-.5)*80*sp}px,${(.5-p5)*H*.6*sp}px) rotate(${dir*(p5-.5)*10}deg)`;});
   }
@@ -429,7 +429,7 @@ a{color:inherit}
   const ctx=cv.getContext('2d');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W=0,H=0,DPR=1;
-  function size(){DPR=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+  function size(){DPR=Math.min(devicePixelRatio||1,1.5);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
   size(); addEventListener('resize',size);
   const rnd=(a,b)=>a+Math.random()*(b-a);
   // pierścienie (łuki) — każdy ma własną oś nachylenia, prędkość i wzór kresek
@@ -512,7 +512,7 @@ const mob=innerWidth<820;
 
 try{
   const renderer=new THREE.WebGLRenderer({antialias:false,alpha:true,powerPreference:'high-performance'});
-  const PR=Math.min(devicePixelRatio,2);
+  const PR=Math.min(devicePixelRatio,mob?1.25:1.5);
   renderer.setPixelRatio(PR);
   host.appendChild(renderer.domElement);
   const scene=new THREE.Scene();
@@ -550,13 +550,15 @@ try{
     frame.pos.set([Math.cos(a)*.93+Math.cos(t)*j,y,Math.sin(a)*.93+Math.sin(t)*j],k*3);frame.size[k]=rnd(.7,1.3);frame.alpha[k]=rnd(.3,.6);ice(frame,k,.9);}
 
   // ---- piasek
-  const N=mob?13000:30000;
+  const N=mob?10000:22000;
   function sample(y0,y1){for(;;){const y=rnd(y0,y1);const r=prof(Math.abs(y))*.9;if(Math.random()>(r/RMAX)**2)continue;const rho=Math.sqrt(Math.random())*r,th=rnd(0,6.283);return {x:Math.cos(th)*rho,y,z:Math.sin(th)*rho,rho,r};}}
   const topS=Array.from({length:N},()=>{const g=sample(.05,.8);g.k=g.y-.18*(1-g.rho/g.r);return g;}).sort((a,b)=>a.k-b.k);
   const botS=Array.from({length:N},()=>{const g=sample(-.98,-.1);g.k=g.y+.5*(g.rho/RMAX);return g;}).sort((a,b)=>a.k-b.k);
   const sand=cloud(N);
   const vel=new Float32Array(N*3), st=new Uint8Array(N);
   const P0=sand.pos;
+  const awake=new Uint8Array(N).fill(1);
+  const posAttr=sand.g.attributes.position;posAttr.setUsage(THREE.DynamicDrawUsage);
   for(let i=0;i<N;i++){const g=topS[i];sand.pos.set([g.x,g.y,g.z],i*3);sand.size[i]=rnd(.8,1.9);sand.alpha[i]=rnd(.35,.85);ice(sand,i,1,true);}
 
   // ---- pył wokół
@@ -594,14 +596,18 @@ try{
   let shown=0, sp=0, phase='flow', pt=0, flipA=0; // flow -> hold -> flip -> flow...
   const clock=new THREE.Clock();
   function prog(){const r=sec.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight));}
+  let near=false;new IntersectionObserver(es=>near=es[0].isIntersecting,{rootMargin:'50% 0px'}).observe(sec);
+  const lastC=[-1,-1,-1];
 
   (function loop(){
     requestAnimationFrame(loop);
+    if(!near&&!visible) return;
     const p=reduce?.4:prog();
-    // etapy tekstu
+    // etapy tekstu (zapis tylko przy zmianie)
     const idx=p<.33?0:p<.66?1:2;
-    steps.forEach((s,i)=>{const c=i===0?1-sstep(.24,.33,p):i===1?sstep(.33,.42,p)*(1-sstep(.57,.66,p)):sstep(.66,.75,p);
-      s.style.opacity=reduce?1:c.toFixed(3);s.style.transform=`translateY(${((1-c)*(i<idx?-24:24)).toFixed(1)}px)`;s.style.pointerEvents=c>.5?'auto':'none';});
+    steps.forEach((s,i)=>{let c=i===0?1-sstep(.24,.33,p):i===1?sstep(.33,.42,p)*(1-sstep(.57,.66,p)):sstep(.66,.75,p);if(reduce)c=1;
+      c=Math.round(c*200)/200;if(c===lastC[i])return;lastC[i]=c;
+      s.style.opacity=c;s.style.transform=`translate3d(0,${((1-c)*(i<idx?-24:24)).toFixed(1)}px,0)`;s.style.pointerEvents=c>.5?'auto':'none';});
     if(!visible) return;
     const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;uni.uTime.value=t;
     sp+=(p-sp)*.08;
@@ -617,31 +623,41 @@ try{
     else if(phase==='hold'){pt+=dt;if(pt>1.4){phase='flip';pt=0;}}
     else if(phase==='flip'){pt+=dt;const e=sstep(0,1.5,pt);flipA=e*Math.PI;
       if(pt>=1.5){ // po obrocie: dół staje się górą — odbijamy pozycje i zaczynamy od nowa
-        for(let i=0;i<N;i++){const j=i*3;P0[j]=-P0[j];P0[j+1]=-P0[j+1];vel[j]=vel[j+1]=vel[j+2]=0;st[i]=0;}
+        for(let i=0;i<N;i++){const j=i*3;P0[j]=-P0[j];P0[j+1]=-P0[j+1];vel[j]=vel[j+1]=vel[j+2]=0;st[i]=0;awake[i]=1;}
         flipA=0;shown=0;phase='flow';rig.rotation.z=tilt;rig.updateMatrixWorld();}}
     const m=Math.round(shown*N);
 
     let px=99,py=99,pz=99;
     if(ptrOn&&!drag){ray.setFromCamera(ptr,cam);cam.getWorldDirection(cd);plane.setFromNormalAndCoplanarPoint(cd.negate(),rig.position);if(ray.ray.intersectPlane(plane,hit)){spin.worldToLocal(hit);px=hit.x;py=hit.y;pz=hit.z;}}
-    const R2=.1, P=sand.pos;
-    let falling=0;
+    const R2=.1, P=sand.pos, cur=px<50;
+    let falling=0, lo=N, hi=-1;
     for(let i=0;i<N;i++){
       const j=i*3, want=i<N-m?0:2;
-      if(want===2&&st[i]===0){st[i]=1;P[j]=rnd(-.02,.02);P[j+1]=.03;P[j+2]=rnd(-.02,.02);const a=rnd(0,6.283),s=rnd(0,.0045);vel[j]=Math.cos(a)*s;vel[j+1]=-rnd(.004,.01);vel[j+2]=Math.sin(a)*s;}
-      if(want===0&&st[i]!==0){st[i]=0;P[j]=rnd(-.02,.02);P[j+1]=-.02;P[j+2]=rnd(-.02,.02);}
+      if(want===2&&st[i]===0){st[i]=1;awake[i]=1;P[j]=rnd(-.02,.02);P[j+1]=.03;P[j+2]=rnd(-.02,.02);const a=rnd(0,6.283),s=rnd(0,.0045);vel[j]=Math.cos(a)*s;vel[j+1]=-rnd(.004,.01);vel[j+2]=Math.sin(a)*s;}
+      else if(want===0&&st[i]!==0){st[i]=0;awake[i]=1;P[j]=rnd(-.02,.02);P[j+1]=-.02;P[j+2]=rnd(-.02,.02);}
+      let dx=0,dy=0,dz=0,d2=9;
+      if(cur){dy=P[j+1]-py;if(dy<.32&&dy>-.32){dx=P[j]-px;dz=P[j+2]-pz;d2=dx*dx+dy*dy+dz*dz;if(d2<R2)awake[i]=1;}}
+      if(!awake[i]) continue;
+      if(i<lo)lo=i; if(i>hi)hi=i;
       if(st[i]===1){falling++;
         const g=botS[N-1-i];vel[j+1]-=.0011;P[j]+=vel[j];P[j+1]+=vel[j+1];P[j+2]+=vel[j+2];
         const r=prof(Math.abs(P[j+1]))*.92, rr=Math.hypot(P[j],P[j+2]);if(rr>r){P[j]*=r/rr;P[j+2]*=r/rr;}
         if(P[j+1]<=g.y+.015){st[i]=2;vel[j]=(g.x-P[j])*.1+rnd(-.004,.004);vel[j+1]=rnd(.002,.008);vel[j+2]=(g.z-P[j+2])*.1+rnd(-.004,.004);}
         continue;}
       const g=st[i]===0?topS[i]:botS[N-1-i];
-      let fx=(g.x-P[j])*.05,fy=(g.y-P[j+1])*.05,fz=(g.z-P[j+2])*.05;
-      const dx=P[j]-px,dy=P[j+1]-py,dz=P[j+2]-pz,d2=dx*dx+dy*dy+dz*dz;
+      const ex=g.x-P[j],ey=g.y-P[j+1],ez=g.z-P[j+2];
+      let fx=ex*.05,fy=ey*.05,fz=ez*.05;
       if(d2<R2){const f=(1-d2/R2)*.022/Math.sqrt(d2+1e-4);fx+=dx*f;fy+=dy*f;fz+=dz*f;}
       vel[j]=(vel[j]+fx)*.84;vel[j+1]=(vel[j+1]+fy)*.84;vel[j+2]=(vel[j+2]+fz)*.84;
       P[j]+=vel[j];P[j+1]+=vel[j+1];P[j+2]+=vel[j+2];
+      // uśpij ziarno, gdy dotarło na miejsce
+      if(d2>=R2&&ex*ex+ey*ey+ez*ez<1e-7&&vel[j]*vel[j]+vel[j+1]*vel[j+1]+vel[j+2]*vel[j+2]<1e-9){P[j]=g.x;P[j+1]=g.y;P[j+2]=g.z;vel[j]=vel[j+1]=vel[j+2]=0;awake[i]=0;}
     }
-    sand.g.attributes.position.needsUpdate=true;
+    if(hi>=lo){
+      if(posAttr.addUpdateRange){posAttr.clearUpdateRanges();posAttr.addUpdateRange(lo*3,(hi-lo+1)*3);}
+      else {posAttr.updateRange.offset=lo*3;posAttr.updateRange.count=(hi-lo+1)*3;}
+      posAttr.needsUpdate=true;
+    }
     for(let i=0;i<ND;i++){dust.pos[i*3+1]+=dv[i]*dt;dust.pos[i*3]+=Math.sin(t*.4+i)*.0006;if(dust.pos[i*3+1]>2)dust.pos[i*3+1]=-2;}
     dust.g.attributes.position.needsUpdate=true;
     const act=clamp(falling/40);
