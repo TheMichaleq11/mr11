@@ -275,7 +275,7 @@ a{color:inherit}
         </div>
         <div class="mailbox"><code id="mail">m.rosiek2007@gmail.com</code></div>
       </div>
-      <div id="gl" aria-hidden="true"><div class="fallback" id="fb">MR</div></div>
+      <div id="gl" aria-hidden="true"><div class="fallback" id="fb"></div></div>
     </div>
   </section>
 </main>
@@ -448,71 +448,120 @@ a{color:inherit}
 })();
 </script>
 
-<script>
-// klepsydra z ziarenek: piasek przesypuje się w miarę przewijania sekcji kontaktu
-(function(){
-  const host=document.getElementById('gl'); if(!host) return;
-  const fb=document.getElementById('fb'); if(fb) fb.remove();
-  const cv=document.createElement('canvas'); host.appendChild(cv);
-  const ctx=cv.getContext('2d');
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W=0,H=0,DPR=1;
-  function size(){DPR=Math.min(devicePixelRatio||1,2);W=host.clientWidth;H=host.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
-  size(); addEventListener('resize',size);
+<script type="module">
+// klepsydra 3D z ziarenek: piasek spada przez przewężenie w rytm przewijania, można ją obracać, piasek ucieka przed kursorem
+import * as THREE from 'three';
+const host=document.getElementById('gl');
+const fb=document.getElementById('fb');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+try{
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  host.appendChild(renderer.domElement);
+  renderer.domElement.style.touchAction='pan-y';
+  renderer.domElement.style.cursor='grab';
+  if(fb) fb.remove();
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(34,1,.1,100);cam.position.set(0,0,6.2);
+  const group=new THREE.Group();scene.add(group);
 
-  const prof=u=>.055+.6*Math.pow(Math.sin(Math.min(u,1)*Math.PI*.55),1.25); // promień bańki w funkcji |y|
+  // miękka kropka jako sprite
+  const spr=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.25,'rgba(255,255,255,.85)');r.addColorStop(.6,'rgba(200,220,255,.18)');r.addColorStop(1,'rgba(200,220,255,0)');g.fillStyle=r;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);})();
+
+  const prof=u=>.05+.62*Math.pow(Math.sin(Math.min(u,1)*Math.PI*.55),1.2);
   const RMAX=prof(1);
-  const N=innerWidth<700?5200:9000;
-  function sample(y0,y1){for(;;){const y=y0+Math.random()*(y1-y0);const r=prof(Math.abs(y))*.93;if(Math.random()>(r/RMAX)**2)continue;const rho=Math.sqrt(Math.random())*r;return {y,rho,r,th:Math.random()*6.283,tw:Math.random()*6.283};}}
-  // góra: pierwsze odpływają ziarna z wierzchu, środek szybciej (lejek)
-  const top=Array.from({length:N},()=>{const g=sample(.04,.86);g.k=g.y-.45*(1-g.rho/g.r)*.35;return g;}).sort((a,b)=>a.k-b.k);
-  // dół: kopiec rośnie od środka
-  const bot=Array.from({length:N},()=>{const g=sample(-.97,-.06);g.k=g.y+.42*(g.rho/RMAX);return g;}).sort((a,b)=>a.k-b.k);
-  const stream=Array.from({length:240},()=>({y:Math.random(),x:(Math.random()-.5)*.03,v:.6+Math.random()*.6,th:Math.random()*6.283}));
+  const N=innerWidth<700?11000:24000;
+  function sample(y0,y1){for(;;){const y=y0+Math.random()*(y1-y0);const r=prof(Math.abs(y))*.92;if(Math.random()>(r/RMAX)**2)continue;const rho=Math.sqrt(Math.random())*r;const th=Math.random()*6.283;return {x:Math.cos(th)*rho,y,z:Math.sin(th)*rho,rho,r};}}
+  const topS=Array.from({length:N},()=>{const g=sample(.05,.84);g.k=g.y-.16*(1-g.rho/g.r);return g;}).sort((a,b)=>a.k-b.k);
+  const botS=Array.from({length:N},()=>{const g=sample(-.96,-.08);g.k=g.y+.45*(g.rho/RMAX);return g;}).sort((a,b)=>a.k-b.k);
+  // ziarno o randze r w górnej bańce ląduje na dole w miejscu N-1-r
+  const pos=new Float32Array(N*3), vel=new Float32Array(N*3), state=new Uint8Array(N); // 0 góra, 1 spada, 2 dół
+  const col=new Float32Array(N*3);
+  for(let i=0;i<N;i++){const g=topS[i];pos[i*3]=g.x;pos[i*3+1]=g.y;pos[i*3+2]=g.z;const w=.75+Math.random()*.25,bl=Math.random()<.12;col[i*3]=w*(bl?.78:1);col[i*3+1]=w*(bl?.86:1);col[i*3+2]=w;}
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const mat=new THREE.PointsMaterial({size:.034,map:spr,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.9,sizeAttenuation:true});
+  group.add(new THREE.Points(geo,mat));
+
+  // pył w powietrzu
+  const D=500, dpos=new Float32Array(D*3), dsp=new Float32Array(D);
+  for(let i=0;i<D;i++){dpos[i*3]=(Math.random()-.5)*4.4;dpos[i*3+1]=(Math.random()-.5)*3.2;dpos[i*3+2]=(Math.random()-.5)*2;dsp[i]=.05+Math.random()*.15;}
+  const dgeo=new THREE.BufferGeometry();dgeo.setAttribute('position',new THREE.BufferAttribute(dpos,3));
+  scene.add(new THREE.Points(dgeo,new THREE.PointsMaterial({size:.022,map:spr,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.45,color:0xCFE0FF})));
+
+  // szkło: siatka profilu, wieczka, słupki
+  const lineMat=new THREE.LineBasicMaterial({color:0xDCE8FF,transparent:true,opacity:.22,depthWrite:false});
+  const prf=[];for(let k=0;k<=60;k++){const y=-1+k/30;prf.push(new THREE.Vector2(prof(Math.abs(y)),y));}
+  for(let k=0;k<10;k++){const a=k/10*6.283;const pts=prf.map(v=>new THREE.Vector3(Math.cos(a)*v.x,v.y,Math.sin(a)*v.x));group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));}
+  for(const y of[-1.04,1.04]){const disc=new THREE.Mesh(new THREE.CylinderGeometry(.86,.86,.06,72,1,true),new THREE.MeshBasicMaterial({color:0xDCE8FF,transparent:true,opacity:.14,side:THREE.DoubleSide,depthWrite:false}));disc.position.y=y;group.add(disc);
+    const ring=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(Array.from({length:96},(_,i)=>new THREE.Vector3(Math.cos(i/96*6.283)*.86,y,Math.sin(i/96*6.283)*.86))),new THREE.LineBasicMaterial({color:0xFFFFFF,transparent:true,opacity:.5}));group.add(ring);}
+  for(let k=0;k<3;k++){const a=k/3*6.283+.5;const post=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,2.08,8),new THREE.MeshBasicMaterial({color:0xC9D8F5,transparent:true,opacity:.35}));post.position.set(Math.cos(a)*.8,0,Math.sin(a)*.8);group.add(post);}
+  // poświata w przewężeniu
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:spr,color:0xFFFFFF,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false}));glow.scale.set(.6,.6,1);group.add(glow);
+
+  function size(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.position.z=w/h<.9?5.2:4.5;cam.updateProjectionMatrix();}
+  size();addEventListener('resize',size);
+
+  // obracanie palcem/myszką z bezwładnością
+  let rotY=.4, rotX=.12, vY=0, vX=0, drag=false, lx=0, ly=0, lastMove=0;
+  const el=renderer.domElement;
+  el.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;el.style.cursor='grabbing';el.setPointerCapture(e.pointerId);});
+  el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();ptr.x=(e.clientX-r.left)/r.width*2-1;ptr.y=-(e.clientY-r.top)/r.height*2+1;ptrOn=true;lastMove=performance.now();
+    if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;vY=dx*.006;vX=dy*.004;rotY+=vY;rotX=Math.max(-.6,Math.min(.6,rotX+vX));});
+  const up=()=>{drag=false;el.style.cursor='grab';};
+  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('pointerleave',()=>{ptrOn=false;});
+
+  // kursor w przestrzeni klepsydry
+  const ptr=new THREE.Vector2(9,9);let ptrOn=false;const ray=new THREE.Raycaster();const plane=new THREE.Plane();const hit=new THREE.Vector3(),loc=new THREE.Vector3(),camDir=new THREE.Vector3();
 
   const sec=document.getElementById('kontakt');
-  let shown=0, visible=false;
-  new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(host);
-  const t0=performance.now();
-  function target(){const r=sec.getBoundingClientRect();const vh=innerHeight;return Math.min(1,Math.max(0,(vh*.85-r.top)/(vh*.95)));}
-
-  function draw(now){
-    requestAnimationFrame(draw);
+  const target=()=>{const r=sec.getBoundingClientRect(),vh=innerHeight;return Math.min(1,Math.max(0,(vh*.85-r.top)/(vh*.95)));};
+  let shown=0, visible=false;new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(host);
+  const tmp=new THREE.Vector3();
+  const clock=new THREE.Clock();
+  (function loop(){
+    requestAnimationFrame(loop);
     if(!visible) return;
-    const t=(now-t0)/1000;
-    const goal=reduce?.5:target();
-    shown+=(goal-shown)*.06;
-    const m=Math.floor(shown*N);
-    ctx.clearRect(0,0,W,H);
-    const S=Math.min(H*.4,W*.5), cx=W/2, cy=H/2;
-    const rot=reduce?0:t*.25;
-    const P=(x,y,z)=>{const f=3.2/(3.2-z);return [cx+x*S*f,cy-y*S*f,f];};
+    const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime;
+    shown+=((reduce?.45:target())-shown)*.08;
+    const m=Math.round(shown*N); // ile ziaren ma być na dole
 
-    // szkło: obrys bańki, wieczka, słupki
-    ctx.lineWidth=1.2;
-    for(const side of[-1,1]){ctx.strokeStyle='rgba(220,232,255,.32)';ctx.beginPath();
-      for(let k=0;k<=80;k++){const y=-1+k/40;const [X,Y]=P(side*prof(Math.abs(y)),y,0);k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.stroke();}
-    for(const y of[1.02,-1.02]){ctx.fillStyle='rgba(205,220,250,.10)';ctx.strokeStyle='rgba(220,232,255,.45)';ctx.beginPath();ctx.ellipse(cx,cy-y*S,S*.82,S*.1,0,0,6.283);ctx.fill();ctx.stroke();}
-    for(let k=0;k<3;k++){const a=rot*.4+k*2.094;const x=Math.cos(a)*.78,z=Math.sin(a)*.78;const [X1,Y1]=P(x,1.02,z),[X2,Y2]=P(x,-1.02,z);
-      ctx.strokeStyle=`rgba(220,232,255,${.18+.22*(z+1)/2})`;ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(X1,Y1);ctx.lineTo(X2,Y2);ctx.stroke();}
+    if(!drag){vY*=.95;vX*=.9;rotY+=vY+(reduce?0:.0025);rotX+=(.12-rotX)*.02;}
+    group.rotation.set(rotX,rotY,0);
+    group.position.y=Math.sin(t*.7)*.03;
+    group.updateMatrixWorld();
 
-    // ziarna
-    const dot=(g,yo)=>{const a=g.th+rot;const x=Math.cos(a)*g.rho,z=Math.sin(a)*g.rho;const [X,Y,f]=P(x,g.y+(yo||0),z);
-      const b=(.55+.45*(z/RMAX+1)/2)*(.8+.2*Math.sin(t*3+g.tw));ctx.fillStyle=`rgba(236,242,255,${b})`;const s=1.4*f;ctx.fillRect(X,Y,s,s);};
-    for(let i=0;i<N-m;i++) dot(top[i]);
-    for(let i=0;i<m;i++) dot(bot[i]);
+    // kursor -> lokalne współrzędne
+    let px=99,py=99,pz=99;
+    if(ptrOn&&!reduce){ray.setFromCamera(ptr,cam);cam.getWorldDirection(camDir);plane.setFromNormalAndCoplanarPoint(camDir.negate(),group.position);if(ray.ray.intersectPlane(plane,hit)){loc.copy(hit);group.worldToLocal(loc);px=loc.x;py=loc.y;pz=loc.z;}}
+    const R2=.09;
 
-    // strużka przez przewężenie
-    const heap=m?bot[m-1].k:-.97;
-    if(shown<.995){
-      ctx.fillStyle='rgba(245,248,255,.9)';
-      for(const p of stream){p.y-=p.v*.012*(reduce?0:1);if(p.y<0)p.y+=1;const y=.02-(1-p.y)*(.02-heap)*(1)+0;const yy=.02-(.02-heap)*(1-p.y);
-        const a=p.th+rot;const [X,Y,f]=P(Math.cos(a)*Math.abs(p.x),yy,Math.sin(a)*Math.abs(p.x));ctx.fillRect(X,Y,1.3*f,1.3*f);}
-      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,S*.16);g.addColorStop(0,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,S*.16,0,6.283);ctx.fill();
+    for(let i=0;i<N;i++){
+      const want=i<N-m?0:2; const j=i*3;
+      if(want===2&&state[i]===0){state[i]=1;pos[j]=(Math.random()-.5)*.03;pos[j+1]=.02;pos[j+2]=(Math.random()-.5)*.03;vel[j]=(Math.random()-.5)*.002;vel[j+1]=-.004-Math.random()*.004;vel[j+2]=(Math.random()-.5)*.002;}
+      if(want===0&&state[i]!==0){state[i]=0;pos[j]=(Math.random()-.5)*.03;pos[j+1]=.03;pos[j+2]=(Math.random()-.5)*.03;}
+      let tx,ty,tz;
+      if(state[i]===0){const g=topS[i];tx=g.x;ty=g.y;tz=g.z;}
+      else {const g=botS[N-1-i];tx=g.x;ty=g.y;tz=g.z;}
+      if(state[i]===1){ // swobodny spadek przez przewężenie
+        vel[j+1]-=.0009; pos[j]+=vel[j];pos[j+1]+=vel[j+1];pos[j+2]+=vel[j+2];
+        if(pos[j+1]<=ty+.02){state[i]=2;vel[j]=(tx-pos[j])*.08;vel[j+1]=.004;vel[j+2]=(tz-pos[j+2])*.08;}
+        continue;
+      }
+      // sprężyna do miejsca + odpychanie od kursora
+      let fx=(tx-pos[j])*.06, fy=(ty-pos[j+1])*.06, fz=(tz-pos[j+2])*.06;
+      const dx=pos[j]-px, dy=pos[j+1]-py, dz=pos[j+2]-pz, d2=dx*dx+dy*dy+dz*dz;
+      if(d2<R2){const f=(1-d2/R2)*.02/Math.sqrt(d2+1e-4);fx+=dx*f;fy+=dy*f;fz+=dz*f;}
+      vel[j]=(vel[j]+fx)*.82;vel[j+1]=(vel[j+1]+fy)*.82;vel[j+2]=(vel[j+2]+fz)*.82;
+      pos[j]+=vel[j];pos[j+1]+=vel[j+1];pos[j+2]+=vel[j+2];
     }
-  }
-  requestAnimationFrame(draw);
-})();
+    geo.attributes.position.needsUpdate=true;
+
+    for(let i=0;i<D;i++){dpos[i*3+1]+=dsp[i]*dt*.3;dpos[i*3]+=Math.sin(t*.5+i)*.0008;if(dpos[i*3+1]>1.6)dpos[i*3+1]=-1.6;}
+    dgeo.attributes.position.needsUpdate=true;
+    glow.material.opacity=(shown>.002&&shown<.995?.6:.25)*(.85+.15*Math.sin(t*6));
+    renderer.render(scene,cam);
+  })();
+}catch(e){ console.error(e); }
 </script>
 </body>
 </html>
