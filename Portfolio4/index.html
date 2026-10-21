@@ -71,7 +71,7 @@ a{color:inherit}
 .live .pic canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .live .pic::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);pointer-events:none}
 .live .ask{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08);font-size:14px}
-.live .ask button{width:26px;height:26px;border-radius:50%;border:0;background:#fff;color:#111;display:grid;place-items:center;cursor:pointer;font-size:15px}
+.live .ask .plus{text-decoration:none;width:26px;height:26px;border-radius:50%;border:0;background:#fff;color:#111;display:grid;place-items:center;cursor:pointer;font-size:15px}
 .live .prog{display:flex;gap:6px;margin-top:10px}
 .live .prog i{flex:1;height:3px;border-radius:9px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
 .live .prog i::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left;transform:scaleX(var(--p,0))}
@@ -231,27 +231,26 @@ a{color:inherit}
 
 <main>
   <!-- 1. HERO -->
-  <section class="hero gut" id="o-mnie">
+  <section class="hero gut" id="start">
     <div class="panel">
       <div>
-        <h1>Strony, które<span>robią wrażenie</span></h1>
-        <p>Nazywam się Michał Rosiek. Projektuję i buduję strony oraz aplikacje od zera, na własnym kodzie. Bez szablonów, bez WordPressa, bez kompromisów w wyglądzie.</p>
+        <h1>Cześć, jestem Michał<span>i robię strony</span></h1>
+        <p>Studiuję ekonomię na UJ, a po zajęciach piszę strony i aplikacje. Robię wszystko sam, od pierwszego szkicu do wrzucenia do sieci, i nie korzystam z gotowych szablonów.</p>
         <div class="row">
           <a class="btn" href="#projekty">Zobacz projekty</a>
-          <a class="btn w" href="#kontakt">Zacznijmy projekt →</a>
+          <a class="btn w" href="#kontakt">Napisz do mnie →</a>
         </div>
-        <div class="trust"><span class="dots"><i style="background:#FBBF24"></i><i style="background:#60A5FA"></i><i style="background:#F472B6"></i><i style="background:#34D399"></i></span>6 projektów, każdy napisany od zera</div>
+        <div class="trust"><span class="dots"><i style="background:#FBBF24"></i><i style="background:#60A5FA"></i><i style="background:#F472B6"></i><i style="background:#34D399"></i></span>6 projektów, od strony pasieki po aplikację na telewizor</div>
       </div>
       <div class="live" id="live">
-        <div class="bar"><b><i></i>Dostępny</b><span>2026</span></div>
         <div class="pic"><canvas id="holo" aria-hidden="true"></canvas></div>
-        <div class="ask"><span>Potrzebujesz strony?</span><button type="button" aria-label="Przejdź do kontaktu" onclick="location.hash='kontakt'">+</button></div>
+        <div class="ask"><span>Potrzebujesz strony?</span><a class="plus" href="#kontakt" aria-label="Przejdź do kontaktu">+</a></div>
         <div class="prog" id="prog"><i></i><i></i><i></i><i></i></div>
         <div class="done"><b>Michał Rosiek</b>Strony i aplikacje · student ekonomii UJ</div>
       </div>
     </div>
-    <div class="intro2 gut">
-      <p>Lubię, kiedy pomysł zamienia się w coś, czego ludzie naprawdę używają: menu obiadów w telefonie, pieśni na telewizorze w kościele, sklep z miodem.</p>
+    <div class="intro2 gut" id="o-mnie">
+      <p>Najbardziej lubię, kiedy coś, co napisałem, przydaje się na co dzień: menu obiadów w telefonie, pieśni na telewizorze w kościele, sklep z miodem znajomego pszczelarza.</p>
       <div class="stack"><h4>Narzędzia</h4><div><span>HTML</span><span>CSS</span><span>JavaScript</span><span>three.js</span><span>PWA</span><span>Vercel</span><span>GitHub</span></div></div>
     </div>
   </section>
@@ -259,11 +258,11 @@ a{color:inherit}
   <!-- 2. JASNA SCENA -->
   <section class="scene s2" id="s2" aria-label="Własny kod">
     <div class="stick">
-      <div class="marq" id="marq">Własny kod. Zero szablonów. Własny kod. Zero szablonów.</div>
+      <div class="marq" id="marq">Piszę od zera. Bez szablonów. Piszę od zera. Bez szablonów.</div>
       <div class="phones">
         <div class="ph a" data-r="-1"><small><span>Hermes</span><span>Windows</span></small><div><h3>Cała poczta w jednym oknie</h3><p>Gmail, Outlook i Onet razem.</p></div></div>
-        <div class="ph b" data-r="0"><small><span>Lanczuj</span><span>Online</span></small><div><h3>Obiad z dopłatą w dwa kliknięcia</h3><p>Menu wszystkich lokali LanczUJ.</p></div></div>
-        <div class="ph c" data-r="1"><small><span>Ad Maiorem</span><span>TV</span></small><div><h3>Pieśni na ekranie, pilot w telefonie</h3><p>Używane w kościele co tydzień.</p></div></div>
+        <div class="ph b" data-r="0"><small><span>Lanczuj</span><span>Telefon</span></small><div><h3>Obiad z dopłatą w dwa kliknięcia</h3><p>Menu wszystkich lokali LanczUJ.</p></div></div>
+        <div class="ph c" data-r="1"><small><span>Ad Maiorem</span><span>TV</span></small><div><h3>Pieśni na ekranie, pilot w telefonie</h3><p>Działa w moim kościele.</p></div></div>
       </div>
       <a class="tag" href="#projekty">Zobacz wszystkie projekty</a>
     </div>
@@ -272,22 +271,22 @@ a{color:inherit}
   <!-- 3. PONAD / SZABLONY -->
   <section class="scene s3" id="s3" aria-label="Ponad szablony">
     <div class="stick">
-      <div class="w1" id="w1">Ponad</div>
+      <div class="w1" id="w1">Bez</div>
       <svg class="spark" id="spark" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="sg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#F3F7FF"/><stop offset="1" stop-color="#BFD3FF"/></radialGradient></defs><path d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z" fill="url(#sg)"/></svg>
-      <p class="copy" id="copy3">Gotowy szablon wygląda jak tysiąc innych stron. Kod pisany od zera wygląda jak Ty i robi dokładnie to, czego potrzebujesz.</p>
+      <p class="copy" id="copy3">Gotowy szablon wygląda jak setki innych stron. Wolę napisać wszystko sam. Wtedy strona wygląda tak, jak chcesz, i nie ma w niej nic zbędnego.</p>
       <div class="stats" id="stats">
-        <div><b>6</b><span>projektów</span></div>
-        <div><b>0</b><span>gotowych szablonów</span></div>
-        <div><b>100%</b><span>kodu od zera</span></div>
+        <div><b>6</b><span>projektów na koncie</span></div>
+        <div><b>2</b><span>działają na co dzień</span></div>
+        <div><b>1</b><span>wolne miejsce na Twój</span></div>
       </div>
-      <div class="w2" id="w2">szablony</div>
+      <div class="w2" id="w2">szablonów</div>
     </div>
   </section>
 
   <!-- 4. PROJEKTY POZIOMO -->
   <section class="scene s4" id="projekty" aria-label="Projekty">
     <div class="stick">
-      <div class="head gut"><h2>Projekty</h2><p>Przewijaj dalej, a projekty przesuną się w bok.</p></div>
+      <div class="head gut"><h2>Projekty</h2><p>Przewijaj w dół, a karty przesuną się w bok.</p></div>
       <div class="track" id="track"></div>
       <div class="gut"><div class="bar4"><i id="bar4"></i></div></div>
     </div>
@@ -296,7 +295,7 @@ a{color:inherit}
   <!-- 5. KAFELKI -->
   <section class="scene s5" id="s5" aria-label="Portfolio rośnie">
     <div class="stick" id="tiles">
-      <div class="mid"><h2>Portfolio, które<br>ciągle rośnie</h2><p>Co kilka tygodni dochodzi coś nowego. Następny może być Twój projekt.</p></div>
+      <div class="mid"><h2>Ciągle coś<br>dochodzi</h2><p>Co jakiś czas pojawia się tu nowy projekt. Może następny będzie Twój.</p></div>
     </div>
   </section>
 
@@ -309,18 +308,18 @@ a{color:inherit}
       <div id="hg" aria-hidden="true"></div>
       <div class="steps7">
         <div class="st7" data-i="0">
-          <div class="l"><span class="lab"><b>01</b><i></i>Strona od zera</span><h2>Każdy piksel<br>to decyzja</h2></div>
-          <div class="r"><i class="dash"></i><p>Zanim powstanie pierwsza linijka kodu, wszystko jest jeszcze możliwe. Potem każda decyzja zostaje w projekcie, dlatego podejmuję je razem z Tobą.</p>
-            <div class="row"><a class="btn7 pri" href="#kontakt">Zacznijmy projekt <span>↗</span></a><a class="btn7" href="#projekty">Zobacz projekty</a></div></div>
+          <div class="l"><span class="lab"><b>01</b><i></i>Pomysł</span><h2>Zaczynamy<br>od rozmowy</h2></div>
+          <div class="r"><i class="dash"></i><p>Opowiadasz mi, czym się zajmujesz i czego potrzebujesz. Na tym etapie wszystko da się jeszcze zmienić, więc najpierw dużo pytam, a dopiero potem siadam do kodu.</p>
+            <div class="row"><a class="btn7 pri" href="#kontakt">Napisz do mnie <span>↗</span></a><a class="btn7" href="#projekty">Zobacz projekty</a></div></div>
         </div>
         <div class="st7" data-i="1">
-          <div class="l"><span class="lab"><b>02</b><i></i>Czas</span><h2>Twój czas leci,<br>strona pracuje<br>dalej</h2><i class="dash"></i>
-            <p>Dobra strona nie wymaga pilnowania. Działa szybko, dobrze wygląda na telefonie i zdobywa klientów, kiedy Ty zajmujesz się czymś innym.</p>
-            <span class="mono">Kod od zera — bez szablonów</span></div>
+          <div class="l"><span class="lab"><b>02</b><i></i>Jak pracuję</span><h2>Projekt, kod,<br>publikacja</h2><i class="dash"></i>
+            <p>Najpierw pokazuję, jak strona będzie wyglądać, i poprawiamy, aż Ci się spodoba. Potem piszę ją od zera, sprawdzam na telefonie i komputerze, wrzucam do sieci i podpinam domenę.</p>
+            <span class="mono">Poprawki po publikacji też robię</span></div>
         </div>
         <div class="st7" data-i="2">
-          <div class="l"><span class="lab"><b>03</b><i></i>Kontakt</span><h2>Zbudujmy coś<br>ponad przeciętność</h2><i class="dash"></i>
-            <p>Rozmowa, projekt wyglądu, kod i wdrożenie z domeną. Prowadzę Cię przez wszystko i zostaję na wypadek poprawek.</p>
+          <div class="l"><span class="lab"><b>03</b><i></i>Kontakt</span><h2>Napisz<br>do mnie</h2><i class="dash"></i>
+            <p>Wystarczy kilka zdań o tym, czego szukasz. Odpiszę i razem ustalimy, co dalej.</p>
             <div class="row"><a class="btn7 pri" href="mailto:m.rosiek2007@gmail.com?subject=Strona%20%E2%80%94%20zapytanie">Napisz e-mail <span>↗</span></a><button class="btn7" type="button" id="copyMail">Kopiuj adres</button></div>
             <code class="mail7" id="mail">m.rosiek2007@gmail.com</code></div>
         </div>
@@ -332,9 +331,9 @@ a{color:inherit}
 
 <footer class="foot gut">
   <div class="in">
-    <div><p class="big">Michał<br>Rosiek</p><p>Strony i aplikacje pisane od zera. Kraków i zdalnie.</p></div>
+    <div><p class="big">Michał<br>Rosiek</p><p>Strony i aplikacje pisane od zera.</p></div>
     <div><h5>Strona</h5><ul><li><a href="#projekty">Projekty</a></li><li><a href="#o-mnie">O mnie</a></li><li><a href="#kontakt">Kontakt</a></li></ul></div>
-    <div><h5>Projekty online</h5><ul><li><a href="https://lanczuj-menu.vercel.app" target="_blank" rel="noopener">Lanczuj ↗</a></li><li><a href="https://mr11-portfolio-3.vercel.app" target="_blank" rel="noopener">Portfolio 3 ↗</a></li></ul></div>
+    <div><h5>Zobacz też</h5><ul><li><a href="https://lanczuj-menu.vercel.app" target="_blank" rel="noopener">Lanczuj ↗</a></li><li><a href="https://mr11-portfolio-3.vercel.app" target="_blank" rel="noopener">Portfolio 3 ↗</a></li></ul></div>
   </div>
   <div class="copy"><span>© 2026 Michał Rosiek</span><span>m.rosiek2007@gmail.com</span></div>
 </footer>
@@ -355,18 +354,18 @@ a{color:inherit}
 
   // projekty
   const P=[
-    {t:'Lanczuj',s:'PWA · Vercel',st:['Online','#4ADE80'],g:'L',bg:'radial-gradient(70% 70% at 30% 20%,#FDE68A,transparent 60%),linear-gradient(150deg,#B45309,#3A1A05)',d:'Menu wszystkich lokali z dopłatą LanczUJ dla studentów UJ. Dodajesz na ekran telefonu i działa jak aplikacja.',link:'https://lanczuj-menu.vercel.app'},
-    {t:'Hermes',s:'Aplikacja na Windows',st:['W trakcie','#F0B44C'],g:'H',bg:'radial-gradient(70% 70% at 70% 20%,#A5B4FC,transparent 60%),linear-gradient(150deg,#312E81,#0B0A24)',d:'Własny klient poczty: Gmail, Outlook, Onet i każda inna skrzynka w jednej aplikacji.'},
-    {t:'Pieśni na TV',s:'Ad Maiorem',st:['W użyciu','#4ADE80'],g:'♪',bg:'radial-gradient(70% 70% at 40% 25%,#FCA5A5,transparent 60%),linear-gradient(150deg,#991B1B,#2A0707)',d:'Pieśni w kościele na zwykłym telewizorze, sterowane z telefonu. Zestawy, zwrotki, psalm dnia.'},
-    {t:'Pasieka Kószka',s:'Strona ze sklepem',st:['W trakcie','#F0B44C'],g:'PK',bg:'radial-gradient(70% 70% at 60% 20%,#FCD34D,transparent 60%),linear-gradient(150deg,#78350F,#1F0E03)',d:'Nowa strona pasieki: historia, duże zdjęcia i prosta droga do sklepu z miodami.'},
-    {t:'Inżynier wyścigowy',s:'Telemetria na żywo',st:['Koncepcja','#A79BFF'],g:'F1',bg:'radial-gradient(70% 70% at 30% 25%,#CBD5E1,transparent 60%),linear-gradient(150deg,#334155,#0B1020)',d:'Dashboard do gier F1 25 i 26: opony, strategia, okno pit stopu. Zdalny inżynier widzi dane w czasie rzeczywistym.'},
-    {t:'Twój projekt',s:'Wolny termin',st:['Dostępny','#4ADE80'],g:'+',bg:'radial-gradient(70% 70% at 50% 30%,#FFFFFF,transparent 60%),linear-gradient(150deg,#2C4C85,#0F1E3A)',d:'Masz pomysł na stronę albo aplikację? Napisz, a ten slot zajmie Twój projekt.',link:'#kontakt'}
+    {t:'Lanczuj',s:'PWA · Vercel',g:'L',bg:'radial-gradient(70% 70% at 30% 20%,#FDE68A,transparent 60%),linear-gradient(150deg,#B45309,#3A1A05)',d:'Menu wszystkich lokali z dopłatą LanczUJ w jednym miejscu. Dodajesz ją do ekranu telefonu i masz pod ręką jak aplikację.',link:'https://lanczuj-menu.vercel.app'},
+    {t:'Hermes',s:'Aplikacja na Windows',g:'H',bg:'radial-gradient(70% 70% at 70% 20%,#A5B4FC,transparent 60%),linear-gradient(150deg,#312E81,#0B0A24)',d:'Mój własny program do poczty na Windowsa. Gmail, Outlook, Onet i każda inna skrzynka w jednym oknie.'},
+    {t:'Pieśni na TV',s:'Ad Maiorem',g:'♪',bg:'radial-gradient(70% 70% at 40% 25%,#FCA5A5,transparent 60%),linear-gradient(150deg,#991B1B,#2A0707)',d:'Wyświetla pieśni na telewizorze w kościele. Steruje się nią z telefonu: wybierasz pieśń, przełączasz zwrotki, a psalm dnia pobiera się sam.'},
+    {t:'Pasieka Kószka',s:'Strona ze sklepem',g:'PK',bg:'radial-gradient(70% 70% at 60% 20%,#FCD34D,transparent 60%),linear-gradient(150deg,#78350F,#1F0E03)',d:'Nowa strona dla pasieki Kószka. Dużo zdjęć, historia pasieki i prosty sklep z miodami.'},
+    {t:'Inżynier wyścigowy',s:'Telemetria na żywo',g:'F1',bg:'radial-gradient(70% 70% at 30% 25%,#CBD5E1,transparent 60%),linear-gradient(150deg,#334155,#0B1020)',d:'Panel do gier F1 25 i 26. Pokazuje opony, strategię i najlepszy moment na pit stop, a drugi gracz w roli inżyniera widzi wszystko na żywo przez internet.'},
+    {t:'Twój projekt',s:'Następny',g:'+',bg:'radial-gradient(70% 70% at 50% 30%,#FFFFFF,transparent 60%),linear-gradient(150deg,#2C4C85,#0F1E3A)',d:'Masz pomysł na stronę albo aplikację? Napisz, pogadamy.',link:'#kontakt'}
   ];
   const track=document.getElementById('track');
   P.forEach(p=>{
     const el=document.createElement(p.link?'a':'div');
     el.className='pc'; if(p.link){el.href=p.link; if(p.link.startsWith('http')){el.target='_blank';el.rel='noopener';}}
-    el.innerHTML=`<div class="vis" style="background:${p.bg}"><span class="st" style="--s:${p.st[1]}"><i></i>${p.st[0]}</span><div class="g">${p.g}</div></div>
+    el.innerHTML=`<div class="vis" style="background:${p.bg}"><div class="g">${p.g}</div></div>
       <div class="meta"><h3>${p.t}</h3><span>${p.s}</span></div><p>${p.d}</p>${p.link?`<span class="open">${p.link.startsWith('http')?'Otwórz projekt ↗':'Napisz do mnie →'}</span>`:''}`;
     track.appendChild(el);
   });
@@ -426,6 +425,24 @@ a{color:inherit}
   if(!reduce){ let run=false;
     const step=()=>{const d=scrollY-sy;sy=Math.abs(d)<.5?scrollY:sy+d*.22;frame();if(sy!==scrollY)requestAnimationFrame(step);else run=false;};
     const on=()=>{if(!run){run=true;requestAnimationFrame(step);}}; addEventListener('scroll',on,{passive:true}); addEventListener('resize',()=>{for(const k in last)delete last[k];on();}); frame(); }
+
+  // płynne przewijanie do sekcji po kliknięciu w menu i przyciski
+  let jump=null;
+  const stopJump=()=>{if(jump){cancelAnimationFrame(jump);jump=null;}};
+  ['wheel','touchstart','keydown'].forEach(ev=>addEventListener(ev,stopJump,{passive:true}));
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#"]');if(!a)return;
+    const id=a.getAttribute('href').slice(1);const t=id&&document.getElementById(id);if(!t)return;
+    e.preventDefault();stopJump();
+    const off=t.classList.contains('anchor')?0:80;
+    const to=Math.max(0,Math.min(t.getBoundingClientRect().top+scrollY-off,document.documentElement.scrollHeight-innerHeight));
+    if(reduce){scrollTo(0,to);return;}
+    const from=scrollY,d=to-from,dur=Math.min(1800,Math.max(700,600+Math.abs(d)*.12)),t0=performance.now();
+    const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+    const go=now=>{const k=Math.min(1,(now-t0)/dur);scrollTo(0,from+d*ease(k));jump=k<1?requestAnimationFrame(go):null;};
+    jump=requestAnimationFrame(go);
+    history.replaceState(null,'','#'+id);
+  });
 
   // kopiowanie
   const btn=document.getElementById('copyMail');
