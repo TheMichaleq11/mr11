@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Michał Rosiek</title>
+<meta name="description" content="Michał Rosiek. Strony i aplikacje pisane od zera, na własnym kodzie.">
+<meta name="theme-color" content="#07060B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: strona-opowieść przewijana scenami: fioletowy hero z pływającą kartą, jasna scena z wielkim tekstem i kartami 3D, „Ponad / szablony” z gwiazdą, poziomy pas projektów, rozsypane kafelki, fioletowy finał z chromowanym obiektem 3D, jasna stopka. */
+:root{
+  --ink:#07060B;
+  --ink2:#121019;
+  --line:#26232F;
+  --paper:#F2F1F5;
+  --paper2:#E4E2EA;
+  --txt:#F5F4F8;
+  --mut:#9C98A8;
+  --dark-mut:#5D5A68;
+  --v1:#6D28D9;
+  --v2:#3B0F8C;
+  --v3:#1A0645;
+  --glow:#C084FC;
+  --ok:#4ADE80;
+  --f:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --fm:'Geist Mono',ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--ink);color:var(--txt)}
+body{font-family:var(--f);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{max-width:100%;display:block}
+a{color:inherit}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 15px/1 var(--f);padding:13px 18px;border-radius:999px;text-decoration:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.btn.w{background:#fff;color:#111;border-color:#fff}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* nav */
+.nav{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:rgba(20,18,28,.62);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);max-width:calc(100% - 24px)}
+.nav .star{width:30px;height:30px;display:grid;place-items:center;color:#fff}
+.nav a.l{font-size:13px;color:#D6D3DE;text-decoration:none;padding:7px 11px;border-radius:999px;white-space:nowrap}
+.nav a.l:hover{background:rgba(255,255,255,.08)}
+.nav a.cta{font-size:13px;font-weight:600;background:#fff;color:#111;text-decoration:none;padding:8px 14px;border-radius:999px;white-space:nowrap}
+@media (max-width:480px){.nav a.hide{display:none}}
+
+/* ---------- 1. hero ---------- */
+.hero{padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:12px}
+.panel{position:relative;border-radius:28px;overflow:hidden;min-height:min(860px,96svh);
+  background:radial-gradient(120% 80% at 70% 105%,#B57BFF 0%,rgba(181,123,255,0) 55%),radial-gradient(90% 70% at 15% 0%,#4C1D95 0%,rgba(76,29,149,0) 60%),linear-gradient(180deg,var(--v2) 0%,var(--v1) 70%,#8B5CF6 100%);
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:24px;padding:110px clamp(22px,5vw,72px) 56px}
+.panel::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E");mix-blend-mode:overlay;pointer-events:none}
+.hero h1{margin:0;font-size:clamp(46px,7.6vw,104px);font-weight:500;letter-spacing:-.045em;line-height:.95}
+.hero h1 span{display:block;color:rgba(255,255,255,.52)}
+.hero p{margin:28px 0 0;max-width:38ch;color:rgba(255,255,255,.78);font-size:17px}
+.hero .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.trust{display:inline-flex;align-items:center;gap:10px;margin-top:28px;font-size:13px;color:rgba(255,255,255,.8);background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.12);padding:6px 12px 6px 6px;border-radius:999px}
+.trust .dots{display:flex}
+.trust .dots i{width:22px;height:22px;border-radius:50%;border:2px solid #4C1D95;margin-left:-7px;display:block}
+.trust .dots i:first-child{margin-left:0}
+.live{position:relative;justify-self:center;width:min(340px,100%);border-radius:22px;padding:14px;background:rgba(18,8,40,.42);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 80px -30px rgba(10,0,40,.8);will-change:transform}
+.live .bar{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.85)}
+.live .bar b{font-weight:500;display:flex;align-items:center;gap:6px}
+.live .bar b i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(74,222,128,.2)}
+.live .bar span{font-family:var(--fm);font-size:11px;background:rgba(255,255,255,.12);padding:2px 8px;border-radius:999px}
+.live .pic{position:relative;margin-top:12px;height:300px;border-radius:14px;overflow:hidden;background:radial-gradient(60% 55% at 50% 40%,#E9D5FF 0%,#A855F7 35%,#3B0764 80%)}
+.live .pic img{position:absolute;left:50%;top:14px;height:820px;width:auto;max-width:none;transform:translateX(-50%)}
+.live .ask{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08);font-size:14px}
+.live .ask button{width:26px;height:26px;border-radius:50%;border:0;background:#fff;color:#111;display:grid;place-items:center;cursor:pointer;font-size:15px}
+.live .prog{display:flex;gap:6px;margin-top:10px}
+.live .prog i{flex:1;height:3px;border-radius:9px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+.live .prog i::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left;transform:scaleX(var(--p,0))}
+.live .done{margin-top:12px;font-size:13px;color:rgba(255,255,255,.75)}
+.live .done b{color:#fff;font-weight:600;display:block;font-size:14px}
+@media (max-width:860px){
+  .panel{grid-template-columns:1fr;padding-top:96px;gap:36px;border-radius:22px}
+  .live .pic{height:240px}
+  .live .pic img{height:660px}
+}
+.intro2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:32px;max-width:1200px;margin:0 auto;padding-block:46px 90px}
+.intro2 p{margin:0;font-size:clamp(19px,2.2vw,24px);line-height:1.4;color:#D9D6E2;max-width:40ch}
+.intro2 .stack h4{margin:0 0 10px;font-size:14px;font-weight:600}
+.intro2 .stack div{display:flex;flex-wrap:wrap;gap:6px}
+.intro2 .stack span{font-family:var(--fm);font-size:12px;color:var(--mut);border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+@media (max-width:760px){.intro2{grid-template-columns:1fr}}
+
+/* sceny przyklejane */
+.scene{position:relative}
+.stick{position:sticky;top:0;height:100svh;overflow:hidden}
+
+/* ---------- 2. jasna scena: wielki tekst + karty ---------- */
+.s2{height:300svh}
+.s2 .stick{background:var(--paper);color:#121018;border-radius:28px 28px 0 0}
+.marq{position:absolute;left:0;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:clamp(90px,15vw,220px);font-weight:500;letter-spacing:-.05em;line-height:1;color:#121018;will-change:transform}
+.phones{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;gap:clamp(10px,2vw,28px);perspective:1400px}
+.ph{width:clamp(150px,19vw,250px);aspect-ratio:9/15;border-radius:26px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;box-shadow:0 40px 70px -30px rgba(20,10,40,.55),inset 0 1px 0 rgba(255,255,255,.25);will-change:transform;position:relative;overflow:hidden}
+.ph::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 35%);pointer-events:none}
+.ph small{font-family:var(--fm);font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.8;display:flex;justify-content:space-between}
+.ph h3{margin:0;font-size:clamp(17px,1.8vw,22px);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.ph p{margin:6px 0 0;font-size:12px;opacity:.8;line-height:1.35}
+.ph.a{background:radial-gradient(80% 60% at 70% 30%,#9F7AEA,transparent 70%),linear-gradient(160deg,#2E1065,#0B0618)}
+.ph.b{background:linear-gradient(150deg,#F7F7FA 0%,#B9BBC6 45%,#E6E7EC 60%,#8E909C 100%);color:#15131C}
+.ph.c{background:radial-gradient(70% 50% at 40% 70%,#34D399,transparent 70%),linear-gradient(170deg,#0F2B2A,#071211)}
+.s2 .tag{position:absolute;left:50%;bottom:calc(36px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font-size:13px;background:#121018;color:#fff;padding:9px 16px;border-radius:999px;white-space:nowrap}
+
+/* ---------- 3. Ponad / szablony ---------- */
+.s3{height:260svh}
+.s3 .stick{background:var(--ink)}
+.w1,.w2{position:absolute;font-size:clamp(64px,12vw,180px);font-weight:500;letter-spacing:-.05em;line-height:1;will-change:transform}
+.w1{left:clamp(16px,5vw,80px);top:16%}
+.w2{right:clamp(16px,5vw,80px);bottom:12%;color:#D7D4DE}
+.spark{position:absolute;left:50%;top:50%;width:clamp(90px,14vw,190px);aspect-ratio:1;transform:translate(-50%,-50%);will-change:transform;filter:drop-shadow(0 0 40px rgba(192,132,252,.55))}
+.s3 .copy{position:absolute;left:clamp(16px,5vw,80px);top:42%;max-width:30ch;color:var(--mut);font-size:15px}
+.stats{position:absolute;right:clamp(16px,5vw,80px);top:28%;display:flex;flex-direction:column;gap:22px;text-align:right}
+.stats div{will-change:transform,opacity}
+.stats b{display:block;font-size:clamp(24px,3vw,38px);font-weight:500;letter-spacing:-.03em}
+.stats span{font-size:13px;color:var(--mut)}
+@media (max-width:700px){.s3 .copy{top:auto;bottom:30%;max-width:24ch;font-size:14px}.stats{top:30%;gap:14px}}
+
+/* ---------- 4. poziomy pas projektów ---------- */
+.s4{height:420svh}
+.s4 .stick{display:flex;flex-direction:column;justify-content:center;gap:28px}
+.s4 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;max-width:1200px;width:100%;margin:0 auto}
+.s4 h2,.s5 h2,.s6 h2{margin:0;font-size:clamp(34px,5vw,64px);font-weight:500;letter-spacing:-.045em;line-height:1}
+.s4 .head p{margin:0;color:var(--mut);max-width:34ch}
+.track{display:flex;gap:18px;padding-left:max(16px,calc((100vw - 1200px)/2));will-change:transform}
+.pc{flex:none;width:clamp(270px,34vw,460px);display:flex;flex-direction:column;gap:12px;text-decoration:none}
+.pc .vis{aspect-ratio:4/3;border-radius:20px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.pc .vis::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 45%,rgba(255,255,255,.35),transparent 70%);mix-blend-mode:soft-light}
+.pc .vis .g{position:absolute;inset:auto 0 -6% 0;text-align:center;font-size:clamp(90px,12vw,170px);font-weight:700;letter-spacing:-.06em;color:rgba(255,255,255,.12);line-height:1}
+.pc .vis .st{position:absolute;top:14px;right:14px;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;gap:6px;align-items:center}
+.pc .vis .st i{width:6px;height:6px;border-radius:50%;background:var(--s)}
+.pc .meta{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.pc h3{margin:0;font-size:clamp(24px,2.6vw,34px);font-weight:500;letter-spacing:-.03em}
+.pc .meta span{font-size:14px;color:var(--mut);text-align:right}
+.pc p{margin:0;color:var(--mut);font-size:15px;max-width:44ch}
+.pc .open{font-size:14px;color:#fff;text-decoration:underline;text-underline-offset:3px}
+.bar4{max-width:1200px;width:100%;margin:0 auto;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar4 i{display:block;height:100%;background:#fff;transform-origin:left;transform:scaleX(0)}
+
+/* ---------- 5. rozsypane kafelki ---------- */
+.s5{height:240svh}
+.s5 .stick{display:grid;place-items:center}
+.tile{position:absolute;border-radius:14px;will-change:transform;box-shadow:0 30px 60px -30px rgba(0,0,0,.9)}
+.s5 .mid{position:relative;z-index:3;text-align:center;padding:0 16px}
+.s5 .mid p{color:var(--mut);margin:16px auto 0;max-width:36ch}
+
+/* ---------- 6. fioletowy finał z 3D ---------- */
+.s6{padding-block:12px}
+.s6 .panel{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);min-height:min(820px,94svh);padding-top:72px;background:radial-gradient(90% 90% at 75% 50%,#A855F7 0%,rgba(168,85,247,0) 60%),linear-gradient(135deg,#2E1065 0%,var(--v1) 55%,#9333EA 100%)}
+.s6 h2{font-size:clamp(44px,6vw,84px)}
+.s6 h2 span{display:block;color:rgba(255,255,255,.55)}
+.s6 p{color:rgba(255,255,255,.8);max-width:34ch;margin:22px 0 0}
+.s6 .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.mailbox{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;font-family:var(--fm);font-size:14px;color:rgba(255,255,255,.85)}
+.mailbox code{user-select:all;-webkit-user-select:all;background:rgba(0,0,0,.2);padding:8px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.15);overflow-wrap:anywhere}
+#gl{position:relative;width:100%;aspect-ratio:1/1;max-height:640px;justify-self:center}
+#gl canvas{width:100%!important;height:100%!important;display:block}
+#gl .fallback{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#C4B5FD 25%,#5B21B6 60%,#1E0A46);filter:blur(1px)}
+@media (max-width:860px){.s6 .panel{grid-template-columns:1fr}#gl{max-width:420px;order:-1}}
+
+/* stopka */
+.foot{background:var(--paper);color:#121018;border-radius:28px 28px 0 0;margin-top:12px;padding-block:64px calc(28px + env(safe-area-inset-bottom,0px))}
+.foot .in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,.6fr));gap:32px}
+.foot .big{font-size:clamp(48px,9vw,128px);font-weight:500;letter-spacing:-.055em;line-height:.9;margin:0}
+.foot p{color:var(--dark-mut);margin:14px 0 0;max-width:34ch}
+.foot h5{margin:0 0 10px;font-size:13px;color:var(--dark-mut);font-weight:500}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.foot a{text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.foot .copy{max-width:1200px;margin:48px auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--dark-mut);border-top:1px solid #D2D0D9;padding-top:18px}
+@media (max-width:760px){.foot .in{grid-template-columns:1fr 1fr}.foot .in>div:first-child{grid-column:1/-1}}
+
+@media (prefers-reduced-motion:reduce){
+  .s2,.s3,.s5{height:auto}.s2 .stick,.s3 .stick,.s5 .stick{position:relative;height:100svh}
+  .s4{height:auto}.s4 .stick{position:relative;height:auto;padding-block:80px}.track{overflow-x:auto;transform:none!important;padding-bottom:10px}
+}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Główna">
+  <span class="star" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z" fill="currentColor"/></svg></span>
+  <a class="l" href="#projekty">Projekty</a>
+  <a class="l hide" href="#o-mnie">O mnie</a>
+  <a class="l hide" href="#jak">Jak pracuję</a>
+  <a class="cta" href="#kontakt">Napisz</a>
+</nav>
+
+<main>
+  <!-- 1. HERO -->
+  <section class="hero gut" id="o-mnie">
+    <div class="panel">
+      <div>
+        <h1>Strony, które<span>robią wrażenie</span></h1>
+        <p>Nazywam się Michał Rosiek. Projektuję i buduję strony oraz aplikacje od zera, na własnym kodzie. Bez szablonów, bez WordPressa, bez kompromisów w wyglądzie.</p>
+        <div class="row">
+          <a class="btn" href="#projekty">Zobacz projekty</a>
+          <a class="btn w" href="#kontakt">Zacznijmy projekt →</a>
+        </div>
+        <div class="trust"><span class="dots"><i style="background:#FBBF24"></i><i style="background:#60A5FA"></i><i style="background:#F472B6"></i><i style="background:#34D399"></i></span>6 projektów, każdy napisany od zera</div>
+      </div>
+      <div class="live" id="live">
+        <div class="bar"><b><i></i>Dostępny</b><span>2026</span></div>
+        <div class="pic"><img src="michal.webp" alt="Michał Rosiek" width="459" height="1400"></div>
+        <div class="ask"><span>Potrzebujesz strony?</span><button type="button" aria-label="Przejdź do kontaktu" onclick="location.hash='kontakt'">+</button></div>
+        <div class="prog" id="prog"><i></i><i></i><i></i><i></i></div>
+        <div class="done"><b>Michał Rosiek</b>Strony i aplikacje · student ekonomii UJ</div>
+      </div>
+    </div>
+    <div class="intro2 gut">
+      <p>Lubię, kiedy pomysł zamienia się w coś, czego ludzie naprawdę używają: menu obiadów w telefonie, pieśni na telewizorze w kościele, sklep z miodem.</p>
+      <div class="stack"><h4>Narzędzia</h4><div><span>HTML</span><span>CSS</span><span>JavaScript</span><span>three.js</span><span>PWA</span><span>Vercel</span><span>GitHub</span></div></div>
+    </div>
+  </section>
+
+  <!-- 2. JASNA SCENA -->
+  <section class="scene s2" id="s2" aria-label="Własny kod">
+    <div class="stick">
+      <div class="marq" id="marq">Własny kod. Zero szablonów. Własny kod. Zero szablonów.</div>
+      <div class="phones">
+        <div class="ph a" data-r="-1"><small><span>Hermes</span><span>Windows</span></small><div><h3>Cała poczta w jednym oknie</h3><p>Gmail, Outlook i Onet razem.</p></div></div>
+        <div class="ph b" data-r="0"><small><span>Lanczuj</span><span>Online</span></small><div><h3>Obiad z dopłatą w dwa kliknięcia</h3><p>Menu wszystkich lokali LanczUJ.</p></div></div>
+        <div class="ph c" data-r="1"><small><span>Ad Maiorem</span><span>TV</span></small><div><h3>Pieśni na ekranie, pilot w telefonie</h3><p>Używane w kościele co tydzień.</p></div></div>
+      </div>
+      <a class="tag" href="#projekty">Zobacz wszystkie projekty</a>
+    </div>
+  </section>
+
+  <!-- 3. PONAD / SZABLONY -->
+  <section class="scene s3" id="s3" aria-label="Ponad szablony">
+    <div class="stick">
+      <div class="w1" id="w1">Ponad</div>
+      <svg class="spark" id="spark" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="sg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#F3E8FF"/><stop offset="1" stop-color="#C084FC"/></radialGradient></defs><path d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z" fill="url(#sg)"/></svg>
+      <p class="copy" id="copy3">Gotowy szablon wygląda jak tysiąc innych stron. Kod pisany od zera wygląda jak Ty i robi dokładnie to, czego potrzebujesz.</p>
+      <div class="stats" id="stats">
+        <div><b>6</b><span>projektów</span></div>
+        <div><b>0</b><span>gotowych szablonów</span></div>
+        <div><b>100%</b><span>kodu od zera</span></div>
+      </div>
+      <div class="w2" id="w2">szablony</div>
+    </div>
+  </section>
+
+  <!-- 4. PROJEKTY POZIOMO -->
+  <section class="scene s4" id="projekty" aria-label="Projekty">
+    <div class="stick">
+      <div class="head gut"><h2>Projekty</h2><p>Przewijaj dalej, a projekty przesuną się w bok.</p></div>
+      <div class="track" id="track"></div>
+      <div class="gut"><div class="bar4"><i id="bar4"></i></div></div>
+    </div>
+  </section>
+
+  <!-- 5. KAFELKI -->
+  <section class="scene s5" id="s5" aria-label="Portfolio rośnie">
+    <div class="stick" id="tiles">
+      <div class="mid"><h2>Portfolio, które<br>ciągle rośnie</h2><p>Co kilka tygodni dochodzi coś nowego. Następny może być Twój projekt.</p></div>
+    </div>
+  </section>
+
+  <!-- 6. FINAŁ -->
+  <section class="s6 gut" id="kontakt">
+    <div class="panel">
+      <div id="jak">
+        <h2>Zbudujmy coś<span>ponad przeciętność</span></h2>
+        <p>Rozmowa, projekt wyglądu, kod od zera i wdrożenie z domeną. Prowadzę Cię przez wszystko i zostaję na wypadek poprawek.</p>
+        <div class="row">
+          <a class="btn w" href="mailto:m.rosiek2007@gmail.com?subject=Strona%20%E2%80%94%20zapytanie">Napisz e-mail →</a>
+          <button class="btn" type="button" id="copyMail">Kopiuj adres</button>
+        </div>
+        <div class="mailbox"><code id="mail">m.rosiek2007@gmail.com</code></div>
+      </div>
+      <div id="gl" aria-hidden="true"><div class="fallback" id="fb"></div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot gut">
+  <div class="in">
+    <div><p class="big">Michał<br>Rosiek</p><p>Strony i aplikacje pisane od zera. Kraków i zdalnie.</p></div>
+    <div><h5>Strona</h5><ul><li><a href="#projekty">Projekty</a></li><li><a href="#o-mnie">O mnie</a></li><li><a href="#kontakt">Kontakt</a></li></ul></div>
+    <div><h5>Projekty online</h5><ul><li><a href="https://lanczuj-menu.vercel.app" target="_blank" rel="noopener">Lanczuj ↗</a></li><li><a href="https://mr11-portfolio-3.vercel.app" target="_blank" rel="noopener">Portfolio 3 ↗</a></li></ul></div>
+  </div>
+  <div class="copy"><span>© 2026 Michał Rosiek</span><span>m.rosiek2007@gmail.com</span></div>
+</footer>
+
+<script>
+(function(){
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const vh=()=>innerHeight;
+  function prog(el){const r=el.getBoundingClientRect();return clamp(-r.top/(r.height-vh()));}
+
+  // projekty
+  const P=[
+    {t:'Lanczuj',s:'PWA · Vercel',st:['Online','#4ADE80'],g:'L',bg:'radial-gradient(70% 70% at 30% 20%,#FDE68A,transparent 60%),linear-gradient(150deg,#B45309,#3A1A05)',d:'Menu wszystkich lokali z dopłatą LanczUJ dla studentów UJ. Dodajesz na ekran telefonu i działa jak aplikacja.',link:'https://lanczuj-menu.vercel.app'},
+    {t:'Hermes',s:'Aplikacja na Windows',st:['W trakcie','#F0B44C'],g:'H',bg:'radial-gradient(70% 70% at 70% 20%,#A5B4FC,transparent 60%),linear-gradient(150deg,#312E81,#0B0A24)',d:'Własny klient poczty: Gmail, Outlook, Onet i każda inna skrzynka w jednej aplikacji.'},
+    {t:'Pieśni na TV',s:'Ad Maiorem',st:['W użyciu','#4ADE80'],g:'♪',bg:'radial-gradient(70% 70% at 40% 25%,#FCA5A5,transparent 60%),linear-gradient(150deg,#991B1B,#2A0707)',d:'Pieśni w kościele na zwykłym telewizorze, sterowane z telefonu. Zestawy, zwrotki, psalm dnia.'},
+    {t:'Pasieka Kószka',s:'Strona ze sklepem',st:['W trakcie','#F0B44C'],g:'PK',bg:'radial-gradient(70% 70% at 60% 20%,#FCD34D,transparent 60%),linear-gradient(150deg,#78350F,#1F0E03)',d:'Nowa strona pasieki: historia, duże zdjęcia i prosta droga do sklepu z miodami.'},
+    {t:'Inżynier wyścigowy',s:'Telemetria na żywo',st:['Koncepcja','#A79BFF'],g:'F1',bg:'radial-gradient(70% 70% at 30% 25%,#CBD5E1,transparent 60%),linear-gradient(150deg,#334155,#0B1020)',d:'Dashboard do gier F1 25 i 26: opony, strategia, okno pit stopu. Zdalny inżynier widzi dane w czasie rzeczywistym.'},
+    {t:'Twój projekt',s:'Wolny termin',st:['Dostępny','#4ADE80'],g:'+',bg:'radial-gradient(70% 70% at 50% 30%,#E9D5FF,transparent 60%),linear-gradient(150deg,#6D28D9,#1A0645)',d:'Masz pomysł na stronę albo aplikację? Napisz, a ten slot zajmie Twój projekt.',link:'#kontakt'}
+  ];
+  const track=document.getElementById('track');
+  P.forEach(p=>{
+    const el=document.createElement(p.link?'a':'div');
+    el.className='pc'; if(p.link){el.href=p.link; if(p.link.startsWith('http')){el.target='_blank';el.rel='noopener';}}
+    el.innerHTML=`<div class="vis" style="background:${p.bg}"><span class="st" style="--s:${p.st[1]}"><i></i>${p.st[0]}</span><div class="g">${p.g}</div></div>
+      <div class="meta"><h3>${p.t}</h3><span>${p.s}</span></div><p>${p.d}</p>${p.link?`<span class="open">${p.link.startsWith('http')?'Otwórz projekt ↗':'Napisz do mnie →'}</span>`:''}`;
+    track.appendChild(el);
+  });
+
+  // kafelki
+  const tilesWrap=document.getElementById('tiles');
+  const T=[
+    [8,14,15,10,'linear-gradient(135deg,#C7CBD6,#6B7080 55%,#E5E7EE)',1.4],[72,10,17,12,'linear-gradient(140deg,#3B0764,#7C3AED)',.9],
+    [18,64,20,15,'radial-gradient(circle at 30% 30%,#E5E7EB,#6B7280 60%,#1F2937)',1.2],[78,58,12,18,'linear-gradient(160deg,#14532D,#4ADE80)',1.6],
+    [40,6,9,9,'linear-gradient(135deg,#7F1D1D,#F87171)',.7],[55,78,14,10,'linear-gradient(135deg,#1E3A8A,#93C5FD)',1.1],
+    [3,40,9,13,'linear-gradient(135deg,#78350F,#FBBF24)',.8],[88,34,8,10,'linear-gradient(135deg,#312E81,#A5B4FC)',1.3]
+  ];
+  const tiles=T.map(t=>{const d=document.createElement('div');d.className='tile';Object.assign(d.style,{left:t[0]+'%',top:t[1]+'%',width:t[2]+'vw',height:t[3]+'vw',minWidth:'70px',minHeight:'50px',background:t[4]});d.dataset.sp=t[5];tilesWrap.appendChild(d);return d;});
+
+  const s2=document.getElementById('s2'),s3=document.getElementById('s3'),s4=document.getElementById('projekty'),s5=document.getElementById('s5');
+  const marq=document.getElementById('marq'),phones=[...document.querySelectorAll('.ph')];
+  const w1=document.getElementById('w1'),w2=document.getElementById('w2'),spark=document.getElementById('spark'),stats=[...document.querySelectorAll('#stats div')],copy3=document.getElementById('copy3');
+  const bar4=document.getElementById('bar4'),live=document.getElementById('live'),progs=[...document.querySelectorAll('#prog i')];
+
+  function frame(){
+    const y=scrollY, H=vh(), W=innerWidth;
+    // hero: karta odpływa w dół, paski postępu się wypełniają
+    const hp=clamp(y/(H*.9));
+    live.style.transform=`translateY(${hp*90}px) rotate(${hp*-3}deg)`;
+    progs.forEach((p,i)=>p.style.setProperty('--p',clamp(hp*4-i).toFixed(2)));
+
+    // 2: wielki tekst w lewo, karty obracają się
+    const p2=prog(s2);
+    marq.style.transform=`translate(${(W*.15)-p2*(marq.scrollWidth-W*.6)}px,-50%)`;
+    phones.forEach(ph=>{const r=+ph.dataset.r;const a=ease(clamp(p2*1.4));
+      ph.style.transform=`translateY(${(1-a)*(120+r*r*60)}px) rotateY(${r*(28-24*a)}deg) rotateZ(${r*(8-5*a)}deg) translateZ(${-Math.abs(r)*60}px)`;});
+
+    // 3: słowa rozjeżdżają się, gwiazda rośnie, liczby wjeżdżają
+    const p3=prog(s3);
+    w1.style.transform=`translateX(${-p3*W*.05}px)`;
+    w2.style.transform=`translateX(${p3*W*.05}px)`;
+    const sc=.6+ease(clamp(p3*1.3))*1.6;
+    spark.style.transform=`translate(-50%,-50%) rotate(${p3*180}deg) scale(${sc})`;
+    copy3.style.opacity=clamp(1-p3*2.2);
+    stats.forEach((s,i)=>{const t=clamp(p3*3-.6-i*.35);s.style.opacity=t;s.style.transform=`translateY(${(1-t)*30}px)`;});
+
+    // 4: poziomy pas
+    const p4=prog(s4);
+    const max=track.scrollWidth-W+32;
+    track.style.transform=`translateX(${-p4*Math.max(0,max)}px)`;
+    bar4.style.transform=`scaleX(${p4})`;
+
+    // 5: kafelki parallax
+    const p5=prog(s5);
+    tiles.forEach((t,i)=>{const sp=+t.dataset.sp;const dir=i%2?1:-1;
+      t.style.transform=`translate(${dir*(p5-.5)*80*sp}px,${(.5-p5)*H*.6*sp}px) rotate(${dir*(p5-.5)*10}deg)`;});
+  }
+  if(!reduce){ let tk=false; const on=()=>{if(!tk){tk=true;requestAnimationFrame(()=>{frame();tk=false;});}}; addEventListener('scroll',on,{passive:true}); addEventListener('resize',on); frame(); }
+
+  // kopiowanie
+  const btn=document.getElementById('copyMail');
+  btn.addEventListener('click',()=>{const m='m.rosiek2007@gmail.com';const fail=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('mail'));const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Zaznaczono';};
+    try{navigator.clipboard.writeText(m).then(()=>{btn.textContent='Skopiowano';setTimeout(()=>btn.textContent='Kopiuj adres',1600);},fail);}catch(_){fail();}});
+})();
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+const host=document.getElementById('gl');
+try{
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  host.appendChild(renderer.domElement);
+  document.getElementById('fb').remove();
+  const scene=new THREE.Scene();
+  const pm=new THREE.PMREMGenerator(renderer);
+  scene.environment=pm.fromScene(new RoomEnvironment(),0.04).texture;
+  const cam=new THREE.PerspectiveCamera(35,1,.1,100);cam.position.set(0,0,7);
+
+  // czteroramienna gwiazda z wygładzonej, odkształconej kuli
+  const geo=new THREE.IcosahedronGeometry(1,64);
+  const pos=geo.attributes.position, v=new THREE.Vector3();
+  for(let i=0;i<pos.count;i++){
+    v.fromBufferAttribute(pos,i).normalize();
+    const ax=Math.abs(v.x), ay=Math.abs(v.y);
+    const spike=Math.pow(Math.max(ax,ay),10)*(1-Math.pow(Math.abs(v.z),2));
+    const r=.62+1.55*spike;
+    v.multiplyScalar(r); v.z*=.55;
+    pos.setXYZ(i,v.x,v.y,v.z);
+  }
+  geo.computeVertexNormals();
+  const mat=new THREE.MeshPhysicalMaterial({color:0xE9E4F5,metalness:1,roughness:.12,clearcoat:1,clearcoatRoughness:.08,iridescence:.35,envMapIntensity:1.25});
+  const star=new THREE.Mesh(geo,mat);
+  star.rotation.set(.35,-.5,.6);
+  scene.add(star);
+  const l1=new THREE.PointLight(0xC084FC,40,20);l1.position.set(-3,2,3);scene.add(l1);
+  const l2=new THREE.PointLight(0xFFFFFF,25,20);l2.position.set(3,-2,4);scene.add(l2);
+
+  function size(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  size();addEventListener('resize',size);
+  let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;});
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let visible=false;new IntersectionObserver(es=>{visible=es[0].isIntersecting;}).observe(host);
+  const clock=new THREE.Clock();
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(!visible) return;
+    const t=clock.getElapsedTime();
+    if(!reduce){star.rotation.z=.6+t*.25;star.rotation.y+=((-.5+mx*.8)-star.rotation.y)*.05;star.rotation.x+=((.35+my*.6)-star.rotation.x)*.05;star.position.y=Math.sin(t*.9)*.08;}
+    renderer.render(scene,cam);
+  })();
+}catch(e){ /* zostaje statyczna kula zapasowa */ }
+</script>
+</body>
+</html>
