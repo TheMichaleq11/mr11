@@ -66,6 +66,7 @@ h2{font-size:clamp(34px,5vw,60px);font-weight:700;letter-spacing:-.035em;line-he
 
 /* fan */
 .work{border-top:1px solid var(--line);padding-block:88px 72px;overflow:hidden}
+main{overflow-x:clip}
 .work-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 40px}
 .work-head p{color:var(--mut);max-width:38ch;margin:0}
 .fan{position:relative;height:clamp(440px,58vw,560px);margin-top:36px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;outline:none}
@@ -88,7 +89,7 @@ h2{font-size:clamp(34px,5vw,60px);font-weight:700;letter-spacing:-.035em;line-he
 .fcard .meta span{font-family:var(--f-mono);font-size:calc(var(--w)*.03);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,.22);color:rgba(255,255,255,.8)}
 .fcard .go{align-self:flex-start;font:500 calc(var(--w)*.04)/1 var(--f-sans);color:#111;background:#fff;border:0;border-radius:999px;padding:10px 16px;text-decoration:none;cursor:pointer}
 .fcard:not(.active) .bot{opacity:0;pointer-events:none}
-.dots{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:7px}
+.dots{position:absolute;left:0;right:0;bottom:6px;z-index:200;display:flex;justify-content:center;gap:7px}
 .dots button{width:7px;height:7px;padding:0;border:0;border-radius:99px;background:#3a3a42;cursor:pointer;transition:width .3s,background .3s}
 .dots button[aria-current="true"]{width:22px;background:var(--mut)}
 .dots button:focus-visible{outline:2px solid var(--txt);outline-offset:3px}
@@ -246,7 +247,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;f
     W=fan.clientWidth;
     const w=W<640?Math.min(250,W*.62):Math.min(300,Math.max(250,W*.25));
     fan.style.setProperty('--w',w+'px');
-    fan.style.height=(w*1.26+130)+'px';
+    fan.style.height=(w*1.26+w*.42+110)+'px';
   }
   measure();addEventListener('resize',()=>{measure();render();});
 
@@ -257,8 +258,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;f
     for(let i=0;i<n;i++){
       const k=i-pos, a=Math.abs(k);
       const rot=k*(narrow?11:12.5);
-      const x=Math.sin(k*.42)*w*(narrow?1.15:1.55);
-      const y=(1-Math.cos(k*.42))*w*(narrow?1.1:1.45)+Math.min(a,1)*w*.16;
+      const x=Math.sin(k*.42)*w*(narrow?1.15:1.6);
+      const y=(1-Math.cos(k*.42))*w*(narrow?.8:.95)+Math.min(a,1)*w*.1;
       const s=a<1?1-.2*a:Math.max(.62,.8-.045*(a-1));
       const el=cards[i];
       el.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${s.toFixed(3)})`;
