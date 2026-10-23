@@ -114,6 +114,7 @@ a{color:inherit}
 .c3 h3{margin:0;font-size:clamp(17px,1.75vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.08}
 .c3 p{margin:8px 0 0;font-size:clamp(10.5px,.9vw,12.5px);line-height:1.4;opacity:.78}
 .c3 .spk{position:absolute;left:50%;top:50%;width:26%;transform:translate(-50%,-50%);opacity:.95}
+.c3 .ico{position:absolute;left:50%;top:44%;width:38%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:22%;filter:drop-shadow(0 10px 22px rgba(4,10,30,.38))}
 .c3.chrome{background:repeating-conic-gradient(from 20deg at 62% 38%,#F4F6FA 0deg,#B9C0CC 18deg,#EEF1F6 36deg,#8F97A6 60deg,#F7F8FB 84deg,#C7CDD7 110deg,#F4F6FA 130deg);color:#0D1A33}
 .c3.chrome .pill{background:rgba(13,26,51,.1)}
 .c3.glow{background:radial-gradient(60% 45% at 62% 38%,rgba(214,228,255,.95) 0%,rgba(120,160,235,.55) 35%,rgba(20,40,90,0) 72%),linear-gradient(170deg,#1D3C78 0%,#0C1A3A 100%)}
@@ -150,6 +151,8 @@ a{color:inherit}
 .pc .hd b{font-weight:500;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.12)}
 .pc .hd span:last-child{margin-left:auto;opacity:.7}
 .pc .ft{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.pc .nm{display:flex;align-items:center;gap:14px;min-width:0}
+.pc .ico{flex:none;width:clamp(44px,4.4vw,60px);height:auto;aspect-ratio:1;border-radius:22%;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
 .pc h3{margin:0;font-size:clamp(26px,2.8vw,38px);font-weight:500;letter-spacing:-.035em;line-height:1}
 .pc .tags{display:block;margin-top:6px;font-size:12px;color:rgba(255,255,255,.62)}
 .pc .go{font-size:12px;color:#BFD3FF;white-space:nowrap}
@@ -283,17 +286,22 @@ a{color:inherit}
       <div class="marq" id="marq">Piszę od zera. Bez szablonów. Piszę od zera. Bez szablonów. Piszę od zera.</div>
       <div class="cards3d" id="cards3d">
         <div class="c3 chrome"><div class="top"><span class="pill">Lanczuj</span><span class="mini">Telefon</span></div>
-          <svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z" fill="#fff"/></svg>
+          <img class="ico" src="icons/lanczuj.png" width="192" height="192" alt="" decoding="async">
           <div class="bot"><h3>Obiad z dopłatą w dwa kliknięcia</h3><p>Menu wszystkich lokali LanczUJ w telefonie.</p></div></div>
         <div class="c3 glow"><div class="top"><span class="pill">Hermes</span><span class="mini">Windows</span></div>
+          <img class="ico" src="icons/hermes.png" width="192" height="192" alt="" decoding="async">
           <div class="bot"><h3>Cała poczta w jednym oknie</h3><p>Gmail, Outlook i Onet razem.</p></div></div>
         <div class="c3 lines"><div class="top"><span class="pill">Ad Maiorem</span><span class="mini">TV</span></div>
+          <img class="ico" src="icons/ad-maiorem.png" width="192" height="192" alt="" decoding="async">
           <div class="bot"><h3>Pieśni na ekranie, pilot w telefonie</h3><p>Działa w moim kościele.</p></div></div>
         <div class="c3 amber"><div class="top"><span class="pill">Pasieka Kószka</span><span class="mini">WWW</span></div>
+          <img class="ico" src="icons/koszka.png" width="192" height="192" alt="" decoding="async">
           <div class="bot"><h3>Miód prosto z pasieki</h3><p>Strona i sklep dla pasieki znajomego.</p></div></div>
         <div class="c3 dark"><div class="top"><span class="pill">Inżynier wyścigowy</span><span class="mini">Gra</span></div>
+          <img class="ico" src="icons/inzynier.png" width="192" height="192" alt="" decoding="async">
           <div class="bot"><h3>Strategia na żywo</h3><p>Panel do F1 25 i 26 dla dwóch graczy.</p></div></div>
         <div class="c3 steel"><div class="top"><span class="pill">Portfolio</span><span class="mini">WWW</span></div>
+          <svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z" fill="#fff"/></svg>
           <div class="bot"><h3>Ta strona</h3><p>Napisana od zera, łącznie z klepsydrą.</p></div></div>
       </div>
       <a class="tag" href="#projekty">Zobacz wszystkie projekty</a>
@@ -389,11 +397,11 @@ a{color:inherit}
 
   // ---- projekty (sekcja 4)
   const P=[
-    {n:'lanczuj',t:'Lanczuj',k:'telefon',tags:'PWA · Vercel',c:['#FDE68A','#B45309'],d:'Menu wszystkich lokali z dopłatą LanczUJ w jednym miejscu. Dodajesz ją do ekranu telefonu i masz pod ręką jak aplikację.',link:'https://lanczuj-menu.vercel.app'},
-    {n:'hermes',t:'Hermes',k:'windows',tags:'Aplikacja · Poczta',c:['#A5B4FC','#3346B8'],d:'Mój własny program do poczty na Windowsa. Gmail, Outlook, Onet i każda inna skrzynka w jednym oknie.'},
-    {n:'ad maiorem',t:'Pieśni na TV',k:'tv',tags:'Aplikacja · Kościół',c:['#BFD3FF','#3E64AE'],d:'Wyświetla pieśni na telewizorze w kościele. Steruje się nią z telefonu: wybierasz pieśń, przełączasz zwrotki, a psalm dnia pobiera się sam.'},
-    {n:'kószka',t:'Pasieka Kószka',k:'www',tags:'Strona · Sklep',c:['#FCD34D','#92400E'],d:'Nowa strona dla pasieki Kószka. Dużo zdjęć, historia pasieki i prosty sklep z miodami.'},
-    {n:'inżynier',t:'Inżynier wyścigowy',k:'gra',tags:'Panel na żywo',c:['#99F6E4','#0F766E'],d:'Panel do gier F1 25 i 26. Pokazuje opony, strategię i najlepszy moment na pit stop, a drugi gracz w roli inżyniera widzi wszystko na żywo przez internet.'}
+    {n:'lanczuj',t:'Lanczuj',k:'telefon',i:'lanczuj',tags:'PWA · Vercel',c:['#FDE68A','#B45309'],d:'Menu wszystkich lokali z dopłatą LanczUJ w jednym miejscu. Dodajesz ją do ekranu telefonu i masz pod ręką jak aplikację.',link:'https://lanczuj-menu.vercel.app'},
+    {n:'hermes',t:'Hermes',k:'windows',i:'hermes',tags:'Aplikacja · Poczta',c:['#A5B4FC','#3346B8'],d:'Mój własny program do poczty na Windowsa. Gmail, Outlook, Onet i każda inna skrzynka w jednym oknie.'},
+    {n:'ad maiorem',t:'Pieśni na TV',k:'tv',i:'ad-maiorem',tags:'Aplikacja · Kościół',c:['#BFD3FF','#3E64AE'],d:'Wyświetla pieśni na telewizorze w kościele. Steruje się nią z telefonu: wybierasz pieśń, przełączasz zwrotki, a psalm dnia pobiera się sam.'},
+    {n:'kószka',t:'Pasieka Kószka',k:'www',i:'koszka',tags:'Strona · Sklep',c:['#FCD34D','#92400E'],d:'Nowa strona dla pasieki Kószka. Dużo zdjęć, historia pasieki i prosty sklep z miodami.'},
+    {n:'inżynier',t:'Inżynier wyścigowy',k:'gra',i:'inzynier',tags:'Panel na żywo',c:['#99F6E4','#0F766E'],d:'Panel do gier F1 25 i 26. Pokazuje opony, strategię i najlepszy moment na pit stop, a drugi gracz w roli inżyniera widzi wszystko na żywo przez internet.'}
   ];
   const track=document.getElementById('track');
   const pcs=P.map((p,i)=>{
@@ -402,7 +410,7 @@ a{color:inherit}
     el.innerHTML=`<div class="glowv" style="background:radial-gradient(55% 50% at 50% 42%,${p.c[0]}cc 0%,${p.c[1]}66 38%,transparent 72%),linear-gradient(170deg,#0E1A36,#070E20)"></div>
       <div class="hd"><b>0${i+1}</b><span>${p.n}</span><span>${p.k}</span></div>
       <p class="desc">${p.d}</p>
-      <div class="ft"><div><h3>${p.t}</h3><span class="tags">${p.tags}</span></div>${p.link?'<span class="go">Zobacz projekt →</span>':''}</div>`;
+      <div class="ft"><div class="nm">${p.i?`<img class="ico" src="icons/${p.i}.png" width="192" height="192" alt="" decoding="async">`:''}<div><h3>${p.t}</h3><span class="tags">${p.tags}</span></div></div>${p.link?'<span class="go">Zobacz projekt →</span>':''}</div>`;
     track.appendChild(el);return el;
   });
   const end=document.createElement('a');end.className='pc end';end.href='#kontakt';
