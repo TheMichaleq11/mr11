@@ -1,0 +1,22 @@
+import type { MetadataRoute } from 'next';
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'Andromeda — Twój USOS',
+    short_name: 'Andromeda',
+    description: 'Czytelny plan zajęć, oceny i przedmioty z USOS UJ.',
+    id: '/',
+    start_url: '/',
+    scope: '/',
+    display: 'standalone',
+    orientation: 'portrait',
+    background_color: '#F3F4F1',
+    theme_color: '#2F5BEA',
+    lang: 'pl',
+    icons: [
+      { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+    ],
+  };
+}
