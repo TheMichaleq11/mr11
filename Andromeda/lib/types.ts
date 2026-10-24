@@ -9,6 +9,7 @@ export type ClassEvent = {
   courseName: string;
   classType: string | null; // np. "Wykład", "Ćwiczenia"
   building: string | null;
+  buildingId?: string | null;
   room: string | null;
   group: number | null;
   lecturers: string[];

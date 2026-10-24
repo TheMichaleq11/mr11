@@ -11,6 +11,14 @@ Czytelna nakładka na USOS UJ: plan zajęć, oceny i przedmioty. Działa w przeg
   - przedmioty i semestry: `services/courses/user`
   - oceny: `services/grades/terms2`
   - prowadzący: `services/users/users`
+  - zapisy: `services/registrations/*` (tury, przedmioty, `register` / `unregister`)
+  - sprawdziany: `services/crstests/*`
+  - kalendarz akademicki: `services/calendar/search`
+  - budynki: `services/geo/building_index`
+  - profil i legitymacja: `services/users/user`, `services/progs/student`, `services/cards/user`
+  - płatności: `services/payments/user_payments`
+  - ankiety (z wypełnianiem): `services/surveys/*`
+  - aktualności: `services/news/*`
 - Bez klucza API działa tryb demo z przykładowymi danymi.
 
 ## Konfiguracja (Vercel → Settings → Environment Variables)
@@ -37,4 +45,6 @@ copy .env.example .env.local   # uzupełnij klucze albo zostaw puste (tryb demo)
 npm run dev
 ```
 
-Testy: `npm run test:oauth` (podpis OAuth) i `npm run test:usos` (przetwarzanie odpowiedzi USOS).
+Testy: `npm run test:oauth` (podpis OAuth), `npm run test:usos` i `npx tsx scripts/test-more.mts` (przetwarzanie odpowiedzi USOS).
+
+Po zmianie listy uprawnień (`SCOPES` w `lib/usos.ts`) każdy użytkownik musi raz zalogować się ponownie.

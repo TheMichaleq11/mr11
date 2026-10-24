@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { courseColor, gradeTone } from '@/lib/colors';
 import { addDays, dayNumber, dayOf, hhmm, shortWeekday, today } from '@/lib/dates';
 import type { ClassEvent, CourseSummary, Grade } from '@/lib/types';
+import { MapPin } from './Icons';
 
 export const courseHref = (courseId: string | null, termId?: string | null) =>
   courseId ? `/przedmioty/${encodeURIComponent(courseId)}${termId ? `?term=${encodeURIComponent(termId)}` : ''}` : '/przedmioty';
@@ -19,6 +20,48 @@ export function Skeleton({ h = 72, n = 1 }: { h?: number; n?: number }) {
       ))}
     </>
   );
+}
+
+/** Prośba o ponowne zalogowanie, gdy token nie ma zgody na nową sekcję. */
+export function ScopeBox() {
+  return (
+    <div className="notice warn" role="alert">
+      <span>
+        Ta sekcja jest nowa i potrzebuje Twojej zgody w USOS. Zaloguj się jeszcze raz — USOS pokaże listę uprawnień do zatwierdzenia.
+      </span>
+      <a href="/api/auth/login" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start', textDecoration: 'none', color: '#fff' }}>
+        Zaloguj ponownie przez USOS
+      </a>
+    </div>
+  );
+}
+
+/** Błąd ładowania z obsługą braku zgody. */
+export function LoadError({ api }: { api: { error: string | null; errorCode: string | null; reload: () => void } }) {
+  if (!api.error) return null;
+  if (api.errorCode === 'scope') return <ScopeBox />;
+  return <ErrorBox message={api.error} onRetry={api.reload} />;
+}
+
+export function PageHead({ eyebrow, title, children }: { eyebrow?: ReactNode; title: string; children?: ReactNode }) {
+  return (
+    <header className="page-head">
+      <div className="titles">
+        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+        <h1 className="title">{title}</h1>
+      </div>
+      {children}
+    </header>
+  );
+}
+
+/** "2026-10-26 10:00:00" → "26.10.2026" (+ godzina, jeśli inna niż północ) */
+export function fmtDate(v: string | null, withTime = false): string {
+  if (!v) return '';
+  const d = v.slice(0, 10).split('-');
+  const date = d.length === 3 ? `${d[2]}.${d[1]}.${d[0]}` : v;
+  const t = v.slice(11, 16);
+  return withTime && t && t !== '00:00' ? `${date}, ${t}` : date;
 }
 
 export function ErrorBox({ message, onRetry }: { message: string; onRetry?: () => void }) {
@@ -72,21 +115,28 @@ export function EventRow({ e }: { e: ClassEvent }) {
 export function EventCard({ e }: { e: ClassEvent }) {
   const c = courseColor(e.courseId ?? e.courseName);
   return (
-    <Link href={courseHref(e.courseId)} className="event-card">
-      <div className="times num">
-        <b>{hhmm(e.start)}</b>
-        <span>{hhmm(e.end)}</span>
-      </div>
-      <div className="body">
-        <div className="kind">
-          <span className="dot" style={{ background: e.kind === 'exam' ? '#E0782B' : c.dot }} />
-          {e.classType ?? 'Zajęcia'}
-          {e.group ? ` · gr. ${e.group}` : ''}
+    <div className="event-card" style={{ alignItems: 'flex-start' }}>
+      <Link href={courseHref(e.courseId)} style={{ display: 'flex', gap: 14, flexGrow: 1, minWidth: 0, color: 'inherit' }}>
+        <div className="times num">
+          <b>{hhmm(e.start)}</b>
+          <span>{hhmm(e.end)}</span>
         </div>
-        <span className="nm">{e.courseName}</span>
-        <span className="wh">{[where(e), e.lecturers.join(', ')].filter(Boolean).join(' · ')}</span>
-      </div>
-    </Link>
+        <div className="body">
+          <div className="kind">
+            <span className="dot" style={{ background: e.kind === 'exam' ? '#E0782B' : c.dot }} />
+            {e.classType ?? 'Zajęcia'}
+            {e.group ? ` · gr. ${e.group}` : ''}
+          </div>
+          <span className="nm">{e.courseName}</span>
+          <span className="wh">{[where(e), e.lecturers.join(', ')].filter(Boolean).join(' · ')}</span>
+        </div>
+      </Link>
+      {e.buildingId && (
+        <Link href={`/budynki/${encodeURIComponent(e.buildingId)}`} className="icon-btn" style={{ background: 'var(--surface-2)' }} aria-label={`Pokaż budynek: ${e.building ?? 'na mapie'}`}>
+          <MapPin size={20} />
+        </Link>
+      )}
+    </div>
   );
 }
 

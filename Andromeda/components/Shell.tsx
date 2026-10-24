@@ -5,21 +5,73 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { useApi } from '@/lib/client';
 import { registerCourses } from '@/lib/colors';
 import type { GradesResponse, Me } from '@/lib/types';
-import { Book, Calendar, Chart, Galaxy, Home, LogOut } from './Icons';
+import {
+  Book,
+  Calendar,
+  CalendarDays,
+  Chart,
+  Clipboard,
+  Galaxy,
+  Grid,
+  Home,
+  IdCard,
+  LogOut,
+  MapPin,
+  News,
+  Survey,
+  Ticket,
+  Wallet,
+} from './Icons';
 
 const MeContext = createContext<Me | null>(null);
 export const useMe = () => useContext(MeContext);
 
-const items = [
+type Item = { href: string; label: string; longLabel?: string; desc?: string; Icon: (p: { size?: number }) => ReactNode };
+
+/** Wszystkie sekcje aplikacji — boczne menu na komputerze i ekran "Więcej" na telefonie. */
+export const sections: { title: string; items: Item[] }[] = [
+  {
+    title: 'Studia',
+    items: [
+      { href: '/', label: 'Dziś', Icon: Home },
+      { href: '/plan', label: 'Plan', longLabel: 'Plan zajęć', Icon: Calendar, desc: 'Tydzień zajęć z salami' },
+      { href: '/oceny', label: 'Oceny', Icon: Chart, desc: 'Oceny i średnia' },
+      { href: '/sprawdziany', label: 'Sprawdziany', Icon: Clipboard, desc: 'Punkty z kolokwiów i prac' },
+      { href: '/przedmioty', label: 'Przedmioty', Icon: Book, desc: 'Prowadzący, terminy, sylabus' },
+      { href: '/zapisy', label: 'Zapisy', Icon: Ticket, desc: 'Rejestracje na zajęcia' },
+    ],
+  },
+  {
+    title: 'Uczelnia',
+    items: [
+      { href: '/kalendarz', label: 'Kalendarz', longLabel: 'Kalendarz akademicki', Icon: CalendarDays, desc: 'Sesja, dni wolne, przerwy' },
+      { href: '/budynki', label: 'Budynki', longLabel: 'Budynki i mapa', Icon: MapPin, desc: 'Gdzie co jest' },
+      { href: '/aktualnosci', label: 'Aktualności', Icon: News, desc: 'Ogłoszenia UJ i wydziału' },
+      { href: '/ankiety', label: 'Ankiety', Icon: Survey, desc: 'Ocena zajęć' },
+    ],
+  },
+  {
+    title: 'Ja',
+    items: [
+      { href: '/profil', label: 'Profil', longLabel: 'Profil i legitymacja', Icon: IdCard, desc: 'Album, kierunek, legitymacja' },
+      { href: '/platnosci', label: 'Płatności', Icon: Wallet, desc: 'Opłaty i należności' },
+    ],
+  },
+];
+
+const tabs: Item[] = [
   { href: '/', label: 'Dziś', Icon: Home },
-  { href: '/plan', label: 'Plan', longLabel: 'Plan zajęć', Icon: Calendar },
+  { href: '/plan', label: 'Plan', Icon: Calendar },
   { href: '/oceny', label: 'Oceny', Icon: Chart },
-  { href: '/przedmioty', label: 'Przedmioty', Icon: Book },
+  { href: '/zapisy', label: 'Zapisy', Icon: Ticket },
+  { href: '/wiecej', label: 'Więcej', Icon: Grid },
 ];
 
 function isActive(path: string, href: string) {
   return href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
 }
+
+const tabHrefs = new Set(tabs.map((t) => t.href).filter((h) => h !== '/wiecej'));
 
 export default function Shell({ children }: { children: ReactNode }) {
   const path = usePathname() || '/';
@@ -30,6 +82,8 @@ export default function Shell({ children }: { children: ReactNode }) {
     if (grades && registerCourses(grades.courses.map((c) => c.courseId))) setPalette((v) => v + 1);
   }, [grades]);
   const initials = me ? `${me.firstName[0] ?? ''}${me.lastName[0] ?? ''}` : '';
+  // "Więcej" świeci się dla sekcji, które nie mają własnej zakładki na telefonie.
+  const moreActive = path === '/wiecej' || ![...tabHrefs].some((h) => isActive(path, h));
 
   return (
     <MeContext.Provider value={me}>
@@ -39,16 +93,21 @@ export default function Shell({ children }: { children: ReactNode }) {
             <span className="brand-mark"><Galaxy /></span>
             <span className="brand-name">Andromeda</span>
           </Link>
-          <nav aria-label="Główna nawigacja">
-            {items.map(({ href, label, longLabel, Icon }) => (
-              <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined}>
-                <Icon size={20} />
-                {longLabel ?? label}
-              </Link>
+          <nav aria-label="Główna nawigacja" className="side-nav">
+            {sections.map((s) => (
+              <div key={s.title} className="side-group">
+                <span className="side-title">{s.title}</span>
+                {s.items.map(({ href, label, longLabel, Icon }) => (
+                  <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined}>
+                    <Icon size={20} />
+                    {longLabel ?? label}
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
           <div className="side-user">
-            <span className="avatar">{initials || '·'}</span>
+            <Link href="/profil" className="avatar" aria-label="Profil">{initials || '·'}</Link>
             <div className="who">
               <span>{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
               <span>{me?.demo ? 'Tryb demo' : me?.programme ?? 'Student UJ'}</span>
@@ -65,13 +124,16 @@ export default function Shell({ children }: { children: ReactNode }) {
           </div>
         </main>
 
-        <nav className="tabbar" aria-label="Główna nawigacja">
-          {items.map(({ href, label, Icon }) => (
-            <Link key={href} href={href} className="tab" aria-current={isActive(path, href) ? 'page' : undefined}>
-              <Icon />
-              {label}
-            </Link>
-          ))}
+        <nav className="tabbar" aria-label="Główna nawigacja" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+          {tabs.map(({ href, label, Icon }) => {
+            const on = href === '/wiecej' ? moreActive : isActive(path, href);
+            return (
+              <Link key={href} href={href} className="tab" aria-current={on ? 'page' : undefined}>
+                <Icon />
+                {label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </MeContext.Provider>

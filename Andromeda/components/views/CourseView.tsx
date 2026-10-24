@@ -4,6 +4,7 @@ import { useApi } from '@/lib/client';
 import { courseColor } from '@/lib/colors';
 import { activeMonday, dayOf, hhmm, shortWeekday } from '@/lib/dates';
 import type { GradesResponse, PlanResponse } from '@/lib/types';
+import type { TestsResponse } from '@/lib/types-more';
 import { ChevronLeft, ChevronRight, External } from '../Icons';
 import { Empty, ErrorBox, GradeChip, roomLabel, Skeleton } from '../ui';
 
@@ -18,7 +19,9 @@ export default function CourseView({ courseId, termId }: { courseId: string; ter
   const lecturers = course?.lecturers.length ? course.lecturers : [...new Set(fromPlan.flatMap((e) => e.lecturers))];
   const allGrades = [...(course?.finalGrades ?? []), ...(course?.unitGrades ?? [])];
   const isDemo = courseId.startsWith('DEMO-');
-  const usosweb = `https://usosweb.uj.edu.pl/kontroler.php?_action=katalog2/przedmioty/pokazPrzedmiot&prz_kod=${encodeURIComponent(courseId)}`;
+  const tests = useApi<TestsResponse>('/api/sprawdziany');
+  const test = tests.data?.tests.find((t) => t.courseId === courseId);
+  const usosweb = `https://www.usosweb.uj.edu.pl/kontroler.php?_action=katalog2/przedmioty/pokazPrzedmiot&prz_kod=${encodeURIComponent(courseId)}`;
 
   return (
     <>
@@ -91,6 +94,16 @@ export default function CourseView({ courseId, termId }: { courseId: string; ter
             ))}
           </div>
         </section>
+      )}
+
+      {test && (
+        <Link href={`/sprawdziany/${encodeURIComponent(test.rootId)}`} className="card row" style={{ padding: '14px 16px' }}>
+          <div className="grow">
+            <span className="t1">Punkty ze sprawdzianów</span>
+            <span className="t2">{test.name}</span>
+          </div>
+          <span style={{ color: 'var(--muted)' }}><ChevronRight /></span>
+        </Link>
       )}
 
       {!isDemo && (

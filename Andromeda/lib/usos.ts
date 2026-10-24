@@ -3,12 +3,24 @@ import { signedParams, toForm, type Credentials } from './oauth';
 import type { ClassEvent, CourseSummary, Grade, GradesResponse, Me, Term } from './types';
 
 export const USOS_BASE = (process.env.USOS_BASE_URL || 'https://apps.usos.uj.edu.pl').replace(/\/$/, '');
-export const SCOPES = 'studies|grades|offline_access';
+// Zmiana listy = użytkownik musi raz zalogować się ponownie (USOS pokaże nowe uprawnienia).
+export const SCOPES = 'studies|grades|offline_access|crstests|payments|cards|surveys_filling|email';
 
 export class UsosAuthError extends Error {}
+/** Token nie ma uprawnienia (scope) do tej metody — potrzebne ponowne zalogowanie. */
+export class UsosScopeError extends Error {}
 export class UsosError extends Error {
+  /** Komunikat z USOS po polsku, jeśli go zwrócił (np. przy nieudanym zapisie). */
+  public userMessage: string | null;
   constructor(message: string, public status: number) {
     super(message);
+    this.userMessage = null;
+    try {
+      const j = JSON.parse(message);
+      this.userMessage = j?.user_messages?.generic_message?.pl || j?.user_messages?.generic_message?.en || j?.message || null;
+    } catch {
+      /* nie-JSON */
+    }
   }
 }
 
@@ -37,7 +49,8 @@ export async function usosPost(
   });
   const text = await res.text();
   if (res.status === 401) throw new UsosAuthError(text);
-  if (!res.ok) throw new UsosError(text.slice(0, 400), res.status);
+  if (res.status === 403 && /scope/i.test(text)) throw new UsosScopeError(text);
+  if (!res.ok) throw new UsosError(text.slice(0, 2000), res.status);
   return text;
 }
 
@@ -109,6 +122,7 @@ type RawActivity = {
   course_name?: LangDict;
   classtype_name?: LangDict;
   building_name?: LangDict;
+  building_id?: string;
   room_number?: string;
   group_number?: number;
   lecturer_ids?: number[];
@@ -121,7 +135,7 @@ export async function fetchPlan(creds: Credentials, start: string, days: number)
     start,
     days: String(Math.min(Math.max(days, 1), 7)),
     fields:
-      'type|start_time|end_time|name|course_id|course_name|classtype_name|building_name|room_number|group_number|lecturer_ids',
+      'type|start_time|end_time|name|course_id|course_name|classtype_name|building_name|building_id|room_number|group_number|lecturer_ids',
   });
 
   const ids = [...new Set(acts.flatMap((a) => a.lecturer_ids || []))];
@@ -155,6 +169,7 @@ export async function fetchPlan(creds: Credentials, start: string, days: number)
         courseName: pl(a.course_name) || pl(a.name),
         classType: kind === 'exam' ? 'Egzamin' : pl(a.classtype_name) || null,
         building: pl(a.building_name) || null,
+        buildingId: a.building_id ?? null,
         room: a.room_number || null,
         group: a.group_number ?? null,
         lecturers: (a.lecturer_ids || []).map(nameOf).filter((x): x is string => Boolean(x)),
