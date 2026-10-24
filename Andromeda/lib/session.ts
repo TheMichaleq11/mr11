@@ -58,5 +58,5 @@ export async function getSession(): Promise<Session | null> {
 }
 
 export function usosConfigured(): boolean {
-  return Boolean(process.env.USOS_CONSUMER_KEY && process.env.USOS_CONSUMER_SECRET);
+  return Boolean(process.env.USOS_CONSUMER_KEY?.trim() && process.env.USOS_CONSUMER_SECRET?.trim());
 }

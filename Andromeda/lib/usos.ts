@@ -14,8 +14,9 @@ export class UsosError extends Error {
 
 export function consumer(): Credentials {
   return {
-    consumerKey: process.env.USOS_CONSUMER_KEY || '',
-    consumerSecret: process.env.USOS_CONSUMER_SECRET || '',
+    // trim(): przy wklejaniu do Vercela łatwo złapać spację albo enter
+    consumerKey: (process.env.USOS_CONSUMER_KEY || '').trim(),
+    consumerSecret: (process.env.USOS_CONSUMER_SECRET || '').trim(),
   };
 }
 
