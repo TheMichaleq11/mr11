@@ -20,6 +20,7 @@ import {
   News,
   Survey,
   Ticket,
+  User,
   Wallet,
 } from './Icons';
 
@@ -46,6 +47,7 @@ export const sections: { title: string; items: Item[] }[] = [
     items: [
       { href: '/kalendarz', label: 'Kalendarz', longLabel: 'Kalendarz akademicki', Icon: CalendarDays, desc: 'Sesja, dni wolne, przerwy' },
       { href: '/budynki', label: 'Budynki', longLabel: 'Budynki i mapa', Icon: MapPin, desc: 'Gdzie co jest' },
+      { href: '/osoby', label: 'Prowadzący', Icon: User, desc: 'Dyżury, pokoje, kontakt' },
       { href: '/aktualnosci', label: 'Aktualności', Icon: News, desc: 'Ogłoszenia UJ i wydziału' },
       { href: '/ankiety', label: 'Ankiety', Icon: Survey, desc: 'Ocena zajęć' },
     ],
