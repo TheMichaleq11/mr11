@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   applicationName: 'Andromeda',
   appleWebApp: { capable: true, title: 'Andromeda', statusBarStyle: 'default' },
   icons: {
-    icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
-    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
+    icon: [{ url: '/icons/icon-192.png?v=2', sizes: '192x192', type: 'image/png' }],
+    apple: [{ url: '/icons/apple-touch-icon.png?v=2', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
 };
