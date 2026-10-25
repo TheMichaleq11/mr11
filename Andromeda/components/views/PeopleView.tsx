@@ -86,7 +86,7 @@ export function PersonView({ id }: { id: string }) {
           <section className="card card-pad" style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             {p.photo ? <img className="photo" src={p.photo} alt="" /> : <span className="avatar" style={{ width: 72, height: 72, borderRadius: 36, fontSize: 26 }}>{initial(p.name)}</span>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 450, letterSpacing: '-0.015em', lineHeight: 1.1 }}>{full}</h1>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.15 }}>{full}</h1>
               {p.positions.map((pos) => <span key={pos} className="meta-line">{pos}</span>)}
             </div>
           </section>

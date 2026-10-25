@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/geist';
-import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/inter';
 import RegisterSW from '@/components/RegisterSW';
 import './globals.css';
 

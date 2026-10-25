@@ -40,7 +40,7 @@ export function ProfileView() {
           <section className="card card-pad" style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             {p.photo ? <img className="photo" src={p.photo} alt="" /> : <span className="avatar" style={{ width: 72, height: 72, borderRadius: 36, fontSize: 24 }}>{`${p.firstName[0] ?? ''}${p.lastName[0] ?? ''}`}</span>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 450, letterSpacing: '-0.015em' }}>{p.firstName} {p.lastName}</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>{p.firstName} {p.lastName}</span>
               {p.studentNumber && <span className="meta-line num">Nr albumu: {p.studentNumber}</span>}
             </div>
           </section>
