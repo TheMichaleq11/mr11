@@ -1,6 +1,13 @@
-import { ArticleView } from '@/components/views/NewsView';
+import View from './view';
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ArticleView id={decodeURIComponent(id)} />;
+// Strona jest tylko "ramką" — dane ładują się po stronie telefonu. Generujemy ją przy pierwszym
+// wejściu i trzymamy w cache Vercela, więc kolejne otwarcia nie czekają na serwer.
+export const dynamicParams = true;
+export const revalidate = false;
+export function generateStaticParams() {
+  return [];
+}
+
+export default function Page() {
+  return <View />;
 }

@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { useApi } from '@/lib/client';
+import { prefetch, useApi } from '@/lib/client';
+import { activeMonday, today } from '@/lib/dates';
 import { registerCourses } from '@/lib/colors';
 import type { GradesResponse, Me } from '@/lib/types';
 import {
@@ -91,6 +92,26 @@ export default function Shell({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (grades && registerCourses(grades.courses.map((c) => c.courseId))) setPalette((v) => v + 1);
   }, [grades]);
+  // Treść rysujemy dopiero na urządzeniu (strony są statyczne, a daty i dane są "na teraz").
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Gdy telefon nic nie robi — dociągamy dane głównych zakładek, żeby otwierały się od razu.
+  useEffect(() => {
+    const warm = () => {
+      prefetch(`/api/plan?start=${activeMonday()}&days=7`);
+      prefetch(`/api/plan?start=${today()}&days=7`);
+      prefetch('/api/grades');
+      setTimeout(() => prefetch('/api/zapisy'), 1500);
+    };
+    // Safari na iPhonie nie ma requestIdleCallback — wtedy krótkie opóźnienie.
+    const id = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 2500 });
+      else warm();
+    }, 600);
+    return () => clearTimeout(id);
+  }, []);
+
   const initials = me ? `${me.firstName[0] ?? ''}${me.lastName[0] ?? ''}` : '';
   // "Więcej" świeci się dla sekcji, które nie mają własnej zakładki na telefonie.
   const moreActive = path === '/wiecej' || ![...tabHrefs].some((h) => isActive(path, h));
@@ -130,7 +151,7 @@ export default function Shell({ children }: { children: ReactNode }) {
 
         <main className="main">
           <div className="container" key={palette}>
-            {children}
+            {mounted ? children : <div className="skeleton" style={{ minHeight: 180 }} aria-hidden="true" />}
           </div>
         </main>
 

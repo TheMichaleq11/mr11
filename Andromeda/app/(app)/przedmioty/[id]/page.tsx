@@ -1,13 +1,13 @@
-import CourseView from '@/components/views/CourseView';
+import View from './view';
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ term?: string }>;
-}) {
-  const { id } = await params;
-  const { term } = await searchParams;
-  return <CourseView courseId={decodeURIComponent(id)} termId={term ?? null} />;
+// Strona jest tylko "ramką" — dane ładują się po stronie telefonu. Generujemy ją przy pierwszym
+// wejściu i trzymamy w cache Vercela, więc kolejne otwarcia nie czekają na serwer.
+export const dynamicParams = true;
+export const revalidate = false;
+export function generateStaticParams() {
+  return [];
+}
+
+export default function Page() {
+  return <View />;
 }

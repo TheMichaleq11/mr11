@@ -72,12 +72,105 @@ export async function usosRaw(path: string, creds: Credentials, params: Record<s
   return res;
 }
 
+// ---------- pamięć podręczna odpowiedzi USOS ----------
+// Ciepła instancja serwera pamięta odpowiedzi przez chwilę, więc ekrany, które pytają
+// o to samo (np. dane użytkownika, listę przedmiotów, plan tygodnia), nie czekają drugi raz.
+// Dane prywatne są kluczowane tokenem użytkownika; publiczne (sylabusy, budynki) — wspólne.
+
+/** Metody zmieniające dane — nigdy nie cache'ujemy, a po nich czyścimy cache użytkownika. */
+const WRITE = /(^|\/)(register|unregister|fill_out2?|create_and_send_message|send_message|receive|update_\w+|oauth\/)/;
+
+/** Dane jednakowe dla wszystkich (czas w sekundach). */
+const PUBLIC_TTL: Record<string, number> = {
+  'courses/classtypes_index': 86400,
+  'courses/course': 21600,
+  'courses/unit': 21600,
+  'courses/search': 3600,
+  'fac/faculty': 86400,
+  'geo/building_index': 43200,
+  'geo/room': 43200,
+  'calendar/search': 21600,
+  'news/search': 600,
+  'news/article': 3600,
+};
+
+/** Dane prywatne — dłużej dla rzeczy, które zmieniają się rzadko. */
+const PRIVATE_TTL: Record<string, number> = {
+  'users/user': 900,
+  'users/users': 3600,
+  'progs/student': 3600,
+  'courses/user': 600,
+  'courses/course_edition': 900,
+  'groups/user': 900,
+  'groups/group': 900,
+  'crstests/participant2': 600,
+  'crstests/participant': 600,
+  'credits/used_sum': 900,
+  'theses/user': 3600,
+  'mobility/student': 3600,
+  'tt/staff': 600,
+  'tt/room': 600,
+  'tt/upcoming_share': 3600,
+  'cards/user': 3600,
+  'exams/student_exams': 600,
+  'exams/group': 600,
+  'surveys/surveys_to_fill2': 120,
+};
+const DEFAULT_PRIVATE_TTL = 90; // plan, oceny, zapisy, punkty — świeże, ale bez dublowania w ciągu chwili
+
+type Entry = { at: number; ttl: number; value: Promise<unknown> };
+const cache = new Map<string, Entry>();
+const MAX_ENTRIES = 1500;
+
+function cacheKey(path: string, creds: Credentials, params: Record<string, string>): string {
+  const p = Object.keys(params)
+    .sort()
+    .map((k) => `${k}=${params[k]}`)
+    .join('&');
+  return path in PUBLIC_TTL ? `pub|${path}|${p}` : `${creds.token ?? 'anon'}|${path}|${p}`;
+}
+
+function prune() {
+  if (cache.size <= MAX_ENTRIES) return;
+  const now = Date.now();
+  for (const [k, e] of cache) if (now - e.at > e.ttl * 1000) cache.delete(k);
+  // nadal za dużo — usuń najstarsze
+  for (const k of cache.keys()) {
+    if (cache.size <= MAX_ENTRIES * 0.8) break;
+    cache.delete(k);
+  }
+}
+
+/** Czyści pamięć podręczną jednego użytkownika (po zapisie, wysłaniu ankiety itp.). */
+export function forgetUser(token: string | undefined) {
+  if (!token) return;
+  for (const k of cache.keys()) if (k.startsWith(token + '|')) cache.delete(k);
+}
+
 export async function usosJson<T>(
   path: string,
   creds: Credentials,
   params: Record<string, string> = {},
 ): Promise<T> {
-  return JSON.parse(await usosPost(path, creds, { format: 'json', ...params })) as T;
+  const run = async () => JSON.parse(await usosPost(path, creds, { format: 'json', ...params })) as T;
+  if (WRITE.test(path)) {
+    const out = await run();
+    forgetUser(creds.token);
+    return out;
+  }
+  const key = cacheKey(path, creds, params);
+  const hit = cache.get(key);
+  if (hit && Date.now() - hit.at < hit.ttl * 1000) return hit.value as Promise<T>;
+
+  const ttl = PUBLIC_TTL[path] ?? PRIVATE_TTL[path] ?? DEFAULT_PRIVATE_TTL;
+  const value = run();
+  cache.set(key, { at: Date.now(), ttl, value });
+  // błędów nie zapamiętujemy
+  value.catch(() => {
+    if (cache.get(key)?.value === value) cache.delete(key);
+  });
+  prune();
+  return value;
 }
 
 // ---------- pomocnicze ----------
@@ -153,6 +246,8 @@ type RawActivity = {
   lecturer_ids?: number[];
 };
 
+const lecturerNames = new Map<string, string>();
+
 type RawUsers = Record<string, { first_name?: string; last_name?: string; titles?: { before?: string | null } } | null>;
 
 export async function fetchPlan(creds: Credentials, start: string, days: number): Promise<ClassEvent[]> {
@@ -178,23 +273,25 @@ export async function fetchActivities(
     acts = await usosJson<RawActivity[]>(method, creds, { ...extra, start, days: String(Math.min(Math.max(days, 1), 7)), fields: 'type|start_time|end_time|name' });
   }
 
-  const ids = [...new Set(acts.flatMap((a) => a.lecturer_ids || []))];
-  let people: RawUsers = {};
-  if (ids.length) {
+  // Imiona prowadzących są publiczne i rzadko się zmieniają — pamiętamy je osobno dla każdej osoby,
+  // więc kolejne tygodnie planu nie czekają na dodatkowe zapytanie.
+  const ids = [...new Set(acts.flatMap((a) => a.lecturer_ids || []))].map(String);
+  const missing = ids.filter((id) => !lecturerNames.has(id));
+  if (missing.length) {
     try {
-      people = await usosJson<RawUsers>('users/users', creds, {
-        user_ids: ids.join('|'),
+      const people = await usosJson<RawUsers>('users/users', creds, {
+        user_ids: missing.join('|'),
         fields: 'first_name|last_name|titles',
       });
+      for (const [id, p] of Object.entries(people)) {
+        if (p) lecturerNames.set(id, [p.titles?.before, p.first_name, p.last_name].filter(Boolean).join(' '));
+      }
+      if (lecturerNames.size > 5000) lecturerNames.clear();
     } catch (e) {
       if (e instanceof UsosAuthError) throw e;
     }
   }
-  const nameOf = (id: number) => {
-    const p = people[String(id)];
-    if (!p) return null;
-    return [p.titles?.before, p.first_name, p.last_name].filter(Boolean).join(' ');
-  };
+  const nameOf = (id: number) => lecturerNames.get(String(id)) ?? null;
 
   return acts
     .map((a, i): ClassEvent => {

@@ -1,6 +1,13 @@
-import { GroupView } from '@/components/views/GroupsView';
+import View from './view';
 
-export default async function Page({ params }: { params: Promise<{ key: string }> }) {
-  const { key } = await params;
-  return <GroupView id={decodeURIComponent(key)} />;
+// Strona jest tylko "ramką" — dane ładują się po stronie telefonu. Generujemy ją przy pierwszym
+// wejściu i trzymamy w cache Vercela, więc kolejne otwarcia nie czekają na serwer.
+export const dynamicParams = true;
+export const revalidate = false;
+export function generateStaticParams() {
+  return [];
+}
+
+export default function Page() {
+  return <View />;
 }

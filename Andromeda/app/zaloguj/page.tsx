@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ClearCache from '@/components/ClearCache';
 import { Galaxy } from '@/components/Icons';
 import { usosConfigured } from '@/lib/session';
 
@@ -17,6 +18,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <main className="login">
+      <ClearCache />
       <div className="login-card">
         <span className="login-logo">
           <Galaxy size={36} />

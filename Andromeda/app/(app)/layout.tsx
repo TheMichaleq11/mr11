@@ -1,11 +1,6 @@
-import { redirect } from 'next/navigation';
 import Shell from '@/components/Shell';
-import { getSession } from '@/lib/session';
 
-export const dynamic = 'force-dynamic';
-
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-  if (!session) redirect('/zaloguj');
+// Strony aplikacji są statyczne (logowanie sprawdza middleware.ts, dane ładują się z /api).
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return <Shell>{children}</Shell>;
 }

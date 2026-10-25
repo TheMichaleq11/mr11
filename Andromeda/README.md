@@ -53,6 +53,14 @@ copy .env.example .env.local   # uzupełnij klucze albo zostaw puste (tryb demo)
 npm run dev
 ```
 
-Testy: `npm run test:oauth` (podpis OAuth), `npm run test:usos`, `npx tsx scripts/test-more.mts` `npx tsx scripts/test-courses.mts` i `npx tsx scripts/test-studies.mts` (przetwarzanie odpowiedzi USOS).
+Testy: `npm run test:oauth` (podpis OAuth), `npm run test:usos`, `npx tsx scripts/test-more.mts` `npx tsx scripts/test-courses.mts` , `npx tsx scripts/test-studies.mts` i `npx tsx scripts/test-cache.mts` (przetwarzanie odpowiedzi USOS).
 
 Po zmianie listy uprawnień (`SCOPES` w `lib/usos.ts`) każdy użytkownik musi raz zalogować się ponownie.
+
+## Szybkość
+
+- Serwer w regionie `fra1` (Frankfurt) — blisko USOS w Krakowie (`vercel.json`).
+- Pamięć podręczna odpowiedzi USOS na serwerze (`lib/usos.ts`): dane prywatne kluczowane tokenem, publiczne (sylabusy, budynki) wspólne; zapisy/ankiety/maile nigdy z cache i czyszczą cache użytkownika.
+- Strony są statyczne (logowanie sprawdza `middleware.ts`), więc przełączanie ekranów nie czeka na serwer.
+- Na urządzeniu ostatnie dane są zapamiętane (`lib/client.ts`) — ekran pokazuje je od razu i odświeża w tle; czyszczone przy wylogowaniu.
+- Service worker trzyma pliki aplikacji i strony — start z ekranu głównego bez czekania.
