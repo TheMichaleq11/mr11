@@ -94,7 +94,7 @@ export default function PlanView() {
             {[...new Map(events.map((e) => [e.courseId ?? e.courseName, e])).values()].map((e) => {
               const c = courseColor(e.courseId ?? e.courseName);
               return (
-                <span key={e.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, background: c.bg, color: c.ink, fontSize: 14, fontWeight: 600 }}>
+                <span key={e.id} className="course-chip">
                   <span className="dot" style={{ background: c.dot }} />
                   {e.courseName}
                 </span>

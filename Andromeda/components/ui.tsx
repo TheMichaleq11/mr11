@@ -123,7 +123,7 @@ export function EventCard({ e }: { e: ClassEvent }) {
         </div>
         <div className="body">
           <div className="kind">
-            <span className="dot" style={{ background: e.kind === 'exam' ? '#E0782B' : c.dot }} />
+            <span className="dot" style={{ background: e.kind === 'exam' ? 'var(--warn)' : c.dot }} />
             {e.classType ?? 'Zajęcia'}
             {e.group ? ` · gr. ${e.group}` : ''}
           </div>
@@ -169,7 +169,7 @@ export function WeekGrid({ monday, events }: { monday: string; events: ClassEven
                     key={e.id}
                     href={courseHref(e.courseId)}
                     className={`slot${e.kind === 'exam' ? ' exam' : ''}`}
-                    style={{ background: c.bg }}
+                    style={{ '--c': c.dot } as React.CSSProperties}
                   >
                     <span className="s1 num" style={{ color: c.ink }}>
                       {hhmm(e.start)} · {e.classType ?? 'Zajęcia'}

@@ -65,7 +65,7 @@ export default function TodayView() {
           <div className="hero">
             <div className="top">
               <span className="when">{heroLabel(hero, now)}</span>
-              <span className="pill" style={hero.kind === 'exam' ? { background: '#E0782B' } : undefined}>
+              <span className="pill" style={hero.kind === 'exam' ? { borderColor: 'var(--warn)', color: '#F2C48E' } : undefined}>
                 {hero.classType ?? 'Zajęcia'}
               </span>
             </div>

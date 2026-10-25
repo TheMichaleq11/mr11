@@ -2,12 +2,13 @@
 export type CourseColor = { dot: string; bg: string; ink: string };
 
 const palette: CourseColor[] = [
-  { dot: '#2F5BEA', bg: 'var(--c-blue-bg)', ink: 'var(--c-blue-ink)' },
-  { dot: '#E0782B', bg: 'var(--c-orange-bg)', ink: 'var(--c-orange-ink)' },
-  { dot: '#12A37F', bg: 'var(--c-teal-bg)', ink: 'var(--c-teal-ink)' },
-  { dot: '#7A5AF8', bg: 'var(--c-purple-bg)', ink: 'var(--c-purple-ink)' },
-  { dot: '#D6457A', bg: 'var(--c-pink-bg)', ink: 'var(--c-pink-ink)' },
-  { dot: '#B8901A', bg: 'var(--c-gold-bg)', ink: 'var(--c-gold-ink)' },
+  // stonowane odcienie — przedmiot ma się dać rozpoznać, ale nie krzyczeć
+  { dot: '#4766D6', bg: 'var(--c-blue-bg)', ink: 'var(--c-blue-ink)' },
+  { dot: '#C47A34', bg: 'var(--c-orange-bg)', ink: 'var(--c-orange-ink)' },
+  { dot: '#2F8F72', bg: 'var(--c-teal-bg)', ink: 'var(--c-teal-ink)' },
+  { dot: '#7A62CC', bg: 'var(--c-purple-bg)', ink: 'var(--c-purple-ink)' },
+  { dot: '#B9547A', bg: 'var(--c-pink-bg)', ink: 'var(--c-pink-ink)' },
+  { dot: '#9C8530', bg: 'var(--c-gold-bg)', ink: 'var(--c-gold-ink)' },
 ];
 
 // Gdy znamy listę przedmiotów z semestru, rozdajemy kolory po kolei — bez powtórzeń.
