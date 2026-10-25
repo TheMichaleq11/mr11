@@ -101,3 +101,15 @@ export const Door = ({ size = 20 }: P) => (
 export const Search = ({ size = 18 }: P) => (
   <svg {...base(size)}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
 );
+export const Chat = ({ size = 24 }: P) => (
+  <svg {...base(size)}><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9.5h8M8 12.5h5" /></svg>
+);
+export const CheckList = ({ size = 24 }: P) => (
+  <svg {...base(size)}><path d="M9 6h11M9 12h11M9 18h11" /><path d="m3.5 6 1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17" /></svg>
+);
+export const Language = ({ size = 24 }: P) => (
+  <svg {...base(size)}><path d="M4 5h9M8.5 3v2M6 5c.6 3 2.6 5.6 5.5 7M11 5c-.8 3.6-3.4 6.8-7 8.5" /><path d="m13 21 4-9 4 9M14.5 18h5" /></svg>
+);
+export const Compass = ({ size = 24 }: P) => (
+  <svg {...base(size)}><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5z" /></svg>
+);

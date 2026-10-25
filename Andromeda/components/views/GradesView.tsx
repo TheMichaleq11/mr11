@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useApi } from '@/lib/client';
 import type { GradesResponse } from '@/lib/types';
 import { CourseGradeRow, Empty, ErrorBox, Skeleton } from '../ui';
+import { LatestGrades } from './ExtraSections';
 
 export default function GradesView() {
   const [term, setTerm] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export default function GradesView() {
                 width: `${data.courses.length ? Math.round((graded / data.courses.length) * 100) : 0}%`,
                 height: 8,
                 borderRadius: 4,
-                background: '#7C9BFF',
+                background: 'var(--hero-accent)',
               }}
             />
           </div>
@@ -61,6 +62,8 @@ export default function GradesView() {
           </span>
         </section>
       ) : null}
+
+      <LatestGrades />
 
       <section className="section">
         <h2 className="h2">Przedmioty</h2>

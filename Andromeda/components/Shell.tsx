@@ -26,6 +26,10 @@ import {
   Ticket,
   User,
   Wallet,
+  Chat,
+  CheckList,
+  Language,
+  Compass,
 } from './Icons';
 
 const MeContext = createContext<Me | null>(null);
@@ -45,7 +49,9 @@ export const sections: { title: string; items: Item[] }[] = [
       { href: '/egzaminy', label: 'Egzaminy', Icon: Pencil, desc: 'Terminy, sale, zapisy w sesji' },
       { href: '/grupy', label: 'Grupy', longLabel: 'Grupy zajęciowe', Icon: Users, desc: 'Kto jest w grupie, mail do grupy' },
       { href: '/przedmioty', label: 'Przedmioty', Icon: Book, desc: 'Prowadzący, terminy, sylabus' },
-      { href: '/zapisy', label: 'Zapisy', Icon: Ticket, desc: 'Rejestracje na zajęcia' },
+      { href: '/zapisy', label: 'Zapisy', Icon: Ticket, desc: 'Rejestracje i koszyk' },
+      { href: '/konsultacje', label: 'Konsultacje', Icon: Chat, desc: 'Zapisy na dyżury i spotkania' },
+      { href: '/testy', label: 'Testy językowe', longLabel: 'Testy poziomujące', Icon: Language, desc: 'Wyniki testów z języków' },
     ],
   },
   {
@@ -56,6 +62,7 @@ export const sections: { title: string; items: Item[] }[] = [
       { href: '/osoby', label: 'Prowadzący', Icon: User, desc: 'Dyżury, pokoje, kontakt' },
       { href: '/aktualnosci', label: 'Aktualności', Icon: News, desc: 'Ogłoszenia UJ i wydziału' },
       { href: '/ankiety', label: 'Ankiety', Icon: Survey, desc: 'Ocena zajęć' },
+      { href: '/przewodnik', label: 'Przewodnik', Icon: Compass, desc: 'Najważniejsze informacje UJ' },
     ],
   },
   {
@@ -64,7 +71,8 @@ export const sections: { title: string; items: Item[] }[] = [
       { href: '/profil', label: 'Profil', longLabel: 'Profil i legitymacja', Icon: IdCard, desc: 'Album, kierunek, legitymacja' },
       { href: '/studia', label: 'Studia i ECTS', Icon: Award, desc: 'Etapy, punkty, dyplom' },
       { href: '/dokumenty', label: 'Dokumenty', Icon: FileText, desc: 'Decyzje i zaświadczenia' },
-      { href: '/platnosci', label: 'Płatności', Icon: Wallet, desc: 'Opłaty i należności' },
+      { href: '/platnosci', label: 'Płatności', Icon: Wallet, desc: 'Opłaty, konto do wpłat, zwroty' },
+      { href: '/obiegowki', label: 'Obiegówki', Icon: CheckList, desc: 'Rozliczenia z uczelnią' },
     ],
   },
 ];

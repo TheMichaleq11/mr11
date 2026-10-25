@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { consumer, SCOPES, USOS_BASE, usosPost } from '@/lib/usos';
+import { BASE_SCOPES, consumer, SCOPES, USOS_BASE, usosPost } from '@/lib/usos';
 import { cookieOptions, REQUEST_COOKIE, seal, usosConfigured } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
@@ -10,8 +10,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/zaloguj?blad=brak-klucza', origin));
   }
   try {
-    const text = await usosPost('oauth/request_token', consumer(), { scopes: SCOPES }, {
-      oauth_callback: `${origin}/api/auth/callback`,
+    const ask = (scopes: string) =>
+      usosPost('oauth/request_token', consumer(), { scopes }, { oauth_callback: `${origin}/api/auth/callback` });
+    // Nowe uprawnienia mogą nie być dostępne dla tej aplikacji — wtedy logujemy się z podstawowymi.
+    const text = await ask(SCOPES).catch((e) => {
+      console.warn('[andromeda login] pełne uprawnienia odrzucone, próbuję podstawowych', e);
+      return ask(BASE_SCOPES);
     });
     const p = new URLSearchParams(text);
     const token = p.get('oauth_token');

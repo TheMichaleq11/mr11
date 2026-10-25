@@ -4,6 +4,7 @@ import { today } from '@/lib/dates';
 import type { PaymentsResponse, ProfileResponse } from '@/lib/types-more';
 import { External, LogOut } from '../Icons';
 import { Empty, fmtDate, LoadError, PageHead, ScopeBox, Skeleton } from '../ui';
+import { PaymentsExtra, ProfileExtra } from './ExtraSections';
 
 const cardType: Record<string, string> = {
   student: 'Legitymacja studencka',
@@ -102,6 +103,7 @@ export function ProfileView() {
             </section>
           )}
 
+          <ProfileExtra usoswebUrl={p.usoswebUrl} />
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <a href={p.usoswebUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><External size={18} /> Otwórz USOSweb</a>
             <form action="/api/auth/logout" method="post">
@@ -167,6 +169,7 @@ export function PaymentsView() {
           ) : (
             <Empty title="Brak płatności">USOS nie ma żadnych należności na Twoim koncie.</Empty>
           )}
+          <PaymentsExtra />
         </>
       ) : null}
     </>

@@ -4,7 +4,9 @@ import type { ClassEvent, CourseSummary, Grade, GradesResponse, Me, Term } from 
 
 export const USOS_BASE = (process.env.USOS_BASE_URL || 'https://apps.usos.uj.edu.pl').replace(/\/$/, '');
 // Zmiana listy = użytkownik musi raz zalogować się ponownie (USOS pokaże nowe uprawnienia).
-export const SCOPES = 'studies|grades|offline_access|crstests|payments|cards|surveys_filling|email|adm_documents|mailclient';
+export const BASE_SCOPES = 'studies|grades|offline_access|crstests|payments|cards|surveys_filling|email|adm_documents|mailclient';
+/** Pełna lista: obiegówki, testy poziomujące, widoczność zdjęcia. Gdy USOS ich nie przyzna, logowanie wraca do BASE_SCOPES. */
+export const SCOPES = BASE_SCOPES + '|slips|placement_tests|photo';
 
 export class UsosAuthError extends Error {}
 /** Token nie ma uprawnienia (scope) do tej metody — potrzebne ponowne zalogowanie. */
@@ -78,7 +80,7 @@ export async function usosRaw(path: string, creds: Credentials, params: Record<s
 // Dane prywatne są kluczowane tokenem użytkownika; publiczne (sylabusy, budynki) — wspólne.
 
 /** Metody zmieniające dane — nigdy nie cache'ujemy, a po nich czyścimy cache użytkownika. */
-const WRITE = /(^|\/)(register|unregister|fill_out2?|create_and_send_message|send_message|receive|update_\w+|oauth\/)/;
+const WRITE = /(^|\/)(register|unregister|fill_out2?|create_and_send_message|send_message|receive|update_\w+|sign_up|sign_off|oauth\/)/;
 
 /** Dane jednakowe dla wszystkich (czas w sekundach). */
 const PUBLIC_TTL: Record<string, number> = {
@@ -92,6 +94,9 @@ const PUBLIC_TTL: Record<string, number> = {
   'calendar/search': 21600,
   'news/search': 600,
   'news/article': 3600,
+  'guide/guide': 21600,
+  'guide/page': 21600,
+  'plctests/test': 86400,
 };
 
 /** Dane prywatne — dłużej dla rzeczy, które zmieniają się rzadko. */
@@ -115,6 +120,13 @@ const PRIVATE_TTL: Record<string, number> = {
   'exams/student_exams': 600,
   'exams/group': 600,
   'surveys/surveys_to_fill2': 120,
+  'payments/user_accounts': 21600,
+  'prgroups/user': 3600,
+  'csgroups/user': 900,
+  'plctests/user': 3600,
+  'photos/my_photo_visibility': 21600,
+  'meetings/available_meetings': 300,
+  'slips/search_slips': 600,
 };
 const DEFAULT_PRIVATE_TTL = 90; // plan, oceny, zapisy, punkty — świeże, ale bez dublowania w ciągu chwili
 

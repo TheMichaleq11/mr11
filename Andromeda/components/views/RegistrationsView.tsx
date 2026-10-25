@@ -4,6 +4,7 @@ import { invalidate, postJson, useApi } from '@/lib/client';
 import type { RegCourse, Registration, RegistrationsResponse, RegRound } from '@/lib/types-more';
 import { External, Search } from '../Icons';
 import { Empty, fmtDate, LoadError, PageHead, Skeleton } from '../ui';
+import { CartSection } from './ExtraSections';
 
 const roundTag: Record<string, [string, string]> = {
   active: ['Trwa', 'good'],
@@ -183,6 +184,7 @@ export default function RegistrationsView() {
           .
         </p>
       )}
+      <CartSection />
     </>
   );
 }

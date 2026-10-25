@@ -7,6 +7,7 @@ import type { GroupDetail, GroupSummary } from '@/lib/usos-studies';
 import MailForm from '../MailForm';
 import { ChevronLeft, ChevronRight, Mail } from '../Icons';
 import { courseHref, Empty, LoadError, PageHead, Skeleton } from '../ui';
+import { GroupsExtra } from './ExtraSections';
 
 export function GroupsList() {
   const api = useApi<{ groups: GroupSummary[] }>('/api/grupy');
@@ -35,6 +36,7 @@ export function GroupsList() {
       ) : (
         api.data && <Empty title="Brak grup" />
       )}
+      <GroupsExtra />
     </>
   );
 }
