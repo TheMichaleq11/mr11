@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { invalidate, postJson, useApi } from '@/lib/client';
-import type { RegCourse, Registration, RegistrationsResponse, RegRound } from '@/lib/types-more';
+import type { RegCourse, Registration, RegistrationsResponse, RegProgramme, RegRound } from '@/lib/types-more';
 import { External, Search } from '../Icons';
 import { Empty, fmtDate, LoadError, PageHead, Skeleton } from '../ui';
 import { CartSection } from './ExtraSections';
@@ -21,8 +21,9 @@ const myStatusLabel: Record<string, [string, string]> = {
   cancelled_ask: ['Wypisany', 'none'],
 };
 
-function CourseRow({ c, round, onDone }: { c: RegCourse; round: RegRound; onDone: (msg: string) => void }) {
+function CourseRow({ c, round, onDone, programmes }: { c: RegCourse; round: RegRound; onDone: (msg: string) => void; programmes: RegProgramme[] }) {
   const [busy, setBusy] = useState(false);
+  const [prog, setProg] = useState(programmes[0]?.id ?? '');
   const full = c.limit !== null && c.count !== null && c.count >= c.limit;
   const mine = c.myStatus ? myStatusLabel[c.myStatus] : null;
 
@@ -30,7 +31,7 @@ function CourseRow({ c, round, onDone }: { c: RegCourse; round: RegRound; onDone
     const verb = action === 'register' ? 'Zapisać się na' : 'Wypisać się z';
     if (!window.confirm(`${verb} „${c.courseName}”?`)) return;
     setBusy(true);
-    const err = await postJson('/api/zapisy', { action, roundId: round.id, courseId: c.courseId, termId: c.termId });
+    const err = await postJson('/api/zapisy', { action, roundId: round.id, courseId: c.courseId, termId: c.termId, programmeId: c.linkage ? prog || undefined : undefined });
     setBusy(false);
     onDone(err ?? (action === 'register' ? `Zapisano na „${c.courseName}”.` : `Wypisano z „${c.courseName}”.`));
   }
@@ -40,13 +41,26 @@ function CourseRow({ c, round, onDone }: { c: RegCourse; round: RegRound; onDone
       <div className="grow">
         <span className="t1">{c.courseName}</span>
         <span className="meta-line num">
-          {c.limit !== null ? `Miejsca: ${c.count ?? 0} / ${c.limit}` : c.count !== null ? `Zapisanych: ${c.count}` : c.courseId}
+          {c.limit !== null && c.count !== null ? `Miejsca: ${c.count} / ${c.limit}` : c.limit !== null ? `Limit miejsc: ${c.limit}` : c.count !== null ? `Zapisanych: ${c.count}` : c.courseId}
           {full && !mine ? ' · brak miejsc' : ''}
         </span>
         {mine && (
           <span>
             <span className={`tag ${mine[1]}`}>{mine[0]}</span>
+            {c.choice ? <span className="meta-line"> · wybór nr {c.choice}</span> : null}
           </span>
+        )}
+        {c.linkage && c.canRegister && (
+          programmes.length > 1 ? (
+            <label className="meta-line" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              Deklaruj na kierunek:
+              <select className="select" style={{ minHeight: 34 }} value={prog} onChange={(e) => setProg(e.target.value)}>
+                {programmes.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            </label>
+          ) : (
+            <span className="meta-line">Deklaracja — przedmiot zostanie przypięty do kierunku{programmes[0] ? ` ${programmes[0].name}` : ''}.</span>
+          )
         )}
       </div>
       {c.canUnregister ? (
@@ -62,7 +76,7 @@ function CourseRow({ c, round, onDone }: { c: RegCourse; round: RegRound; onDone
   );
 }
 
-function RoundBlock({ round, onDone }: { round: RegRound; onDone: (m: string) => void }) {
+function RoundBlock({ round, onDone, programmes }: { round: RegRound; onDone: (m: string) => void; programmes: RegProgramme[] }) {
   const [q, setQ] = useState('');
   const [onlyMine, setOnlyMine] = useState(false);
   const tag = roundTag[round.status] ?? [round.status, 'none'];
@@ -108,7 +122,7 @@ function RoundBlock({ round, onDone }: { round: RegRound; onDone: (m: string) =>
       {round.courses === null ? null : courses.length === 0 ? (
         <span className="meta-line">{round.status === 'preparing' ? 'Lista przedmiotów pojawi się przed startem tury.' : 'Brak przedmiotów w tej turze.'}</span>
       ) : shown.length ? (
-        <div>{shown.slice(0, 150).map((c) => <CourseRow key={c.courseId + c.termId} c={c} round={round} onDone={onDone} />)}</div>
+        <div>{shown.slice(0, 150).map((c) => <CourseRow key={c.courseId + c.termId} c={c} round={round} onDone={onDone} programmes={programmes} />)}</div>
       ) : (
         <span className="meta-line">Nic nie pasuje do wyszukiwania.</span>
       )}
@@ -117,7 +131,7 @@ function RoundBlock({ round, onDone }: { round: RegRound; onDone: (m: string) =>
   );
 }
 
-function RegistrationCard({ r, web, onDone }: { r: Registration; web: string; onDone: (m: string) => void }) {
+function RegistrationCard({ r, web, onDone, programmes }: { r: Registration; web: string; onDone: (m: string) => void; programmes: RegProgramme[] }) {
   const active = r.rounds.some((x) => x.status === 'active');
   return (
     <section className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -129,12 +143,25 @@ function RegistrationCard({ r, web, onDone }: { r: Registration; web: string; on
         {active && <span className="tag good">Otwarta</span>}
       </div>
       {r.message && <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.5 }}>{r.message}</p>}
-      {r.rounds.map((round) => <RoundBlock key={round.id} round={round} onDone={onDone} />)}
-      {(r.kind === 'żetonowa' || r.rounds.length === 0) && (
-        <a href={`${web}/kontroler.php?_action=dla_stud/rejestracja/kalendarz`} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start', background: 'var(--surface-2)' }}>
-          <External size={16} /> Otwórz w USOSweb
-        </a>
-      )}
+      {r.rounds.map((round) => <RoundBlock key={round.id} round={round} onDone={onDone} programmes={programmes} />)}
+      {r.kind === 'żetonowa' ? (
+        <div className="notice">
+          <span>
+            Przedmioty i tury widzisz tutaj, ale samo wydanie żetonów USOS pozwala zrobić tylko w USOSweb — uczelnia nie udostępnia tej
+            operacji aplikacjom.
+          </span>
+          <a href={`${web}/kontroler.php?_action=dla_stud/rejestracja/kalendarz`} target="_blank" rel="noopener noreferrer">
+            Wydaj żetony w USOSweb <External size={13} />
+          </a>
+        </div>
+      ) : r.rounds.length === 0 ? (
+        <div className="notice">
+          <span>USOS nie podał jeszcze tur tej rejestracji — gdy się pojawią, zapiszesz się tutaj.</span>
+          <a href={`${web}/kontroler.php?_action=dla_stud/rejestracja/kalendarz`} target="_blank" rel="noopener noreferrer">
+            Sprawdź w USOSweb <External size={13} />
+          </a>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -170,7 +197,7 @@ export default function RegistrationsView() {
         <Skeleton n={2} h={160} />
       ) : data ? (
         sorted.length ? (
-          sorted.map((r) => <RegistrationCard key={r.id} r={r} web={data.usoswebUrl} onDone={onDone} />)
+          sorted.map((r) => <RegistrationCard key={r.id} r={r} web={data.usoswebUrl} onDone={onDone} programmes={data.programmes ?? []} />)
         ) : (
           <Empty title="Brak otwartych rejestracji">Gdy wydział otworzy zapisy, pojawią się tutaj.</Empty>
         )

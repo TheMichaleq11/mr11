@@ -8,7 +8,7 @@ export function GET() {
   return withSession(async ({ creds }) => (creds ? fetchRegistrations(creds) : demoRegistrations()));
 }
 
-type Body = { action?: string; roundId?: string; courseId?: string; termId?: string };
+type Body = { action?: string; roundId?: string; courseId?: string; termId?: string; programmeId?: string };
 
 export function POST(req: Request) {
   return withSession(async ({ creds }) => {
@@ -18,7 +18,8 @@ export function POST(req: Request) {
       throw new BadRequest('Brakuje danych zapisu.');
     }
     if (!creds) throw new BadRequest('W trybie demo zapisy są tylko na pokaz — zaloguj się do USOS.');
-    await registerAction(creds, b.action, b.roundId, b.courseId, b.termId);
+    const prog = b.programmeId && /^[\w-]+$/.test(b.programmeId) ? b.programmeId : undefined;
+    await registerAction(creds, b.action, b.roundId, b.courseId, b.termId, prog);
     return { ok: true };
   });
 }

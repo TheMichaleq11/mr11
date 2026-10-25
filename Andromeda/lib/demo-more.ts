@@ -21,6 +21,7 @@ const addDays = (n: number) => {
 
 export const demoRegistrations = (): RegistrationsResponse => ({
   usoswebUrl: 'https://www.usosweb.uj.edu.pl',
+  programmes: [{ id: 'DEMO-P1', name: 'Ekonomia, studia I stopnia' }],
   registrations: [
     {
       id: 'DEMO-R1',
@@ -39,15 +40,37 @@ export const demoRegistrations = (): RegistrationsResponse => ({
           end: `${addDays(5)} 23:59:00`,
           selectionLimit: 2,
           courses: [
-            { courseId: 'DEMO-OG1', courseName: 'Historia Krakowa', termId: 'DEMO-L', status: 'register_and_unregister', limit: 120, count: 87, myStatus: 'accepted', canRegister: false, canUnregister: true },
-            { courseId: 'DEMO-OG2', courseName: 'Psychologia decyzji', termId: 'DEMO-L', status: 'register_and_unregister', limit: 80, count: 80, myStatus: null, canRegister: true, canUnregister: false },
-            { courseId: 'DEMO-OG3', courseName: 'Wstęp do programowania w Pythonie', termId: 'DEMO-L', status: 'register_and_unregister', limit: 60, count: 41, myStatus: null, canRegister: true, canUnregister: false },
+            { courseId: 'DEMO-OG1', courseName: 'Historia Krakowa', termId: 'DEMO-L', status: 'register_and_unregister', limit: 120, count: 87, myStatus: 'accepted', canRegister: false, canUnregister: true, linkage: false, choice: null },
+            { courseId: 'DEMO-OG2', courseName: 'Psychologia decyzji', termId: 'DEMO-L', status: 'register_and_unregister', limit: 80, count: 80, myStatus: null, canRegister: true, canUnregister: false, linkage: false, choice: null },
+            { courseId: 'DEMO-OG3', courseName: 'Wstęp do programowania w Pythonie', termId: 'DEMO-L', status: 'register_and_unregister', limit: 60, count: 41, myStatus: null, canRegister: true, canUnregister: false, linkage: false, choice: null },
           ],
         },
         { id: 'DEMO-T2', name: 'Tura 2 — dopisy', status: 'preparing', mode: null, start: `${addDays(12)} 10:00:00`, end: `${addDays(16)} 23:59:00`, selectionLimit: null, courses: [] },
       ],
     },
-    { id: 'token-DEMO', name: 'Lektoraty — rejestracja żetonowa (demo)', message: 'Wybór języka i poziomu na podstawie testu.', status: 'active', faculty: null, kind: 'żetonowa', rounds: [] },
+    {
+      id: 'token-DEMO',
+      name: 'Lektoraty — rejestracja żetonowa (demo)',
+      message: 'Wybór języka i poziomu na podstawie testu.',
+      status: 'active',
+      faculty: null,
+      kind: 'żetonowa',
+      rounds: [
+        {
+          id: 'DEMO-TT1',
+          name: 'Tura żetonowa — lektoraty',
+          status: 'active',
+          mode: 'token',
+          start: `${addDays(-1)} 09:00:00`,
+          end: `${addDays(6)} 23:59:00`,
+          selectionLimit: 1,
+          courses: [
+            { courseId: 'DEMO-ANG-B2', courseName: 'Język angielski B2', termId: 'DEMO-Z', status: 'register_and_unregister', limit: 24, count: null, myStatus: null, canRegister: false, canUnregister: false, linkage: false, choice: null },
+            { courseId: 'DEMO-NIEM-B1', courseName: 'Język niemiecki B1', termId: 'DEMO-Z', status: 'register_and_unregister', limit: 20, count: null, myStatus: null, canRegister: false, canUnregister: false, linkage: false, choice: null },
+          ],
+        },
+      ],
+    },
   ],
 });
 

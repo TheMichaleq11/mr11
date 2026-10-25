@@ -13,6 +13,9 @@ export type RegCourse = {
   myStatus: string | null; // accepted | ask | refused | ... | null
   canRegister: boolean;
   canUnregister: boolean;
+  /** Zapis wymaga przypięcia przedmiotu do kierunku (deklaracja w programie studiów). */
+  linkage: boolean;
+  choice: number | null;
 };
 
 export type RegRound = {
@@ -36,7 +39,8 @@ export type Registration = {
   rounds: RegRound[];
 };
 
-export type RegistrationsResponse = { registrations: Registration[]; usoswebUrl: string };
+export type RegProgramme = { id: string; name: string };
+export type RegistrationsResponse = { registrations: Registration[]; usoswebUrl: string; programmes: RegProgramme[] };
 
 // ---------- sprawdziany ----------
 export type TestSummary = { rootId: string; courseId: string | null; courseName: string; termId: string | null; name: string };

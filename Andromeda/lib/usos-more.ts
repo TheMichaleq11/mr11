@@ -14,7 +14,9 @@ import type {
   ProfileResponse,
   Programme,
   RegCourse,
+  RegProgramme,
   Registration,
+  RoundStatus,
   RegistrationsResponse,
   RegRound,
   SurveyDetail,
@@ -92,6 +94,8 @@ function toCourse(c: Any, roundActive: boolean): RegCourse {
     myStatus: mine,
     canRegister: roundActive && !registered && (status === 'register_and_unregister' || status === 'register_only'),
     canUnregister: roundActive && registered && (status === 'register_and_unregister' || status === 'unregister_only'),
+    linkage: Boolean(c.is_linkage_required),
+    choice: num(c.user_choice_number),
   };
 }
 
@@ -108,14 +112,25 @@ function toRound(r: Any): RegRound {
   };
 }
 
+/** Status tury żetonowej liczymy z dat (USOS nie podaje go wprost). */
+function datesStatus(start: string | null, end: string | null): RoundStatus {
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  if (start && now < start) return 'preparing';
+  if (end && now > end) return 'closed';
+  return 'active';
+}
+
 export async function fetchRegistrations(creds: Credentials): Promise<RegistrationsResponse> {
-  const [regs, tokenRegs, web] = await Promise.all([
+  const [regs, tokenRegs, web, programmes] = await Promise.all([
     tryFields<Any[]>('registrations/user_registrations', creds, { active_only: 'true' }, [
+      'id|description|message|status|type|is_linkage_required|faculty[id|name]|rounds[id|name|status|registration_mode|start_date|end_date|selection_limit]',
       'id|description|message|status|type|faculty[id|name]|rounds',
       'id|description|message|status|type|faculty',
       'id|description|message|status|type',
     ]),
     tryFields<Any[]>('registrations/user_token_registrations', creds, { active_only: 'true' }, [
+      'id|description|message|status|is_linkage_required|faculty[id|name]|rounds[id|name|start_date|end_date|selection_limit]|related_courses[course_id|term_id|status|limits]',
+      'id|description|message|status|faculty[id|name]|rounds',
       'id|description|message|status|faculty[id|name]',
       'id|description|message|status',
     ]).catch((e) => {
@@ -123,12 +138,19 @@ export async function fetchRegistrations(creds: Credentials): Promise<Registrati
       return [] as Any[];
     }),
     usoswebUrl(creds),
+    tryFields<Any[]>('progs/student', creds, {}, ['id|programme[id|description]', 'id|programme'])
+      .then((l): RegProgramme[] => l.map((p) => ({ id: String(p.id), name: pl(p.programme?.description) || String(p.programme?.id ?? p.id) })))
+      .catch((e) => {
+        if (e instanceof UsosAuthError) throw e;
+        return [] as RegProgramme[];
+      }),
   ]);
 
   const registrations: Registration[] = await Promise.all(
     regs.map(async (r): Promise<Registration> => {
-      let rounds: Any[] = Array.isArray(r.rounds) ? r.rounds : [];
-      if (!Array.isArray(r.rounds)) {
+      // Tury z tym samym zapytaniem; gdy instalacja zwróciła same ID (bez statusu) — dopytujemy osobno.
+      let rounds: Any[] = Array.isArray(r.rounds) && r.rounds.every((x: Any) => x && x.status) ? r.rounds : [];
+      if (!rounds.length) {
         rounds = await tryFields<Any[]>('registrations/course_registration_rounds', creds, { registration_id: String(r.id) }, [
           'id|name|status|registration_mode|start_date|end_date|selection_limit',
           'id|name|status|registration_mode|start_date|end_date',
@@ -145,6 +167,7 @@ export async function fetchRegistrations(creds: Credentials): Promise<Registrati
           .map(async (round) => {
             try {
               const courses = await tryFields<Any[]>('registrations/registration_round_courses', creds, { registration_round_id: round.id }, [
+                'course[id|name]|term_id|status|limits|registrations_count|user_registration_status|user_choice_number|is_linkage_required',
                 'course[id|name]|term_id|status|limits|registrations_count|user_registration_status',
                 'course|term_id|status|limits|registrations_count|user_registration_status',
               ]);
@@ -169,7 +192,48 @@ export async function fetchRegistrations(creds: Credentials): Promise<Registrati
     }),
   );
 
+  // Rejestracje żetonowe: pokazujemy tury i przedmioty w aplikacji (sam zapis żetonami USOS udostępnia tylko w USOSweb).
+  const tokenCourseIds = new Set<string>();
+  tokenRegs.forEach((t) => (Array.isArray(t.related_courses) ? t.related_courses : []).forEach((c: Any) => c?.course_id && tokenCourseIds.add(String(c.course_id))));
+  const names: Record<string, string> = {};
+  const ids = [...tokenCourseIds];
+  for (let i = 0; i < ids.length; i += 50) {
+    try {
+      const res = await usosJson<Any>('courses/courses', creds, { course_ids: ids.slice(i, i + 50).join('|'), fields: 'id|name' });
+      for (const [k, v] of Object.entries(res ?? {})) if (v) names[k] = pl((v as Any).name) || k;
+    } catch (e) {
+      if (e instanceof UsosAuthError) throw e;
+    }
+  }
   for (const t of tokenRegs) {
+    const courses: RegCourse[] = (Array.isArray(t.related_courses) ? t.related_courses : [])
+      .filter(Boolean)
+      .map((c: Any) => ({
+        courseId: String(c.course_id),
+        courseName: names[String(c.course_id)] ?? String(c.course_id),
+        termId: String(c.term_id ?? ''),
+        status: str(c.status),
+        limit: num(c.limits),
+        count: null,
+        myStatus: null,
+        canRegister: false,
+        canUnregister: false,
+        linkage: Boolean(t.is_linkage_required),
+        choice: null,
+      }))
+      .sort((a: RegCourse, b: RegCourse) => a.courseName.localeCompare(b.courseName, 'pl'));
+    const rounds: RegRound[] = (Array.isArray(t.rounds) ? t.rounds : [])
+      .filter((x: Any) => x && x.id)
+      .map((x: Any) => {
+        const start = str(x.start_date);
+        const end = str(x.end_date);
+        const status = datesStatus(start, end);
+        return { id: String(x.id), name: pl(x.name) || `Tura ${x.id}`, status, mode: 'token', start, end, selectionLimit: num(x.selection_limit), courses: null as RegCourse[] | null };
+      })
+      .sort((a: RegRound, b: RegRound) => (a.start || '').localeCompare(b.start || ''));
+    const live = rounds.find((x) => x.status !== 'closed');
+    if (live) live.courses = courses;
+    else if (!rounds.length && courses.length) rounds.push({ id: `token-${t.id}-list`, name: 'Przedmioty w tej rejestracji', status: 'preparing', mode: 'token', start: null, end: null, selectionLimit: null, courses });
     registrations.push({
       id: `token-${t.id}`,
       name: pl(t.description) || String(t.id),
@@ -177,10 +241,10 @@ export async function fetchRegistrations(creds: Credentials): Promise<Registrati
       status: str(t.status),
       faculty: pl(t.faculty?.name) || null,
       kind: 'żetonowa',
-      rounds: [],
+      rounds,
     });
   }
-  return { registrations, usoswebUrl: web };
+  return { registrations, usoswebUrl: web, programmes };
 }
 
 export async function registerAction(
@@ -189,8 +253,12 @@ export async function registerAction(
   roundId: string,
   courseId: string,
   termId: string,
+  programmeId?: string,
 ): Promise<void> {
-  await usosJson(`registrations/${action}`, creds, { round_id: roundId, course_id: courseId, term_id: termId });
+  const p: Record<string, string> = { round_id: roundId, course_id: courseId, term_id: termId };
+  // Deklaracja z przypięciem do kierunku — USOS wymaga wtedy wskazania programu studiów.
+  if (action === 'register' && programmeId) p.user_programme_id = programmeId;
+  await usosJson(`registrations/${action}`, creds, p);
 }
 
 // =====================================================================
