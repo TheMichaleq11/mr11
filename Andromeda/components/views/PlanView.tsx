@@ -83,7 +83,7 @@ export default function PlanView() {
         </section>
       </div>
 
-      <section className="card card-pad desktop-only">
+      <section className="desktop-only plain-week">
         {data ? <WeekGrid monday={monday} events={events} /> : <Skeleton h={320} />}
       </section>
 
@@ -127,7 +127,7 @@ function CalendarSubscribe() {
   }
   const https = state.url?.replace(/^webcal:/, 'https:') ?? null;
   return (
-    <section className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <section className="callout">
       <b>Plan w kalendarzu telefonu</b>
       <span className="meta-line" style={{ lineHeight: 1.5 }}>
         Zajęcia pojawią się w aplikacji Kalendarz i będą się same aktualizować. Na iPhonie potwierdź „Subskrybuj”.

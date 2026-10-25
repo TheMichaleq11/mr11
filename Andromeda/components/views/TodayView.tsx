@@ -58,73 +58,74 @@ export default function TodayView() {
 
       {upcoming.error && <ErrorBox message={upcoming.error} onRetry={upcoming.reload} />}
 
-      <section className="top-grid">
-        {upcoming.loading && !upcoming.data ? (
-          <div className="hero" style={{ minHeight: 170 }} aria-busy="true" />
-        ) : hero ? (
-          <div className="hero">
-            <div className="top">
-              <span className="when">{heroLabel(hero, now)}</span>
-              <span className="pill" style={hero.kind === 'exam' ? { borderColor: 'var(--warn)', color: '#F2C48E' } : undefined}>
-                {hero.classType ?? 'Zajęcia'}
-              </span>
-            </div>
-            <Link href={courseHref(hero.courseId)} className="name">
-              {hero.courseName}
-            </Link>
-            <div className="meta">
-              <span className="num">
-                {hhmm(hero.start)} – {hhmm(hero.end)}
-              </span>
-              {where(hero) && (
-                <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                  <Pin /> {where(hero)}
-                </span>
-              )}
-              {hero.lecturers.length > 0 && (
-                <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                  <User /> {hero.lecturers.join(', ')}
-                </span>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="hero">
-            <span className="when">Najbliższe 7 dni</span>
-            <span className="name">Brak zajęć</span>
-            <span className="meta">Odpocznij — w planie nic nie ma.</span>
-          </div>
-        )}
-
-        <Link href="/oceny" className="tile">
-          <span className="lab">Średnia</span>
-          <span className="big num">
-            {grades.data?.average != null ? grades.data.average.toFixed(2).replace('.', ',') : '—'}
-          </span>
-          <span className="sub">
-            {grades.data
-              ? grades.data.gradedCount
-                ? `z ${grades.data.gradedCount} ${grades.data.gradedCount === 1 ? 'oceny' : 'ocen'}`
-                : 'jeszcze brak ocen'
-              : 'wczytywanie…'}
-          </span>
-        </Link>
-
-        <div className={`tile${exam ? ' warn' : ''}`}>
-          <span className="lab">Najbliższy egzamin</span>
-          {exam ? (
+      <section className="band" aria-label="Najbliższe zajęcia i podsumowanie">
+        <div className="band-main">
+          {upcoming.loading && !upcoming.data ? (
+            <div style={{ minHeight: 120 }} aria-busy="true" />
+          ) : hero ? (
             <>
-              <span className="mid">{exam.courseName}</span>
-              <span className="sub">
-                {shortDate(dayOf(exam.start))} · {hhmm(exam.start)} · {relativeDay(dayOf(exam.start), todayIso)}
-              </span>
+              <div className="top">
+                <span className="when">{heroLabel(hero, now)}</span>
+                <span className={`pill${hero.kind === 'exam' ? ' pill-exam' : ''}`}>{hero.classType ?? 'Zajęcia'}</span>
+              </div>
+              <Link href={courseHref(hero.courseId)} className="name">
+                {hero.courseName}
+              </Link>
+              <div className="meta">
+                <span className="num">
+                  {hhmm(hero.start)} – {hhmm(hero.end)}
+                </span>
+                {where(hero) && (
+                  <span className="meta-i">
+                    <Pin /> {where(hero)}
+                  </span>
+                )}
+                {hero.lecturers.length > 0 && (
+                  <span className="meta-i">
+                    <User /> {hero.lecturers.join(', ')}
+                  </span>
+                )}
+              </div>
             </>
           ) : (
             <>
-              <span className="mid">Brak w tym tygodniu</span>
-              <span className="sub">Sprawdzamy 7 dni do przodu</span>
+              <span className="when">Najbliższe 7 dni</span>
+              <span className="name">Brak zajęć</span>
+              <span className="meta">W planie nic nie ma.</span>
             </>
           )}
+        </div>
+
+        <div className="band-stats">
+          <Link href="/oceny" className="stat">
+            <span className="lab">Średnia</span>
+            <span className="val num">
+              {grades.data?.average != null ? grades.data.average.toFixed(2).replace('.', ',') : '—'}
+            </span>
+            <span className="sub">
+              {grades.data
+                ? grades.data.gradedCount
+                  ? `z ${grades.data.gradedCount} ${grades.data.gradedCount === 1 ? 'oceny' : 'ocen'}`
+                  : 'jeszcze brak ocen'
+                : 'wczytywanie…'}
+            </span>
+          </Link>
+          <Link href="/egzaminy" className={`stat${exam ? ' stat-warn' : ''}`}>
+            <span className="lab">Najbliższy egzamin</span>
+            {exam ? (
+              <>
+                <span className="val-sm">{exam.courseName}</span>
+                <span className="sub num">
+                  {shortDate(dayOf(exam.start))} · {hhmm(exam.start)} · {relativeDay(dayOf(exam.start), todayIso)}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="val-sm">Brak w tym tygodniu</span>
+                <span className="sub">Sprawdzamy 7 dni do przodu</span>
+              </>
+            )}
+          </Link>
         </div>
       </section>
 
@@ -147,20 +148,20 @@ export default function TodayView() {
       </section>
 
       <div className="two-col desktop-only">
-        <section className="card card-pad wide section" style={{ gap: 16 }}>
-          <div className="section-head">
-            <h2 className="h2" style={{ fontSize: 20 }}>{isNextWeek ? 'Nadchodzący tydzień' : 'Ten tydzień'}</h2>
+        <section className="wide section plain">
+          <div className="section-head ruled">
+            <h2 className="h2">{isNextWeek ? 'Nadchodzący tydzień' : 'Ten tydzień'}</h2>
             <Link href="/plan" className="link-sm">Cały plan</Link>
           </div>
           {week.data ? <WeekGrid monday={monday} events={week.data.events} /> : <Skeleton h={220} />}
         </section>
-        <section className="card card-pad narrow section" style={{ gap: 6, paddingTop: 20, paddingBottom: 12 }}>
-          <div className="section-head">
-            <h2 className="h2" style={{ fontSize: 20 }}>Oceny</h2>
+        <section className="narrow section plain">
+          <div className="section-head ruled">
+            <h2 className="h2">Oceny</h2>
             <Link href="/oceny" className="link-sm">Wszystkie</Link>
           </div>
           {grades.data ? (
-            grades.data.courses.slice(0, 6).map((c) => <CourseGradeRow key={c.courseId} c={c} />)
+            <div className="ledger">{grades.data.courses.slice(0, 6).map((c) => <CourseGradeRow key={c.courseId} c={c} />)}</div>
           ) : (
             <Skeleton n={3} h={52} />
           )}

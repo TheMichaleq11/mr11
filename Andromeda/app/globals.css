@@ -288,6 +288,62 @@ a.tile:hover { color: var(--ink); border-color: var(--line-strong); }
 /* ---------- przedmioty tygodnia ---------- */
 .course-chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 13.5px; font-weight: 550; }
 
+
+/* ---------- pas „najbliższe zajęcia + podsumowanie” (zamiast trzech kafelków) ---------- */
+.band {
+  position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) 320px;
+  background: var(--hero); color: var(--hero-ink); border-radius: var(--r-lg);
+  background-image:
+    radial-gradient(70% 140% at 62% 0%, rgba(110, 140, 255, 0.20), transparent 60%),
+    radial-gradient(40% 90% at 0% 100%, rgba(150, 100, 230, 0.08), transparent 60%);
+}
+.band::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.55;
+  background-image:
+    radial-gradient(1px 1px at 48% 18%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 57% 64%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 40% 78%, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1px 1px at 64% 34%, rgba(255,255,255,0.5), transparent);
+}
+.band > * { position: relative; z-index: 1; }
+.band a { color: inherit; }
+.band-main { padding: 26px 28px 28px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.band-main .top { display: flex; align-items: center; gap: 12px; }
+.band-main .when { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hero-accent); }
+.band-main .name { font-size: clamp(26px, 2.8vw, 34px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.band-main .name:hover { color: #fff; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; text-decoration-color: rgba(255,255,255,0.35); }
+.band-main .meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; color: var(--hero-muted); }
+.meta-i { display: inline-flex; gap: 6px; align-items: center; }
+.meta-i svg { opacity: 0.75; }
+.pill-exam { border-color: var(--warn) !important; color: #F2C48E !important; }
+.band-stats { display: grid; grid-template-rows: 1fr 1fr; border-left: 1px solid var(--hero-line); }
+.stat { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 18px 24px; transition: background 0.15s var(--ease); }
+.stat + .stat { border-top: 1px solid var(--hero-line); }
+.stat:hover { background: rgba(255, 255, 255, 0.035); }
+.stat .lab { font-size: 12px; font-weight: 500; color: var(--hero-muted); }
+.stat .val { font-size: 34px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; }
+.stat .val-sm { font-size: 16px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.25; }
+.stat .sub { font-size: 12.5px; color: var(--hero-muted); }
+.stat-warn .lab { color: #F2C48E; }
+.stat-warn .lab::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 3px; background: var(--warn); margin-right: 7px; vertical-align: 1px; }
+@media (max-width: 899px) {
+  .band { grid-template-columns: 1fr; }
+  .band-main { padding: 22px 20px 20px; }
+  .band-stats { grid-template-rows: none; grid-template-columns: 1fr 1fr; border-left: none; border-top: 1px solid var(--hero-line); }
+  .stat { padding: 14px 20px 16px; }
+  .stat + .stat { border-top: none; border-left: 1px solid var(--hero-line); }
+  .stat .val { font-size: 28px; }
+}
+
+/* ---------- sekcje bez pudełek ---------- */
+.plain { background: none; border: none; padding: 0; }
+.section-head.ruled { padding-bottom: 12px; border-bottom: 1px solid var(--line-strong); }
+.section-head.ruled .h2 { font-size: 17px; font-weight: 650; letter-spacing: -0.02em; }
+.ledger { display: flex; flex-direction: column; }
+.ledger .row { padding: 13px 2px; }
+.plain .week-head { border-bottom: none; padding-top: 4px; }
+.plain-week { display: flex; flex-direction: column; gap: 12px; }
+
 /* ---------- tydzień ---------- */
 .week-scroll { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
 .week { display: grid; gap: 8px; min-width: 560px; }
@@ -388,8 +444,8 @@ a.event-card:hover { color: var(--ink); }
 }
 @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } html { scroll-behavior: auto; } }
-.empty { background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--r-lg); padding: 28px 20px; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center; }
-.empty b { font-family: var(--font-display); font-size: 18px; font-weight: 650; letter-spacing: -0.02em; }
+.empty { background: transparent; border: 1px dashed var(--line-strong); border-radius: var(--r-lg); padding: 22px 20px; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center; }
+.empty b { font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-2); }
 .empty span { font-size: 13.5px; color: var(--muted); max-width: 44ch; }
 .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: var(--r-md); padding: 14px 16px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .btn {
@@ -530,3 +586,7 @@ details.syl > .html { padding: 0 18px 18px; font-size: 14.5px; }
 .choice input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
 textarea.input { width: 100%; min-height: 88px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); padding: 12px 14px; font-family: inherit; font-size: 16px; resize: vertical; transition: border-color 0.15s, box-shadow 0.15s; }
 textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* ---------- wezwanie do działania bez pudełka ---------- */
+.callout { display: flex; flex-direction: column; gap: 10px; padding: 20px 0 4px; border-top: 1px solid var(--line-strong); max-width: 640px; }
+.callout b { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
