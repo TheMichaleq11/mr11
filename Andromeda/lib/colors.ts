@@ -1,14 +1,10 @@
 // Każdy przedmiot dostaje stały kolor (z kodu przedmiotu), żeby był rozpoznawalny wszędzie.
 export type CourseColor = { dot: string; bg: string; ink: string };
 
+// Jednolity wygląd: wszystkie przedmioty mają ten sam akcent (błękit z logo).
+// Zostawiamy mechanizm przydziału, gdyby kiedyś wróciły kolory przedmiotów.
 const palette: CourseColor[] = [
-  // stonowane odcienie — przedmiot ma się dać rozpoznać, ale nie krzyczeć
-  { dot: '#4766D6', bg: 'var(--c-blue-bg)', ink: 'var(--c-blue-ink)' },
-  { dot: '#C47A34', bg: 'var(--c-orange-bg)', ink: 'var(--c-orange-ink)' },
-  { dot: '#2F8F72', bg: 'var(--c-teal-bg)', ink: 'var(--c-teal-ink)' },
-  { dot: '#7A62CC', bg: 'var(--c-purple-bg)', ink: 'var(--c-purple-ink)' },
-  { dot: '#B9547A', bg: 'var(--c-pink-bg)', ink: 'var(--c-pink-ink)' },
-  { dot: '#9C8530', bg: 'var(--c-gold-bg)', ink: 'var(--c-gold-ink)' },
+  { dot: 'var(--accent)', bg: 'var(--accent-soft)', ink: 'var(--accent-ink)' },
 ];
 
 // Gdy znamy listę przedmiotów z semestru, rozdajemy kolory po kolei — bez powtórzeń.
