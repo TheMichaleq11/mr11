@@ -11,6 +11,7 @@ export type ClassEvent = {
   building: string | null;
   buildingId?: string | null;
   room: string | null;
+  roomId?: string | null;
   group: number | null;
   lecturers: string[];
 };

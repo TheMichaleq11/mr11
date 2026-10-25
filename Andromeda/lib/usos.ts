@@ -4,7 +4,7 @@ import type { ClassEvent, CourseSummary, Grade, GradesResponse, Me, Term } from 
 
 export const USOS_BASE = (process.env.USOS_BASE_URL || 'https://apps.usos.uj.edu.pl').replace(/\/$/, '');
 // Zmiana listy = użytkownik musi raz zalogować się ponownie (USOS pokaże nowe uprawnienia).
-export const SCOPES = 'studies|grades|offline_access|crstests|payments|cards|surveys_filling|email';
+export const SCOPES = 'studies|grades|offline_access|crstests|payments|cards|surveys_filling|email|adm_documents|mailclient';
 
 export class UsosAuthError extends Error {}
 /** Token nie ma uprawnienia (scope) do tej metody — potrzebne ponowne zalogowanie. */
@@ -54,6 +54,24 @@ export async function usosPost(
   return text;
 }
 
+/** Podpisany POST zwracający surową odpowiedź (pliki, np. zaświadczenia z blobbox). */
+export async function usosRaw(path: string, creds: Credentials, params: Record<string, string> = {}): Promise<Response> {
+  const url = `${USOS_BASE}/services/${path}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: toForm(signedParams('POST', url, creds, params)),
+    cache: 'no-store',
+  });
+  if (res.status === 401) throw new UsosAuthError(await res.text());
+  if (!res.ok) {
+    const text = await res.text();
+    if (res.status === 403 && /scope/i.test(text)) throw new UsosScopeError(text);
+    throw new UsosError(text.slice(0, 2000), res.status);
+  }
+  return res;
+}
+
 export async function usosJson<T>(
   path: string,
   creds: Credentials,
@@ -82,6 +100,12 @@ export function parseGradeNumber(symbol: string): number | null {
 export function localDate(d = new Date()): string {
   // Data w strefie Polski, niezależnie od strefy serwera.
   return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Warsaw' }).format(d);
+}
+
+export function addDaysIso(iso: string, n: number): string {
+  const d = new Date(iso + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
 }
 
 // ---------- użytkownik ----------
@@ -124,6 +148,7 @@ type RawActivity = {
   building_name?: LangDict;
   building_id?: string;
   room_number?: string;
+  room_id?: string | number;
   group_number?: number;
   lecturer_ids?: number[];
 };
@@ -131,12 +156,27 @@ type RawActivity = {
 type RawUsers = Record<string, { first_name?: string; last_name?: string; titles?: { before?: string | null } } | null>;
 
 export async function fetchPlan(creds: Credentials, start: string, days: number): Promise<ClassEvent[]> {
-  const acts = await usosJson<RawActivity[]>('tt/student', creds, {
-    start,
-    days: String(Math.min(Math.max(days, 1), 7)),
-    fields:
-      'type|start_time|end_time|name|course_id|course_name|classtype_name|building_name|building_id|room_number|group_number|lecturer_ids',
-  });
+  return fetchActivities(creds, 'tt/student', {}, start, days);
+}
+
+/** Wspólne dla planu studenta, planu sali (tt/room) i planu prowadzącego (tt/staff). */
+export async function fetchActivities(
+  creds: Credentials,
+  method: 'tt/student' | 'tt/room' | 'tt/staff',
+  extra: Record<string, string>,
+  start: string,
+  days: number,
+): Promise<ClassEvent[]> {
+  const fields =
+    'type|start_time|end_time|name|course_id|course_name|classtype_name|building_name|building_id|room_number|room_id|group_number|lecturer_ids';
+  let acts: RawActivity[];
+  try {
+    acts = await usosJson<RawActivity[]>(method, creds, { ...extra, start, days: String(Math.min(Math.max(days, 1), 7)), fields });
+  } catch (e) {
+    // Plan sali/prowadzącego zwraca też inne typy aktywności — gdy któreś pole nie pasuje, prostszy zestaw.
+    if (method === 'tt/student' || !(e instanceof UsosError) || e.status !== 400) throw e;
+    acts = await usosJson<RawActivity[]>(method, creds, { ...extra, start, days: String(Math.min(Math.max(days, 1), 7)), fields: 'type|start_time|end_time|name' });
+  }
 
   const ids = [...new Set(acts.flatMap((a) => a.lecturer_ids || []))];
   let people: RawUsers = {};
@@ -171,6 +211,7 @@ export async function fetchPlan(creds: Credentials, start: string, days: number)
         building: pl(a.building_name) || null,
         buildingId: a.building_id ?? null,
         room: a.room_number || null,
+        roomId: a.room_id != null ? String(a.room_id) : null,
         group: a.group_number ?? null,
         lecturers: (a.lecturer_ids || []).map(nameOf).filter((x): x is string => Boolean(x)),
       };

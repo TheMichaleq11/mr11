@@ -103,6 +103,46 @@ export default function PlanView() {
           </div>
         </section>
       )}
+
+      <CalendarSubscribe />
     </>
+  );
+}
+
+/** Subskrypcja planu w Kalendarzu (iPhone: webcal, Google/Outlook: link https). */
+function CalendarSubscribe() {
+  const [state, setState] = useState<{ busy: boolean; url: string | null; err: string | null }>({ busy: false, url: null, err: null });
+  async function get() {
+    setState({ busy: true, url: null, err: null });
+    try {
+      const r = await fetch('/api/ical', { credentials: 'same-origin' });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j?.error === 'scope' ? 'Potrzebna ponowna zgoda w USOS — zaloguj się jeszcze raz.' : j?.detail || 'Błąd');
+      if (!j.webcalUrl) throw new Error('W trybie demo nie ma kalendarza — zaloguj się do USOS.');
+      setState({ busy: false, url: j.webcalUrl, err: null });
+      if (/iPhone|iPad|Macintosh/.test(navigator.userAgent)) window.location.href = j.webcalUrl;
+    } catch (e) {
+      setState({ busy: false, url: null, err: e instanceof Error ? e.message : String(e) });
+    }
+  }
+  const https = state.url?.replace(/^webcal:/, 'https:') ?? null;
+  return (
+    <section className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <b>Plan w kalendarzu telefonu</b>
+      <span className="meta-line" style={{ lineHeight: 1.5 }}>
+        Zajęcia pojawią się w aplikacji Kalendarz i będą się same aktualizować. Na iPhonie potwierdź „Subskrybuj”.
+      </span>
+      {state.err && <div className="notice warn">{state.err}</div>}
+      {state.url ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <a href={state.url} className="btn btn-primary">Dodaj do Kalendarza</a>
+          <span className="meta-line" style={{ overflowWrap: 'anywhere' }}>Google / Outlook — wklej ten adres jako „Dodaj z adresu URL”: {https}</span>
+        </div>
+      ) : (
+        <button className="btn btn-primary" disabled={state.busy} onClick={get} style={{ alignSelf: 'flex-start' }}>
+          {state.busy ? 'Chwila…' : 'Dodaj plan do kalendarza'}
+        </button>
+      )}
+    </section>
   );
 }

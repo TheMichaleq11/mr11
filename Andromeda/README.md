@@ -20,6 +20,12 @@ Czytelna nakładka na USOS UJ: plan zajęć, oceny i przedmioty. Działa w przeg
   - ankiety (z wypełnianiem): `services/surveys/*`
   - aktualności: `services/news/*`
   - sylabus: `services/courses/course`, `course_edition`, `unit`, `services/groups/group`
+  - egzaminy: `services/exams/student_exams`, `exams/group`
+  - etapy i ECTS: `services/progs/student`, `services/credits/used_sum`
+  - grupy i poczta: `services/groups/user`, `groups/group`, `services/mailclient/create_and_send_message`
+  - dokumenty: `services/adm_documents/*`, `services/blobbox/get`
+  - plan sali / prowadzącego / kalendarz: `services/tt/room`, `tt/staff`, `tt/upcoming_share`
+  - prace dyplomowe i wymiana: `services/theses/user`, `services/mobility/student`
   - katalog przedmiotów i prowadzący: `services/courses/search`, `services/users/search2`, `services/users/user`
 - Bez klucza API działa tryb demo z przykładowymi danymi.
 
@@ -47,6 +53,6 @@ copy .env.example .env.local   # uzupełnij klucze albo zostaw puste (tryb demo)
 npm run dev
 ```
 
-Testy: `npm run test:oauth` (podpis OAuth), `npm run test:usos`, `npx tsx scripts/test-more.mts` i `npx tsx scripts/test-courses.mts` (przetwarzanie odpowiedzi USOS).
+Testy: `npm run test:oauth` (podpis OAuth), `npm run test:usos`, `npx tsx scripts/test-more.mts` `npx tsx scripts/test-courses.mts` i `npx tsx scripts/test-studies.mts` (przetwarzanie odpowiedzi USOS).
 
 Po zmianie listy uprawnień (`SCOPES` w `lib/usos.ts`) każdy użytkownik musi raz zalogować się ponownie.

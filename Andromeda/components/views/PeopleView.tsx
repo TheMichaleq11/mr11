@@ -5,7 +5,9 @@ import { useApi } from '@/lib/client';
 import type { GradesResponse } from '@/lib/types';
 import type { Person, PersonHit } from '@/lib/usos-courses';
 import { useDebounced } from '@/lib/useDebounced';
-import { ChevronLeft, ChevronRight, External, MapPin, Search } from '../Icons';
+import { ChevronLeft, ChevronRight, External, Mail, MapPin, Search } from '../Icons';
+import MailForm from '../MailForm';
+import { WeekActivities } from './RoomView';
 import { courseHref, Empty, LoadError, PageHead, Skeleton } from '../ui';
 
 const initial = (name: string) => name.replace(/^((prof\.|dr|hab\.|mgr|inż\.|lic\.)\s*)+/g, '').charAt(0) || '·';
@@ -71,6 +73,7 @@ export function PersonView({ id }: { id: string }) {
   const api = useApi<Person>(`/api/osoby/${encodeURIComponent(id)}`);
   const p = api.data;
   const full = p ? [p.titlesBefore, p.name, p.titlesAfter].filter(Boolean).join(' ') : '';
+  const [mail, setMail] = useState(false);
 
   return (
     <>
@@ -122,10 +125,14 @@ export function PersonView({ id }: { id: string }) {
           </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {p.emailUrl && <a href={p.emailUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary"><External size={18} /> Pokaż e-mail</a>}
+            <button className="btn btn-primary" onClick={() => setMail((v) => !v)}><Mail /> Napisz przez USOS</button>
+            <Link href={`/osoby/${encodeURIComponent(p.id)}/plan`} className="btn btn-ghost">Plan zajęć</Link>
+            {p.emailUrl && <a href={p.emailUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><External size={18} /> Pokaż e-mail</a>}
             {p.homepage && <a href={p.homepage} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><External size={18} /> Strona domowa</a>}
             {p.profileUrl && <a href={p.profileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><External size={18} /> Profil w USOSweb</a>}
           </div>
+
+          {mail && <MailForm to={full} userIds={[p.id]} onClose={() => setMail(false)} />}
 
           {p.courses.length > 0 && (
             <section className="section">
@@ -146,5 +153,18 @@ export function PersonView({ id }: { id: string }) {
         </>
       ) : null}
     </>
+  );
+}
+
+export function PersonPlan({ id }: { id: string }) {
+  const api = useApi<Person>(`/api/osoby/${encodeURIComponent(id)}`);
+  const p = api.data;
+  return (
+    <WeekActivities
+      url={(s) => `/api/osoby/${encodeURIComponent(id)}/plan?start=${s}`}
+      eyebrow="Plan zajęć prowadzącego"
+      title={p ? [p.titlesBefore, p.name].filter(Boolean).join(' ') : '…'}
+      back={{ href: `/osoby/${encodeURIComponent(id)}`, label: 'Wróć do profilu' }}
+    />
   );
 }

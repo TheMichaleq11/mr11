@@ -131,8 +131,13 @@ export function EventCard({ e }: { e: ClassEvent }) {
           <span className="wh">{[where(e), e.lecturers.join(', ')].filter(Boolean).join(' · ')}</span>
         </div>
       </Link>
-      {e.buildingId && (
-        <Link href={`/budynki/${encodeURIComponent(e.buildingId)}`} className="icon-btn" style={{ background: 'var(--surface-2)' }} aria-label={`Pokaż budynek: ${e.building ?? 'na mapie'}`}>
+      {(e.roomId || e.buildingId) && (
+        <Link
+          href={e.roomId ? `/sale/${encodeURIComponent(e.roomId)}` : `/budynki/${encodeURIComponent(e.buildingId!)}`}
+          className="icon-btn"
+          style={{ background: 'var(--surface-2)' }}
+          aria-label={e.roomId ? `Sala ${e.room ?? ''}: plan i mapa` : `Pokaż budynek: ${e.building ?? 'na mapie'}`}
+        >
           <MapPin size={20} />
         </Link>
       )}
