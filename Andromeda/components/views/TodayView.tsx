@@ -4,7 +4,7 @@ import { useApi, useNow } from '@/lib/client';
 import { activeMonday, dayOf, hhmm, isoDay, longDate, mondayOf, relativeDay, shortDate, shortWeekday, toDate } from '@/lib/dates';
 import type { ClassEvent, GradesResponse, PlanResponse } from '@/lib/types';
 import { useMe } from '../Shell';
-import { Galaxy, Pin, User } from '../Icons';
+import { Pin, User } from '../Icons';
 import { CourseGradeRow, courseHref, Empty, ErrorBox, EventRow, Skeleton, WeekGrid, where } from '../ui';
 
 function heroLabel(e: ClassEvent, now: Date): string {
@@ -43,7 +43,7 @@ export default function TodayView() {
       <header className="page-head">
         <div className="titles">
           <div className="mini-brand mobile-only">
-            <Galaxy size={20} />
+            <img src="/logo-ikona.png" alt="" width={20} height={20} className="mini-brand-mark" />
             <span>Andromeda</span>
           </div>
           <p className="eyebrow">{longDate(todayIso)}</p>

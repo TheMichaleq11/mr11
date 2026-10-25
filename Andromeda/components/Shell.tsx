@@ -16,7 +16,6 @@ import {
   FileText,
   Pencil,
   Users,
-  Galaxy,
   Grid,
   Home,
   IdCard,
@@ -121,7 +120,7 @@ export default function Shell({ children }: { children: ReactNode }) {
       <div className="shell">
         <aside className="side">
           <Link href="/" className="brand" aria-label="Andromeda — strona główna">
-            <span className="brand-mark"><Galaxy /></span>
+            <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={36} height={36} /></span>
             <span className="brand-name">Andromeda</span>
           </Link>
           <nav aria-label="Główna nawigacja" className="side-nav">

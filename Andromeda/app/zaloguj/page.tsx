@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import ClearCache from '@/components/ClearCache';
-import { Galaxy } from '@/components/Icons';
 import { usosConfigured } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Zaloguj · Andromeda' };
@@ -21,7 +20,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <ClearCache />
       <div className="login-card">
         <span className="login-logo">
-          <Galaxy size={36} />
+          <img src="/logo-ikona.png" alt="" width={64} height={64} />
         </span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <h1>Andromeda</h1>
