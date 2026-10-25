@@ -99,7 +99,7 @@ export default function CourseView({ courseId, termId }: { courseId: string; ter
 
   return (
     <>
-      <section className="course-hero" style={{ background: col.dot }}>
+      <section className="course-hero" style={{ '--c': col.dot } as React.CSSProperties}>
         <Link href="/przedmioty" className="back" aria-label="Wróć do przedmiotów">
           <ChevronLeft size={20} />
         </Link>

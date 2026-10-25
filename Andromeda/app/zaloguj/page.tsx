@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import ClearCache from '@/components/ClearCache';
 import { usosConfigured } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'Zaloguj · Andromeda' };
+export const metadata: Metadata = { title: 'Andromeda' };
 export const dynamic = 'force-dynamic';
 
 const errors: Record<string, string> = {

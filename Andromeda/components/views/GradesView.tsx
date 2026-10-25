@@ -35,13 +35,13 @@ export default function GradesView() {
       ) : data ? (
         <section className="summary">
           <div className="row2">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <span className="lab">{hasFinals ? 'Średnia z ocen końcowych' : 'Średnia z ocen cząstkowych'}</span>
               <span className="avg num">{data.average != null ? data.average.toFixed(2).replace('.', ',') : '—'}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
               <span className="lab">Przedmioty z oceną</span>
-              <span className="num" style={{ fontSize: 22, fontWeight: 700 }}>
+              <span className="num" style={{ fontSize: 22, fontWeight: 600 }}>
                 {graded} / {data.courses.length}
               </span>
             </div>

@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource-variable/inter';
-import '@fontsource/bricolage-grotesque/600.css';
-import '@fontsource/bricolage-grotesque/700.css';
 import RegisterSW from '@/components/RegisterSW';
 import './globals.css';
 
@@ -22,8 +20,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F3F4F1' },
-    { media: '(prefers-color-scheme: dark)', color: '#0B0D14' },
+    { media: '(prefers-color-scheme: light)', color: '#F3F4F6' },
+    { media: '(prefers-color-scheme: dark)', color: '#080C18' },
   ],
 };
 
