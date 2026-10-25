@@ -29,7 +29,7 @@ export function ScopeBox() {
       <span>
         Ta sekcja jest nowa i potrzebuje Twojej zgody w USOS. Zaloguj się jeszcze raz — USOS pokaże listę uprawnień do zatwierdzenia.
       </span>
-      <a href="/api/auth/login" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start', textDecoration: 'none', color: '#fff' }}>
+      <a href="/api/auth/login" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start', textDecoration: 'none' }}>
         Zaloguj ponownie przez USOS
       </a>
     </div>

@@ -670,3 +670,146 @@ textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0
     animation: none !important;
   }
 }
+
+/* =========================================================================
+   SZKŁO NA KOSMOSIE — matowe, półprzezroczyste panele na tle mgławicy z Andromedą.
+   Jeden rozmyty „ekran” (main), w środku jaśniejsze tafle bez dodatkowego rozmycia (wydajność).
+   ========================================================================= */
+:root {
+  --bg: #070a16;
+  --surface: rgba(255, 255, 255, 0.075);
+  --surface-2: rgba(255, 255, 255, 0.055);
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --ink: #F3F5FB;
+  --ink-2: rgba(236, 240, 252, 0.86);
+  --muted: rgba(225, 230, 248, 0.64);
+  --faint: rgba(225, 230, 248, 0.42);
+  --accent: #9DB2FF;
+  --accent-ink: #C3D0FF;
+  --accent-soft: rgba(157, 178, 255, 0.16);
+  --focus: #B4C3FF;
+  --hero: rgba(12, 18, 44, 0.55);
+  --hero-ink: #F4F6FB;
+  --hero-muted: rgba(220, 226, 248, 0.7);
+  --hero-accent: #A9BCFF;
+  --hero-line: rgba(255, 255, 255, 0.10);
+  --side: rgba(10, 14, 32, 0.42);
+  --side-active: rgba(255, 255, 255, 0.08);
+  --warn-bg: rgba(224, 154, 82, 0.16); --warn-ink: #F6C894; --warn: #E8A35C;
+  --good-bg: rgba(90, 210, 160, 0.15); --good-ink: #9BE6C7;
+  --ok-bg: rgba(157, 178, 255, 0.16);  --ok-ink: #C3D0FF;
+  --bad-bg: rgba(245, 110, 140, 0.16); --bad-ink: #FFB0C1;
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+html { background: #070a16; }
+body {
+  background: #070a16 url('/tlo.webp') center / cover no-repeat fixed;
+  min-height: 100dvh;
+}
+/* iOS nie wspiera background-attachment: fixed — tło jako osobna warstwa */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: url('/tlo.webp') center / cover no-repeat;
+}
+::selection { background: rgba(157, 178, 255, 0.35); color: #fff; }
+
+/* wspólna "tafla szkła" */
+.side, .main, .tabbar, .login-card {
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  backdrop-filter: blur(28px) saturate(1.5);
+}
+
+/* główny ekran = jedna duża szyba */
+@media (min-width: 900px) {
+  .shell { padding: 14px; gap: 14px; }
+  .side {
+    margin: 0; top: 14px; height: calc(100dvh - 28px);
+    background: var(--side); background-image: none;
+    border: none; box-shadow: var(--glass-edge), var(--shadow);
+  }
+  .main {
+    margin: 0; border-radius: 28px; min-height: calc(100dvh - 28px);
+    background: rgba(14, 20, 46, 0.38);
+    box-shadow: var(--glass-edge), var(--shadow);
+    padding: 36px clamp(24px, 3.5vw, 52px) 56px;
+  }
+  .side-link[aria-current='page'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; }
+  .side-link[aria-current='page'] svg { color: #0D1428; }
+  .side-link:hover { background: rgba(255, 255, 255, 0.10); }
+  .brand-mark { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 18px -6px rgba(120, 150, 255, 0.6); }
+  .tip { background: rgba(12, 16, 36, 0.78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  .tip::before { border-right-color: rgba(12, 16, 36, 0.78); }
+}
+
+/* tafle w środku: jaśniejsze szkło z jasną krawędzią u góry */
+.card, .list, .tile, .event-card, .more-grid, .q, .skeleton, .day-btn, .icon-btn, .select, .searchbox, .seg, .course-chip, .btn-ghost, .choice span, textarea.input, .map-frame {
+  background: var(--surface);
+  border-color: transparent;
+  box-shadow: var(--glass-edge);
+}
+.card:hover, a.tile:hover, .event-card:hover { border-color: transparent; background: rgba(255, 255, 255, 0.10); }
+.more-grid { overflow: hidden; }
+.more-tile { border-bottom-color: var(--line); }
+.more-tile:hover { background: rgba(255, 255, 255, 0.06); }
+.more-tile .ico { background: rgba(255, 255, 255, 0.08); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.select option { background: #141a33; color: #F3F5FB; }
+.seg button[aria-pressed='true'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; box-shadow: none; }
+.day-btn[aria-selected='true'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; border-color: transparent; }
+.btn-primary { background: #F3F5FB; color: #0D1428; box-shadow: 0 8px 24px -10px rgba(160, 180, 255, 0.6); }
+.btn-primary:hover { background: #fff; color: #0D1428; }
+.btn-ghost { color: var(--ink); }
+.btn-ghost:hover { color: var(--ink); background: rgba(255, 255, 255, 0.12); }
+.choice input:checked + span { background: #F3F5FB; color: #0D1428; }
+
+/* wyróżnione pasy: przyciemnione, przydymione szkło */
+.band, .summary, .hero, .course-hero {
+  background: rgba(10, 16, 40, 0.5) !important;
+  box-shadow: var(--glass-edge), 0 20px 50px -30px rgba(0, 0, 0, 0.7);
+}
+.band::after, .hero::after { opacity: 0.35; }
+.glass { background: rgba(10, 16, 40, 0.35); }
+.glass-grid { background: var(--hero-line); }
+
+/* kalendarz tygodnia na szkle */
+.slot { background: rgba(255, 255, 255, 0.07) !important; box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, 0.05); }
+a.slot:hover { background: rgba(255, 255, 255, 0.12) !important; }
+.slot.exam { background: rgba(224, 154, 82, 0.16) !important; }
+.free { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 255, 255, 0.06) 6px 7px); }
+.week-head { border-bottom-color: var(--line); }
+.week-head.is-today { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* plakietki i oceny */
+.chip.none { box-shadow: inset 0 0 0 1px var(--line-strong); }
+.demo-badge { background: rgba(224, 154, 82, 0.14); border-color: rgba(232, 163, 92, 0.4); }
+.avatar { background: rgba(255, 255, 255, 0.9); color: #0D1428; }
+.id-card { background: radial-gradient(90% 120% at 100% 0%, rgba(140, 165, 255, 0.45), transparent 55%), linear-gradient(160deg, rgba(40, 56, 120, 0.75) 0%, rgba(13, 20, 46, 0.8) 70%); box-shadow: var(--glass-edge), 0 24px 50px -24px rgba(0, 0, 0, 0.7); }
+.html td, .html th { border-color: var(--line-strong); }
+.html a { color: var(--accent); }
+
+/* logowanie: pojedyncza tafla na środku kosmosu */
+.login { background: transparent; }
+.login-card {
+  max-width: 440px; padding: 34px 32px 28px; border-radius: 28px;
+  background: rgba(14, 20, 46, 0.42); box-shadow: var(--glass-edge), var(--shadow);
+}
+
+/* telefon: pływająca szklana pigułka zamiast paska przyklejonego do dołu */
+@media (max-width: 899px) {
+  .main { padding-bottom: calc(110px + env(safe-area-inset-bottom)); -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(7, 10, 22, 0.35); min-height: 100dvh; }
+  .tabbar {
+    left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); border-radius: 26px;
+    padding: 6px; background: rgba(14, 20, 46, 0.55); border: none; box-shadow: var(--glass-edge), 0 18px 40px -16px rgba(0, 0, 0, 0.7);
+  }
+  .tab { border-radius: 20px; color: var(--muted); transition: background 0.2s var(--ease), color 0.2s var(--ease); }
+  .tab[aria-current='page'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; }
+}
+
+/* przejście ekranów: mocniejsze rozmycie jak w szkle */
+@keyframes reveal {
+  from { opacity: 0; filter: blur(18px); transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
