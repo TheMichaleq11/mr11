@@ -101,6 +101,21 @@ export default function Shell({ children }: { children: ReactNode }) {
   }, [grades]);
   // Treść rysujemy dopiero na urządzeniu (strony są statyczne, a daty i dane są "na teraz").
   const [mounted, setMounted] = useState(false);
+  // Podpis ikony w pływającym dymku (rysowany poza paskiem, więc pasek może się przewijać).
+  const [tip, setTip] = useState<{ label: string; top: number; left: number } | null>(null);
+  const tipProps = (label: string) => ({
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
+    },
+    onFocus: (e: React.FocusEvent<HTMLElement>) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
+    },
+    onMouseLeave: () => setTip(null),
+    onBlur: () => setTip(null),
+  });
+  useEffect(() => setTip(null), [path]);
   useEffect(() => setMounted(true), []);
 
   // Gdy telefon nic nie robi — dociągamy dane głównych zakładek, żeby otwierały się od razu.
@@ -126,38 +141,39 @@ export default function Shell({ children }: { children: ReactNode }) {
   return (
     <MeContext.Provider value={me}>
       <div className="shell">
-        <aside className="side">
+        <aside className="side" aria-label="Menu">
           <Link href="/" className="brand" aria-label="Andromeda — strona główna">
-            <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={36} height={36} /></span>
-            <span className="brand-name">Andromeda</span>
+            <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={40} height={40} /></span>
           </Link>
           <nav aria-label="Główna nawigacja" className="side-nav">
             {sections.map((s) => (
               <div key={s.title} className="side-group">
-                <span className="side-title">{s.title}</span>
+                <span className="side-title sr-only">{s.title}</span>
                 {s.items.map(({ href, label, longLabel, Icon }) => (
-                  <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined}>
+                  <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined} aria-label={longLabel ?? label} {...tipProps(longLabel ?? label)}>
                     <Icon size={20} />
-                    {longLabel ?? label}
                   </Link>
                 ))}
               </div>
             ))}
           </nav>
           <div className="side-user">
-            <Link href="/profil" className="avatar" aria-label="Profil">{initials || '·'}</Link>
-            <div className="who">
-              <span>{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
-              <span>{me?.demo ? 'Tryb demo' : me?.programme ?? 'Student UJ'}</span>
-            </div>
+            <Link href="/profil" className="avatar side-link-av" aria-label={me ? `Profil: ${me.firstName} ${me.lastName}` : 'Profil'} {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
+              {initials || '·'}
+            </Link>
             <form action="/api/auth/logout" method="post">
-              <button className="icon-btn" aria-label="Wyloguj" title="Wyloguj"><LogOut /></button>
+              <button className="icon-btn side-link" aria-label="Wyloguj" {...tipProps('Wyloguj')}><LogOut /></button>
             </form>
           </div>
         </aside>
+        {tip && (
+          <span className="tip on" role="tooltip" style={{ top: tip.top, left: tip.left }}>
+            {tip.label}
+          </span>
+        )}
 
         <main className="main">
-          <div className="container" key={palette}>
+          <div className="container page-in" key={`${palette}-${path}`}>
             {mounted ? children : <div className="skeleton" style={{ minHeight: 180 }} aria-hidden="true" />}
           </div>
         </main>

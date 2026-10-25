@@ -6,6 +6,7 @@ import type { ClassEvent, GradesResponse, PlanResponse } from '@/lib/types';
 import { useMe } from '../Shell';
 import { Pin, User } from '../Icons';
 import { CourseGradeRow, courseHref, Empty, ErrorBox, EventRow, Skeleton, WeekGrid, where } from '../ui';
+import CountUp from '../CountUp';
 
 function heroLabel(e: ClassEvent, now: Date): string {
   const start = toDate(e.start);
@@ -100,7 +101,7 @@ export default function TodayView() {
           <Link href="/oceny" className="stat">
             <span className="lab">Średnia</span>
             <span className="val num">
-              {grades.data?.average != null ? grades.data.average.toFixed(2).replace('.', ',') : '—'}
+              <CountUp value={grades.data?.average ?? null} />
             </span>
             <span className="sub">
               {grades.data
