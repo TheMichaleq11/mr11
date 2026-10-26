@@ -237,7 +237,7 @@ export async function fetchPerson(creds: Credentials, id: string): Promise<Perso
     'id|first_name|last_name|titles|photo_urls|office_hours|homepage_url|phone_numbers|profile_url',
   ]);
   const photos: Record<string, string> = u.photo_urls ?? {};
-  const photo = photos['400x500'] ?? photos['200x250'] ?? photos['200x200'] ?? photos['100x125'] ?? Object.values(photos)[0] ?? null;
+  const photo = photos['original'] ?? photos['400x500'] ?? photos['200x250'] ?? photos['200x200'] ?? photos['100x125'] ?? Object.values(photos)[0] ?? null;
   const positions = (u.employment_positions ?? [])
     .map((p: Any) => [pl(p?.position?.name ?? p?.name), pl(p?.faculty?.name)].filter(Boolean).join(' · '))
     .filter(Boolean);

@@ -414,7 +414,9 @@ export async function fetchProfile(creds: Credentials): Promise<ProfileResponse>
   ]);
 
   const photos: Record<string, string> = user.photo_urls || {};
-  const bestPhoto = Object.entries(photos).sort((a, b) => parseInt(b[0]) - parseInt(a[0]))[0]?.[1] ?? null;
+  // Największe dostępne zdjęcie: „original”, potem 400x500 itd. (klucze to rozmiary, a „original” nie jest liczbą).
+  const area = (k: string) => (k === 'original' ? Infinity : k.split('x').reduce((a, n) => a * (parseInt(n) || 0), 1));
+  const bestPhoto = Object.entries(photos).sort((a, b) => area(b[0]) - area(a[0]))[0]?.[1] ?? null;
   const cards: Card[] | null = cardsRaw
     ? cardsRaw.map((c) => ({
         type: str(c.type) ?? 'student',

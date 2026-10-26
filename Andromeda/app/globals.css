@@ -1348,3 +1348,5 @@ html[data-motyw='jasny'] .main .slot .s1 { color: color-mix(in srgb, var(--c) 70
   .side .side-top { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
   .side .side-nav { padding-top: 6px; }
 }
+/* zdjęcia osób: portret 4:5 w pełnej rozdzielczości */
+.photo { width: 84px; height: 105px; border-radius: 16px; object-fit: cover; object-position: 50% 20%; image-rendering: auto; }
