@@ -1280,3 +1280,9 @@ html:has(.shell), body:has(.shell) { background: #080C1C; }
 @media (min-width: 900px) {
   .side .brand-name.lbl { font-size: 21px; letter-spacing: 0.15em; margin-left: 2px; padding-top: 3px; }
 }
+/* bez kropek okna; litera profilu w zwykłej, klasycznej czcionce */
+@media (min-width: 900px) {
+  .side .side-top { margin-top: 0; }
+  .side .me-letter { font-family: 'Inter Variable', Inter, system-ui, sans-serif; font-style: normal; font-weight: 600; font-size: 26px; letter-spacing: -0.02em; }
+}
+@media (min-width: 900px) { .side.mini .side-me { gap: 0; } .side.mini .me-letter { width: auto; } }

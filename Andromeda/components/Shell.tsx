@@ -169,7 +169,6 @@ export default function Shell({ children }: { children: ReactNode }) {
     <MeContext.Provider value={me}>
       <div className="shell">
         <aside className={`side${collapsed ? ' mini' : ''}`} aria-label="Menu">
-          <span className="side-dots" aria-hidden="true"><i /><i /><i /></span>
           <div className="side-top">
             <Link href="/" className="brand" aria-label="Andromeda — strona główna">
               <span className="brand-mark"><img src="/logo-znak.svg" alt="" width={44} height={30} /></span>
