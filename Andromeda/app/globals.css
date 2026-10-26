@@ -1143,3 +1143,27 @@ html[data-motyw='jasny'] .main ::selection { background: rgba(60, 111, 224, 0.25
 }
 html[data-motyw='jasny'] .main .pill { border-color: rgba(30, 40, 90, 0.2); background: rgba(30, 40, 90, 0.04); }
 html[data-motyw='jasny'] .main .stat-warn .lab, html[data-motyw='jasny'] .main .pill-exam { color: #A85A12 !important; }
+
+/* pasek: kafelek „Ty” zawsze pod logo, a wszystko w tych samych miejscach w pionie
+   przy zwijaniu i rozwijaniu (nic nie skacze góra–dół) */
+@media (min-width: 900px) {
+  .side.mini .side-me { order: 0; margin-top: 0; padding: 8px; }
+  .side.mini .side-me .avatar, .side .side-me .avatar { width: 38px; height: 38px; border-radius: 12px; }
+  .side-me { transition: background 0.3s, box-shadow 0.3s; }
+  .side.mini .side-title { height: auto; max-width: none; padding: 4px 12px 6px; opacity: 0; }
+  .side.mini .side-group + .side-group { padding-top: 8px; margin-top: 4px; border-top: 1px solid transparent; }
+  .side.mini .side-nav { gap: 6px; }
+  .side.mini .side-bottom { margin-top: auto; padding-top: 8px; border-top: 1px solid transparent; }
+}
+
+/* ciemny motyw w aplikacji: jednolite kolory zamiast obrazu kosmosu (logowanie zostaje z kosmosem) */
+body:has(.shell) .space { display: none; }
+html:has(.shell), body:has(.shell) { background: #080C1C; }
+@media (min-width: 900px) {
+  html:not([data-motyw='jasny']) .main { background: #282E5C; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .side { background: #10152E; }
+}
+@media (max-width: 899px) {
+  html:not([data-motyw='jasny']):has(.shell), html:not([data-motyw='jasny']) body:has(.shell) { background: #1C2248; }
+}
+.band::after, .hero::after { display: none; } /* bez gwiazdek — jednolite tło */
