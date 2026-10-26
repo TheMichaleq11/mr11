@@ -3,14 +3,15 @@
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
 
-const MASTER = 'assets/logo/ikona-1024.png';            // kwadrat, bez zaokrągleń (iOS i Android same je dodają)
+const MASTER = 'assets/logo/ikona-1024.png';            // z tłem kosmosu — iPhone wymaga tła (przezroczystość wypełnia czarnym)
+const TRANSPARENT = 'assets/logo/znak-1024.png';        // sam znak, bez tła — Android i przeglądarki
 const MASKABLE = 'assets/logo/ikona-maskable-1024.png'; // znak mniejszy, w strefie bezpiecznej dla Androida
 
 await mkdir('public/icons', { recursive: true });
 
 const out = [
-  [MASTER, 'icon-192.png', 192],
-  [MASTER, 'icon-512.png', 512],
+  [TRANSPARENT, 'icon-192.png', 192],
+  [TRANSPARENT, 'icon-512.png', 512],
   [MASKABLE, 'maskable-512.png', 512],
   [MASTER, 'apple-touch-icon.png', 180],
 ];
