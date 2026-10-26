@@ -20,14 +20,23 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F3F4F6' },
-    { media: '(prefers-color-scheme: dark)', color: '#080C18' },
+    { media: '(prefers-color-scheme: light)', color: '#DEE7F4' },
+    { media: '(prefers-color-scheme: dark)', color: '#DEE7F4' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl">
+    <html lang="pl" suppressHydrationWarning>
+      <head>
+        {/* kolor tła: ?tlo=piasek|blekit|szalwia|lawenda (zapamiętany na urządzeniu) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var q=new URLSearchParams(location.search).get('tlo'),k='andro:tlo',v=['lawenda','piasek','blekit','szalwia'];if(q&&v.indexOf(q)>-1)localStorage.setItem(k,q);var t=localStorage.getItem(k);if(t&&v.indexOf(t)>-1)document.documentElement.dataset.tlo=t}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         {children}
         <RegisterSW />

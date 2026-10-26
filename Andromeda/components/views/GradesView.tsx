@@ -4,6 +4,7 @@ import { useApi } from '@/lib/client';
 import type { GradesResponse } from '@/lib/types';
 import { CourseGradeRow, Empty, ErrorBox, Skeleton } from '../ui';
 import { LatestGrades } from './ExtraSections';
+import CountUp from '../CountUp';
 
 export default function GradesView() {
   const [term, setTerm] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export default function GradesView() {
           <div className="row2">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <span className="lab">{hasFinals ? 'Średnia z ocen końcowych' : 'Średnia z ocen cząstkowych'}</span>
-              <span className="avg num">{data.average != null ? data.average.toFixed(2).replace('.', ',') : '—'}</span>
+              <span className="avg num"><CountUp value={data.average} /></span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
               <span className="lab">Przedmioty z oceną</span>
