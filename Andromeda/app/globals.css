@@ -833,3 +833,85 @@ a.slot:hover { background: rgba(255, 255, 255, 0.72) !important; }
   from { opacity: 0; filter: blur(18px); transform: translateY(8px) scale(0.99); }
   to { opacity: 1; filter: blur(0); transform: none; }
 }
+
+/* =========================================================================
+   PASEK BOCZNY — szklany, rozwijany; podświetlenie jedzie za kursorem.
+   ========================================================================= */
+@media (min-width: 900px) {
+  .side {
+    --w: 252px;
+    width: var(--w); align-items: stretch; padding: 14px 12px 12px; gap: 14px; border-radius: 26px;
+    transition: width 0.42s cubic-bezier(0.32, 0.72, 0, 1), padding 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
+  }
+  .side.mini { --w: 76px; padding-left: 10px; padding-right: 10px; }
+
+  /* podpisy znikają płynnie przy zwijaniu */
+  .side .lbl {
+    white-space: nowrap; overflow: hidden; min-width: 0;
+    transition: opacity 0.22s var(--ease), transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), max-width 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+    max-width: 200px;
+  }
+  .side.mini .lbl { opacity: 0; transform: translateX(-6px); max-width: 0; pointer-events: none; }
+
+  .side-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 42px; position: relative; }
+  .side .brand { display: flex; align-items: center; gap: 10px; padding: 0 2px; min-width: 0; }
+  .side .brand-name { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+  .side-toggle {
+    width: 28px; height: 28px; border-radius: 9px; border: none; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.5); color: var(--muted); box-shadow: var(--glass-edge);
+    transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), background 0.2s, color 0.2s;
+  }
+  .side-toggle:hover { background: rgba(255, 255, 255, 0.85); color: var(--ink); }
+  .side.mini .side-top { flex-direction: column; gap: 10px; min-height: 0; }
+  .side.mini .side-toggle { transform: rotate(180deg); }
+
+  /* Ty */
+  .side-me {
+    display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 16px; color: var(--ink);
+    background: rgba(255, 255, 255, 0.36); box-shadow: var(--glass-edge); transition: background 0.2s;
+  }
+  .side-me:hover { color: var(--ink); background: rgba(255, 255, 255, 0.6); }
+  .side-me .avatar { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; }
+  .side-me .who { display: flex; flex-direction: column; gap: 1px; }
+  .side-me .who span:first-child { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; }
+  .side-me .who span:last-child { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .side.mini .side-me { padding: 8px; justify-content: center; background: transparent; box-shadow: none; }
+
+  /* menu */
+  .side .side-nav { position: relative; align-items: stretch; gap: 6px; width: auto; padding: 0; overflow-y: auto; overflow-x: hidden; }
+  .side .side-group { align-items: stretch; gap: 2px; width: auto; }
+  .side .side-group + .side-group { width: auto; padding-top: 8px; margin-top: 4px; border-top: 1px solid rgba(18, 23, 43, 0.07); }
+  .side .side-group + .side-group > .side-link { margin-left: 0; }
+  .side .side-title {
+    position: static; width: auto; height: auto; clip: auto; overflow: hidden;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); padding: 4px 12px 6px; opacity: 1;
+  }
+  .side.mini .side-title { height: 0; padding: 0; }
+  .side .side-link {
+    position: relative; z-index: 1; width: auto; height: 42px; min-height: 42px; padding: 0 12px; gap: 12px;
+    justify-content: flex-start; border-radius: 13px; font-size: 14px; font-weight: 500; color: var(--side-muted);
+    background: transparent; border: none; text-align: left; font-family: inherit; cursor: pointer;
+  }
+  .side .side-link svg { flex-shrink: 0; opacity: 0.9; }
+  .side .side-link:hover { background: transparent; color: var(--ink); }
+  .side .side-link[aria-current='page'] { background: #12172B; color: #fff; font-weight: 600; box-shadow: 0 8px 18px -8px rgba(18, 23, 43, 0.55); }
+  .side .side-link[aria-current='page'] svg { color: #fff; }
+  .side.mini .side-link { padding: 0; justify-content: center; gap: 0; }
+
+  /* szklana "pastylka" pod kursorem */
+  .side-hover {
+    position: absolute; left: 0; right: 0; top: 0; z-index: 0; pointer-events: none; border-radius: 13px;
+    background: rgba(255, 255, 255, 0.62); box-shadow: var(--glass-edge), 0 6px 16px -10px rgba(40, 40, 90, 0.4);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), height 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s var(--ease);
+  }
+
+  .side-bottom { margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(18, 23, 43, 0.07); display: flex; flex-direction: column; }
+  .side .side-out:hover { background: rgba(200, 60, 90, 0.1); color: var(--bad-ink); }
+
+  .side-user { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .side, .side .lbl, .side-hover, .side-toggle { transition: none !important; }
+}

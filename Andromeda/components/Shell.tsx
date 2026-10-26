@@ -26,6 +26,7 @@ import {
   Ticket,
   User,
   Wallet,
+  ChevronLeft,
   Chat,
   CheckList,
   Language,
@@ -103,15 +104,35 @@ export default function Shell({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   // Podpis ikony w pływającym dymku (rysowany poza paskiem, więc pasek może się przewijać).
   const [tip, setTip] = useState<{ label: string; top: number; left: number } | null>(null);
+  // Pasek boczny: rozwinięty (z podpisami) albo zwinięty do ikon — zapamiętane na urządzeniu.
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem('andro:side') === 'mini');
+    } catch {
+      /* brak dostępu do pamięci — zostaje rozwinięty */
+    }
+  }, []);
+  const toggleSide = () =>
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem('andro:side', c ? 'full' : 'mini');
+      } catch {
+        /* trudno */
+      }
+      return !c;
+    });
+  // Szklane podświetlenie, które płynnie jedzie za kursorem po pozycjach menu.
+  const [hover, setHover] = useState<{ top: number; height: number } | null>(null);
+  const showTip = (label: string, el: HTMLElement) => {
+    setHover({ top: el.offsetTop, height: el.offsetHeight });
+    if (!collapsed) return;
+    const r = el.getBoundingClientRect();
+    setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
+  };
   const tipProps = (label: string) => ({
-    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
-      const r = e.currentTarget.getBoundingClientRect();
-      setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
-    },
-    onFocus: (e: React.FocusEvent<HTMLElement>) => {
-      const r = e.currentTarget.getBoundingClientRect();
-      setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
-    },
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => showTip(label, e.currentTarget),
+    onFocus: (e: React.FocusEvent<HTMLElement>) => showTip(label, e.currentTarget),
     onMouseLeave: () => setTip(null),
     onBlur: () => setTip(null),
   });
@@ -141,30 +162,46 @@ export default function Shell({ children }: { children: ReactNode }) {
   return (
     <MeContext.Provider value={me}>
       <div className="shell">
-        <aside className="side" aria-label="Menu">
-          <Link href="/" className="brand" aria-label="Andromeda — strona główna">
-            <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={40} height={40} /></span>
+        <aside className={`side${collapsed ? ' mini' : ''}`} aria-label="Menu">
+          <div className="side-top">
+            <Link href="/" className="brand" aria-label="Andromeda — strona główna">
+              <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={40} height={40} /></span>
+              <span className="brand-name lbl">Andromeda</span>
+            </Link>
+            <button className="side-toggle" onClick={toggleSide} aria-label={collapsed ? 'Rozwiń menu' : 'Zwiń menu'} aria-expanded={!collapsed}>
+              <ChevronLeft size={16} />
+            </button>
+          </div>
+
+          <Link href="/profil" className="side-me" {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
+            <span className="avatar">{initials || '·'}</span>
+            <span className="who lbl">
+              <span>{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
+              <span>{me?.demo ? 'Tryb demo' : me?.programme ?? 'Student UJ'}</span>
+            </span>
           </Link>
-          <nav aria-label="Główna nawigacja" className="side-nav">
+
+          <nav aria-label="Główna nawigacja" className="side-nav" onMouseLeave={() => setHover(null)}>
+            <span className="side-hover" aria-hidden="true" style={hover ? { transform: `translateY(${hover.top}px)`, height: hover.height, opacity: 1 } : { opacity: 0 }} />
             {sections.map((s) => (
               <div key={s.title} className="side-group">
-                <span className="side-title sr-only">{s.title}</span>
+                <span className="side-title lbl">{s.title}</span>
                 {s.items.map(({ href, label, longLabel, Icon }) => (
-                  <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined} aria-label={longLabel ?? label} {...tipProps(longLabel ?? label)}>
+                  <Link key={href} href={href} className="side-link" aria-current={isActive(path, href) ? 'page' : undefined} aria-label={collapsed ? longLabel ?? label : undefined} {...tipProps(longLabel ?? label)}>
                     <Icon size={20} />
+                    <span className="lbl">{longLabel ?? label}</span>
                   </Link>
                 ))}
               </div>
             ))}
           </nav>
-          <div className="side-user">
-            <Link href="/profil" className="avatar side-link-av" aria-label={me ? `Profil: ${me.firstName} ${me.lastName}` : 'Profil'} {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
-              {initials || '·'}
-            </Link>
-            <form action="/api/auth/logout" method="post">
-              <button className="icon-btn side-link" aria-label="Wyloguj" {...tipProps('Wyloguj')}><LogOut /></button>
-            </form>
-          </div>
+
+          <form action="/api/auth/logout" method="post" className="side-bottom">
+            <button className="side-link side-out" aria-label={collapsed ? 'Wyloguj' : undefined} {...tipProps('Wyloguj')}>
+              <LogOut size={20} />
+              <span className="lbl">Wyloguj</span>
+            </button>
+          </form>
         </aside>
         {tip && (
           <span className="tip on" role="tooltip" style={{ top: tip.top, left: tip.left }}>
