@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <main className="login">
       <ClearCache />
       <GlassCard className="login-card2">
-        <img className="login-mark" src="/logo-znak.png" alt="" width={150} height={103} />
+        <img className="login-mark" src="/logo-znak.svg" alt="" width={150} height={103} />
         <h1 className="login-title">Andromeda</h1>
 
         {blad && errors[blad] && (

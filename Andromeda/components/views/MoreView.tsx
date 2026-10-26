@@ -1,13 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { sections, useMe } from '../Shell';
-import { LogOut } from '../Icons';
+import { LogOut, Moon, Sun } from '../Icons';
+import { useMotyw } from '@/lib/motyw';
 import { PageHead } from '../ui';
 
 const onTabbar = new Set(['/', '/plan', '/oceny', '/zapisy']);
 
 export default function MoreView() {
   const me = useMe();
+  const [motyw, toggleMotyw] = useMotyw();
   return (
     <>
       <PageHead eyebrow={me ? `${me.firstName} ${me.lastName}` : undefined} title="Więcej" />
@@ -29,6 +31,9 @@ export default function MoreView() {
           </section>
         );
       })}
+      <button type="button" className="btn btn-ghost motyw-btn" style={{ width: '100%', marginBottom: 10 }} onClick={toggleMotyw}>
+        {motyw === 'jasny' ? <Moon size={18} /> : <Sun size={18} />} {motyw === 'jasny' ? 'Motyw ciemny' : 'Motyw jasny'}
+      </button>
       <form action="/api/auth/logout" method="post">
         <button className="btn btn-ghost" style={{ width: '100%' }}><LogOut /> Wyloguj</button>
       </form>

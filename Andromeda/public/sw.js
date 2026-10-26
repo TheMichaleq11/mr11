@@ -1,9 +1,9 @@
 // Service worker Andromedy — aplikacja z ekranu głównego startuje od razu, także bez zasięgu.
 // • Pliki aplikacji (_next/static, ikony, czcionki) — z pamięci, bo mają unikalne nazwy.
-// • Strony — od razu z pamięci, a w tle pobieramy nowszą wersję na następny raz.
+// • Strony — najpierw z sieci (nowa wersja widoczna od razu); z pamięci tylko bez zasięgu albo gdy sieć nie odpowie w 3 s.
 // • Dane z /api NIGDY nie trafiają tutaj (prywatne dane z USOS trzyma sama aplikacja).
-const STATIC = 'andromeda-static-v9'; // v9: motyw orbita — stare pliki z pamięci są usuwane
-const PAGES = 'andromeda-pages-v9';
+const STATIC = 'andromeda-static-v11'; // v11: nowe logo, motywy, pasek — stare pliki z pamięci są usuwane
+const PAGES = 'andromeda-pages-v11';
 const SHELL = ['/', '/plan', '/oceny', '/zapisy', '/wiecej', '/przedmioty'];
 
 self.addEventListener('install', (event) => {
@@ -54,13 +54,16 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.open(PAGES).then(async (c) => {
         const key = url.pathname; // bez parametrów — strony i tak czytają je po stronie klienta
-        const hit = await c.match(key);
         const network = fetch(req)
           .then((res) => {
             if (res.ok && !res.redirected) c.put(key, res.clone());
             return res;
           })
           .catch(() => null);
+        const slow = new Promise((r) => setTimeout(() => r(null), 3000));
+        const fresh = await Promise.race([network, slow]);
+        if (fresh) return fresh;
+        const hit = await c.match(key);
         if (hit) {
           event.waitUntil(network);
           return hit;

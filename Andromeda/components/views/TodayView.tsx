@@ -44,7 +44,7 @@ export default function TodayView() {
       <header className="page-head">
         <div className="titles">
           <div className="mini-brand mobile-only">
-            <img src="/logo-znak.png" alt="" width={30} height={21} className="mini-brand-mark" />
+            <img src="/logo-znak.svg" alt="" width={30} height={21} className="mini-brand-mark" />
             <span>Andromeda</span>
           </div>
           <p className="eyebrow">{longDate(todayIso)}</p>

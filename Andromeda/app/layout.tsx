@@ -1,7 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource-variable/inter';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
 import RegisterSW from '@/components/RegisterSW';
 import SpaceBackdrop from '@/components/SpaceBackdrop';
+import { motywScript } from '@/lib/motyw';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -10,8 +15,11 @@ export const metadata: Metadata = {
   applicationName: 'Andromeda',
   appleWebApp: { capable: true, title: 'Andromeda', statusBarStyle: 'black-translucent' },
   icons: {
-    icon: [{ url: '/icons/favicon-32.png?v=3', sizes: '32x32', type: 'image/png' }],
-    apple: [{ url: '/icons/apple-touch-icon.png?v=3', sizes: '180x180' }],
+    icon: [
+      { url: '/icons/favicon.svg?v=4', type: 'image/svg+xml' },
+      { url: '/icons/favicon-32.png?v=4', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png?v=4', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
 };
@@ -29,6 +37,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: motywScript }} />
+      </head>
       <body>
         <SpaceBackdrop />
         {children}
