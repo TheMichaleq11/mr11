@@ -1,9 +1,9 @@
 // Zmień numer wersji przy każdej zmianie strony, żeby telefon pobrał nową wersję.
-const CACHE = "obiady-uj-v17";
+const CACHE = "obiady-uj-v18";
 const FILES = [
   "/", "/app.js", "/logo.svg", "/manifest.webmanifest",
   "/fonts/marcellus-latin.woff2", "/fonts/marcellus-latin-ext.woff2",
-  "/icons/touch-180.png", "/icons/app-192.png", "/icons/app-512.png", "/icons/favicon-32.png"
+  "/icons/touch-180-v2.png", "/icons/app-192.png", "/icons/app-512.png", "/icons/favicon-32.png"
 ];
 
 self.addEventListener("install", (e) => {

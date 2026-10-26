@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/apple-touch-icon.png", "destination": "/icons/touch-180.png" },
-    { "source": "/apple-touch-icon-precomposed.png", "destination": "/icons/touch-180.png" }
+    { "source": "/apple-touch-icon.png", "destination": "/icons/touch-180-v2.png" },
+    { "source": "/apple-touch-icon-precomposed.png", "destination": "/icons/touch-180-v2.png" }
   ],
   "headers": [
     {
