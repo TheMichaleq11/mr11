@@ -10,3 +10,4 @@ next-env.d.ts
 # ikony generowane przy buildzie (npm run icons)
 /public/icons/
 /app/icon.png
+/public/apple-touch-icon*.png

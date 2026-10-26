@@ -15,13 +15,12 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: 'Andromeda', statusBarStyle: 'black-translucent' },
   icons: {
     icon: [
-      { url: '/icons/favicon.svg?v=5', type: 'image/svg+xml' },
-      { url: '/icons/favicon-32.png?v=5', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/favicon.svg?v=6', type: 'image/svg+xml' },
+      { url: '/icons/favicon-32.png?v=6', sizes: '32x32', type: 'image/png' },
       // większe ikonki bez tła — Chrome i Safari na iPadzie/iPhonie biorą największą, więc w karcie nie będzie tła
-      { url: '/icons/icon-192.png?v=5', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512.png?v=5', sizes: '512x512', type: 'image/png' },
+      { url: '/icons/icon-192.png?v=6', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png?v=6', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: '/icons/apple-touch-icon.png?v=5', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
 };
@@ -41,6 +40,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pl" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: motywScript }} />
+        {/* ikona ekranu głównego wpisana na sztywno w <head>, żeby iOS zawsze ją znalazł; zmień v= przy nowej ikonie */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=6" />
       </head>
       <body>
         {children}

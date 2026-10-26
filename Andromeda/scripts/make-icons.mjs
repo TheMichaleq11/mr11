@@ -18,6 +18,9 @@ const out = [
 for (const [src, name, size] of out) {
   await sharp(src).resize(size, size, { kernel: 'lanczos3' }).png().toFile(`public/icons/${name}`);
 }
+// zapasowo w głównym katalogu — iOS sam sprawdza /apple-touch-icon.png
+await copyFile('public/icons/apple-touch-icon.png', 'public/apple-touch-icon.png');
+await copyFile('public/icons/apple-touch-icon.png', 'public/apple-touch-icon-precomposed.png');
 await sharp('assets/logo/favicon-64.png').png().toFile('app/icon.png');
 await sharp('assets/logo/favicon-64.png').resize(32, 32).png().toFile('public/icons/favicon-32.png');
 await copyFile('assets/logo/favicon.svg', 'public/icons/favicon.svg'); // wektorowa ikonka karty
