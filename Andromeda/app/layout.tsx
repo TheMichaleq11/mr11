@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import '@fontsource-variable/inter';
 import RegisterSW from '@/components/RegisterSW';
 import SpaceBackdrop from '@/components/SpaceBackdrop';
+import { motywScript } from '@/lib/motyw';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -32,6 +33,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: motywScript }} />
+      </head>
       <body>
         <SpaceBackdrop />
         {children}

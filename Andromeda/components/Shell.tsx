@@ -31,7 +31,10 @@ import {
   CheckList,
   Language,
   Compass,
+  Sun,
+  Moon,
 } from './Icons';
+import { useMotyw } from '@/lib/motyw';
 
 const MeContext = createContext<Me | null>(null);
 export const useMe = () => useContext(MeContext);
@@ -97,6 +100,8 @@ export default function Shell({ children }: { children: ReactNode }) {
   const { data: me } = useApi<Me>('/api/me');
   const { data: grades } = useApi<GradesResponse>('/api/grades');
   const [palette, setPalette] = useState(0);
+  const [motyw, toggleMotyw] = useMotyw();
+  const motywLabel = motyw === 'jasny' ? 'Motyw ciemny' : 'Motyw jasny';
   useEffect(() => {
     if (grades && registerCourses(grades.courses.map((c) => c.courseId))) setPalette((v) => v + 1);
   }, [grades]);
@@ -198,6 +203,10 @@ export default function Shell({ children }: { children: ReactNode }) {
           </nav>
 
           <form action="/api/auth/logout" method="post" className="side-bottom">
+            <button type="button" className="side-link side-motyw" onClick={toggleMotyw} aria-label={collapsed ? motywLabel : undefined} {...tipProps(motywLabel)}>
+              {motyw === 'jasny' ? <Moon size={20} /> : <Sun size={20} />}
+              <span className="lbl">{motywLabel}</span>
+            </button>
             <button className="side-link side-out" aria-label={collapsed ? 'Wyloguj' : undefined} {...tipProps('Wyloguj')}>
               <LogOut size={20} />
               <span className="lbl">Wyloguj</span>
