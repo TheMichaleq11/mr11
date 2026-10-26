@@ -1167,3 +1167,116 @@ html:has(.shell), body:has(.shell) { background: #080C1C; }
   html:not([data-motyw='jasny']):has(.shell), html:not([data-motyw='jasny']) body:has(.shell) { background: #1C2248; }
 }
 .band::after, .hero::after { display: none; } /* bez gwiazdek — jednolite tło */
+
+/* logo w pasku: znak „A” jest pierwszą literą, po rozwinięciu wysuwa się „ndromeda” */
+@media (min-width: 900px) {
+  .side .brand { gap: 0; }
+  .side .brand-mark, .side.mini .brand-mark { width: 34px; height: 30px; display: flex; align-items: center; transition: width 0.42s cubic-bezier(0.32, 0.72, 0, 1); }
+  .side.mini .brand-mark { width: 44px; }
+  .side .brand-mark img { width: 100%; height: auto; filter: none; }
+  .side .brand-name.lbl {
+    display: flex; margin-left: -3px; font-size: 25px; font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+    opacity: 1; transform: none; max-width: 200px;
+  }
+  .side.mini .brand-name.lbl { max-width: 0; }
+  .side .brand-name b {
+    font-weight: 700; display: inline-block;
+    background: linear-gradient(180deg, #F2F6FF, #A9C8FF); -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 1; transform: none; transition: opacity 0.35s, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .side.mini .brand-name b { opacity: 0; transform: translateX(-10px); transition: opacity 0.15s, transform 0.15s; }
+}
+@media (prefers-reduced-motion: reduce) { .side .brand-name b { transition: none !important; } }
+
+/* =========================================================================
+   PASEK BOCZNY — wierna kopia wzoru „Glassy Sidebar”: kropki okna, nazwa w niebieskim
+   gradiencie, Ty jako litera + imię i rola, etykiety sekcji, cienkie linie, szklane zaznaczenie.
+   ========================================================================= */
+@media (min-width: 900px) {
+  .side {
+    --w: 264px;
+    font-family: 'Poppins', var(--font-display), sans-serif;
+    background: rgba(255, 255, 255, 0.035) !important;
+    border-radius: 26px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 30px 60px -30px rgba(0, 0, 0, 0.8) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3);
+    padding: 16px 14px 14px; gap: 0;
+  }
+  .side.mini { --w: 78px; padding-left: 12px; padding-right: 12px; }
+
+  /* kropki jak w oknie */
+  .side-dots { display: flex; gap: 6px; padding: 2px 6px 0; height: 12px; }
+  .side-dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .side-dots i:nth-child(1) { background: #FF5F57; }
+  .side-dots i:nth-child(2) { background: #FEBC2E; }
+  .side-dots i:nth-child(3) { background: #28C840; }
+  .side.mini .side-dots { justify-content: center; padding: 2px 0 0; gap: 5px; }
+  .side.mini .side-dots i { width: 9px; height: 9px; }
+
+  /* nazwa: znak „A” + NDROMEDA w niebieskim gradiencie, rozstrzelone */
+  .side .side-top { height: 58px; min-height: 58px; margin-top: 6px; padding: 0 6px; justify-content: flex-start; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-left: -14px; margin-right: -14px; padding-left: 20px; }
+  .side.mini .side-top { justify-content: center; padding-left: 0; margin-left: -12px; margin-right: -12px; }
+  .side .brand-mark, .side.mini .brand-mark { width: 27px; height: 28px; }
+  .side.mini .brand-mark { width: 42px; }
+  .side .brand-name.lbl { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 0.13em; margin-left: 1px; }
+  .side .brand-name b { background: linear-gradient(180deg, #6C95FF 0%, #3D67F2 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* przycisk zwijania: okrągły, szklany, na krawędzi */
+  .side .side-toggle {
+    position: absolute; top: 21px; right: -15px; left: auto; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(40, 46, 80, 0.85); color: #fff; opacity: 1;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 6px 16px -6px rgba(0, 0, 0, 0.7);
+  }
+  .side .side-toggle:hover { background: rgba(60, 68, 110, 0.95); color: #fff; }
+
+  /* Ty: litera + imię i rola + strzałka, między liniami */
+  .side .side-me {
+    order: 0; margin: 0 -14px; padding: 12px 18px 12px 22px; border-radius: 0; height: 68px;
+    background: transparent !important; box-shadow: none !important; gap: 16px; align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
+  }
+  .side.mini .side-me { margin: 0 -12px; padding: 12px 0; justify-content: center; }
+  .side .side-me:hover { background: rgba(255, 255, 255, 0.04) !important; }
+  .side .side-me .avatar { display: none; }
+  .side .me-letter { font-family: 'Poppins', sans-serif; font-size: 27px; font-weight: 700; font-style: italic; line-height: 1; width: 22px; text-align: center; flex-shrink: 0; color: #fff; }
+  .side .side-me .who { flex: 1; min-width: 0; }
+  .side .side-me .who span:first-child { font-size: 15.5px; font-weight: 500; letter-spacing: 0; color: #fff; white-space: nowrap; }
+  .side .side-me .who span:last-child { font-size: 12px; color: rgba(255, 255, 255, 0.5); white-space: nowrap; }
+  .side .me-chev { color: rgba(255, 255, 255, 0.55); display: flex; }
+  .side .me-chev svg { transform: rotate(-90deg); }
+
+  /* sekcje i pozycje */
+  .side .side-nav { gap: 0; padding-top: 10px; }
+  .side .side-title, .side.mini .side-title {
+    font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45); padding: 8px 10px 8px; height: auto;
+  }
+  .side.mini .side-title { opacity: 0; }
+  .side .side-group + .side-group, .side.mini .side-group + .side-group { margin-top: 10px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+  .side .side-link {
+    height: 40px; min-height: 40px; padding: 0 10px 0 12px; gap: 18px; border-radius: 11px;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 400; color: rgba(255, 255, 255, 0.86);
+    border: 1px solid transparent;
+  }
+  .side.mini .side-link { justify-content: center; padding: 0; gap: 0; }
+  .side .side-link svg { color: #fff; opacity: 0.92; }
+  .side .side-link:hover { color: #fff; }
+  .side .side-link[aria-current='page'], .side .side-link[aria-current='page']:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.06)) !important; color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 18px -10px rgba(0, 0, 0, 0.7) !important;
+  }
+  .side .side-link[aria-current='page'] svg { color: #fff !important; }
+  .side-hover { background: rgba(255, 255, 255, 0.05) !important; box-shadow: none !important; border-radius: 11px; }
+
+  /* dół: linia i Wyloguj */
+  .side .side-bottom, .side.mini .side-bottom { margin: auto -14px 0; padding: 10px 14px 0; border-top: 1px solid rgba(255, 255, 255, 0.1); gap: 0; }
+  .side.mini .side-bottom { margin: auto -12px 0; padding: 10px 12px 0; }
+  .side .side-out:hover { background: rgba(255, 255, 255, 0.05) !important; color: #fff; }
+
+  /* liczniki (jak „2” przy Notifications) */
+  .side .side-link .badge, .side .side-link .count { background: #fff; color: #0B1024; border-radius: 999px; min-width: 20px; height: 20px; font-size: 11.5px; font-weight: 600; display: inline-grid; place-items: center; margin-left: auto; }
+}
+@media (min-width: 900px) {
+  .side .brand-name.lbl { font-size: 21px; letter-spacing: 0.15em; margin-left: 2px; padding-top: 3px; }
+}

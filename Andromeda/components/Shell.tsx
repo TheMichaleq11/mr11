@@ -169,10 +169,15 @@ export default function Shell({ children }: { children: ReactNode }) {
     <MeContext.Provider value={me}>
       <div className="shell">
         <aside className={`side${collapsed ? ' mini' : ''}`} aria-label="Menu">
+          <span className="side-dots" aria-hidden="true"><i /><i /><i /></span>
           <div className="side-top">
             <Link href="/" className="brand" aria-label="Andromeda — strona główna">
               <span className="brand-mark"><img src="/logo-znak.svg" alt="" width={44} height={30} /></span>
-              <span className="brand-name lbl">Andromeda</span>
+              <span className="brand-name lbl" aria-hidden="true">
+                {'NDROMEDA'.split('').map((c, i) => (
+                  <b key={i} style={{ transitionDelay: collapsed ? '0s' : `${0.22 + i * 0.035}s` }}>{c}</b>
+                ))}
+              </span>
             </Link>
             <button className="side-toggle" onClick={toggleSide} aria-label={collapsed ? 'Rozwiń menu' : 'Zwiń menu'} aria-expanded={!collapsed}>
               <ChevronLeft size={16} />
@@ -181,10 +186,12 @@ export default function Shell({ children }: { children: ReactNode }) {
 
           <Link href="/profil" className="side-me" {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
             <span className="avatar">{initials || '·'}</span>
+            <span className="me-letter" aria-hidden="true">{me?.firstName?.[0] ?? '·'}</span>
             <span className="who lbl">
               <span>{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
               <span>{me?.demo ? 'Tryb demo' : me?.programme ?? 'Student UJ'}</span>
             </span>
+            <span className="me-chev lbl" aria-hidden="true"><ChevronLeft size={14} /></span>
           </Link>
 
           <nav aria-label="Główna nawigacja" className="side-nav" onMouseLeave={() => setHover(null)}>
