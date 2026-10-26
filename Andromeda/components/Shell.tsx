@@ -36,6 +36,24 @@ import {
 } from './Icons';
 import { useMotyw } from '@/lib/motyw';
 
+/** „Ekonomia, stacjonarne pierwszego stopnia” → kierunek „Ekonomia” + „stacjonarne · I stopień”. */
+function splitProgramme(p: string): { field: string; detail: string } {
+  const [field, ...rest] = p.split(',');
+  const r = rest.join(',').toLowerCase();
+  const mode = /niestacjonarn/.test(r) ? 'niestacjonarne' : /stacjonarn/.test(r) ? 'stacjonarne' : null;
+  const level = /jednolit/.test(r)
+    ? 'jednolite magisterskie'
+    : /drugiego|\bii\b|ii stop/.test(r)
+      ? 'II stopień'
+      : /trzeciego|doktor/.test(r)
+        ? 'doktoranckie'
+        : /pierwszego|\bi\b|i stop/.test(r)
+          ? 'I stopień'
+          : null;
+  const detail = [mode, level].filter(Boolean).join(' · ') || rest.join(',').trim();
+  return { field: field.trim(), detail };
+}
+
 const MeContext = createContext<Me | null>(null);
 export const useMe = () => useContext(MeContext);
 
@@ -188,6 +206,7 @@ export default function Shell({ children }: { children: ReactNode }) {
     return () => clearTimeout(id);
   }, []);
 
+  const prog = me?.programme ? splitProgramme(me.programme) : { field: me?.demo ? 'Tryb demo' : 'Student UJ', detail: '' };
   const initials = me ? `${me.firstName[0] ?? ''}${me.lastName[0] ?? ''}` : '';
   // "Więcej" świeci się dla sekcji, które nie mają własnej zakładki na telefonie.
   const moreActive = path === '/wiecej' || ![...tabHrefs].some((h) => isActive(path, h));
@@ -214,10 +233,10 @@ export default function Shell({ children }: { children: ReactNode }) {
             <span className="avatar">{initials || '·'}</span>
             <span className="me-letter" aria-hidden="true">{me?.firstName?.[0] ?? '·'}</span>
             <span className="who lbl">
-              <span>{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
-              <span>{me?.demo ? 'Tryb demo' : me?.programme ?? 'Student UJ'}</span>
+              <span className="who-name">{me ? `${me.firstName} ${me.lastName}` : '…'}</span>
+              <span className="who-kier">{prog.field}</span>
+              {prog.detail && <span className="who-tryb">{prog.detail}</span>}
             </span>
-            <span className="me-chev lbl" aria-hidden="true"><ChevronLeft size={14} /></span>
           </Link>
 
           <nav ref={navRef} aria-label="Główna nawigacja" className={`side-nav${active ? ' has-pill' : ''}`} onMouseLeave={() => setHover(null)}>
