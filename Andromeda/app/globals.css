@@ -1366,3 +1366,32 @@ html[data-motyw='jasny'] .main .slot .s1 { color: color-mix(in srgb, var(--c) 70
   .side.mini .side-me { width: 48px; height: 48px; margin: 26px auto 16px; padding: 0; border-radius: 14px; }
   .side.mini .me-letter { font-size: 17px; font-weight: 600; }
 }
+
+/* zwinięty pasek: „M” na środku między linią a menu (równe odstępy), ciaśniejsze odstępy w obu stanach */
+@media (min-width: 900px) {
+  .side .side-me { height: 72px; margin: 10px 0 2px; padding: 9px 16px; }
+  .side .side-title, .side.mini .side-title { padding: 4px 10px 6px; }
+  .side .side-nav { padding-top: 4px; }
+  /* miejsce na kartę + podpis sekcji = 10+72+2+4+~23 = ~111 px; w zwiniętym M (44 px) stoi pośrodku */
+  .side.mini .side-me { width: 44px; height: 44px; margin: 24px auto 0; border-radius: 13px; }
+  .side.mini .side-nav { margin-top: 20px; }
+  .side.mini .side-title { height: 0; padding: 0; margin: 0; }
+}
+@media (min-width: 900px) {
+  .side .side-me { margin-top: 8px; }
+  .side .side-title, .side.mini .side-title { padding: 2px 10px 4px; }
+  .side.mini .side-title { height: 0; padding: 0; }
+}
+@media (min-width: 900px) {
+  .side.mini .side-me { margin-top: 33px; }
+  .side.mini .side-nav { margin-top: 27px; }
+}
+@media (min-width: 900px) {
+  /* w zwiniętym pasku chowamy tylko pierwszy podpis (STUDIA); kolejne trzymają miejsce, żeby nic nie skakało */
+  .side.mini .side-group + .side-group .side-title { height: auto; padding: 2px 10px 4px; max-width: none; opacity: 0; }
+}
+@media (min-width: 900px) {
+  .side .side-title, .side.mini .side-group + .side-group .side-title { height: 22px; line-height: 16px; padding: 2px 10px 4px; box-sizing: border-box; }
+  .side.mini .side-group:first-child .side-title { height: 0; padding: 0; }
+}
+@media (min-width: 900px) { .side.mini .side-nav { gap: 0; } }

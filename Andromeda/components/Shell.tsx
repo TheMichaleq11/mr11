@@ -150,7 +150,7 @@ export default function Shell({ children }: { children: ReactNode }) {
   const [hover, setHover] = useState<{ top: number; height: number } | null>(null);
   // Szklane zaznaczenie aktywnej zakładki — przejeżdża płynnie do nowo wybranej pozycji.
   const navRef = useRef<HTMLElement>(null);
-  const [active, setActive] = useState<{ top: number; height: number; anim: boolean } | null>(null);
+  const [active, setActive] = useState<{ top: number; height: number; anim: boolean; path: string } | null>(null);
   useLayoutEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
@@ -162,8 +162,8 @@ export default function Shell({ children }: { children: ReactNode }) {
     const r = el.getBoundingClientRect();
     const n = nav.getBoundingClientRect();
     const top = r.top - n.top + nav.scrollTop;
-    setActive((prev) => ({ top, height: r.height, anim: prev !== null }));
-  }, [path]);
+    setActive((prev) => ({ top, height: r.height, anim: prev !== null && prev.path !== path, path }));
+  }, [path, collapsed]);
   const showTip = (label: string, el: HTMLElement) => {
     // Pastylka jeździ tylko po pozycjach menu (nie po profilu czy wylogowaniu) i tylko pod myszką —
     // na dotyku zostawałaby w przypadkowym miejscu.
