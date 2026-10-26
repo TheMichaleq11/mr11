@@ -5,7 +5,6 @@ import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import RegisterSW from '@/components/RegisterSW';
-import SpaceBackdrop from '@/components/SpaceBackdrop';
 import { motywScript } from '@/lib/motyw';
 import './globals.css';
 
@@ -41,7 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: motywScript }} />
       </head>
       <body>
-        <SpaceBackdrop />
         {children}
         <RegisterSW />
       </body>

@@ -1297,3 +1297,23 @@ html:has(.shell), body:has(.shell) { background: #080C1C; }
 @media (min-width: 900px) {
   .side .side-me[aria-current='page'] { background: rgba(255, 255, 255, 0.07) !important; }
 }
+
+/* jednolite ciemne tło wszędzie (także logowanie) — bez obrazu kosmosu */
+html, body { background: #080C1C; }
+html[data-motyw='jasny'] body:has(.login) { background: #080C1C; }
+
+/* pasek: szklane zaznaczenie aktywnej zakładki przejeżdża płynnie do nowej pozycji */
+@media (min-width: 900px) {
+  .side-active {
+    position: absolute; left: 0; right: 0; top: 0; z-index: 0; pointer-events: none; border-radius: 11px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.06));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 18px -10px rgba(0, 0, 0, 0.7);
+    transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), height 0.3s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s ease;
+  }
+  .side .side-nav.has-pill .side-link[aria-current='page'], .side .side-nav.has-pill .side-link[aria-current='page']:hover {
+    background: transparent !important; border-color: transparent; box-shadow: none !important;
+  }
+  .side .side-link { transition: color 0.3s ease; }
+}
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) { .side-active { transition: none; } }

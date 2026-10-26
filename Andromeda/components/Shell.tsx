@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { prefetch, useApi } from '@/lib/client';
 import { activeMonday, today } from '@/lib/dates';
 import { registerCourses } from '@/lib/colors';
@@ -130,6 +130,22 @@ export default function Shell({ children }: { children: ReactNode }) {
     });
   // Szklane podświetlenie, które płynnie jedzie za kursorem po pozycjach menu.
   const [hover, setHover] = useState<{ top: number; height: number } | null>(null);
+  // Szklane zaznaczenie aktywnej zakładki — przejeżdża płynnie do nowo wybranej pozycji.
+  const navRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState<{ top: number; height: number; anim: boolean } | null>(null);
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const el = nav.querySelector<HTMLElement>('.side-link[aria-current="page"]');
+    if (!el) {
+      setActive(null);
+      return;
+    }
+    const r = el.getBoundingClientRect();
+    const n = nav.getBoundingClientRect();
+    const top = r.top - n.top + nav.scrollTop;
+    setActive((prev) => ({ top, height: r.height, anim: prev !== null }));
+  }, [path]);
   const showTip = (label: string, el: HTMLElement) => {
     // Pastylka jeździ tylko po pozycjach menu (nie po profilu czy wylogowaniu) i tylko pod myszką —
     // na dotyku zostawałaby w przypadkowym miejscu.
@@ -204,7 +220,12 @@ export default function Shell({ children }: { children: ReactNode }) {
             <span className="me-chev lbl" aria-hidden="true"><ChevronLeft size={14} /></span>
           </Link>
 
-          <nav aria-label="Główna nawigacja" className="side-nav" onMouseLeave={() => setHover(null)}>
+          <nav ref={navRef} aria-label="Główna nawigacja" className={`side-nav${active ? ' has-pill' : ''}`} onMouseLeave={() => setHover(null)}>
+            <span
+              className="side-active"
+              aria-hidden="true"
+              style={active ? { transform: `translateY(${active.top}px)`, height: active.height, opacity: 1, transition: active.anim ? undefined : 'none' } : { opacity: 0 }}
+            />
             <span className="side-hover" aria-hidden="true" style={hover ? { transform: `translateY(${hover.top}px)`, height: hover.height, opacity: 1 } : { opacity: 0 }} />
             {sections.map((s) => (
               <div key={s.title} className="side-group">
