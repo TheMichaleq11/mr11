@@ -915,3 +915,22 @@ a.slot:hover { background: rgba(255, 255, 255, 0.72) !important; }
 @media (prefers-reduced-motion: reduce) {
   .side, .side .lbl, .side-hover, .side-toggle { transition: none !important; }
 }
+
+/* strzałka zwijania: mała, okrągła, na krawędzi paska — nie przesuwa ikon */
+@media (min-width: 900px) {
+  .side { overflow: visible; }
+  .side .side-nav { overflow-x: hidden; }
+  .side-top { position: static; }
+  .side.mini .side-top { flex-direction: row; justify-content: center; gap: 0; min-height: 42px; }
+  .side-toggle {
+    position: absolute; top: 25px; right: -11px; z-index: 5;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92); color: var(--ink);
+    box-shadow: 0 0 0 1px rgba(18, 23, 43, 0.08), 0 4px 12px -4px rgba(40, 40, 90, 0.45);
+    opacity: 0.9;
+  }
+  .side-toggle svg { width: 13px; height: 13px; }
+  .side-toggle:hover { background: #fff; opacity: 1; transform: scale(1.08); }
+  .side.mini .side-toggle { transform: rotate(180deg); }
+  .side.mini .side-toggle:hover { transform: rotate(180deg) scale(1.08); }
+}

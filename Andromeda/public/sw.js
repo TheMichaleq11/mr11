@@ -2,8 +2,8 @@
 // • Pliki aplikacji (_next/static, ikony, czcionki) — z pamięci, bo mają unikalne nazwy.
 // • Strony — od razu z pamięci, a w tle pobieramy nowszą wersję na następny raz.
 // • Dane z /api NIGDY nie trafiają tutaj (prywatne dane z USOS trzyma sama aplikacja).
-const STATIC = 'andromeda-static-v6'; // v6: nowy pasek boczny — stare pliki z pamięci są usuwane
-const PAGES = 'andromeda-pages-v6';
+const STATIC = 'andromeda-static-v7'; // v7: strzałka paska na krawędzi — stare pliki z pamięci są usuwane
+const PAGES = 'andromeda-pages-v7';
 const SHELL = ['/', '/plan', '/oceny', '/zapisy', '/wiecej', '/przedmioty'];
 
 self.addEventListener('install', (event) => {
