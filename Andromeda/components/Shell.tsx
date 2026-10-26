@@ -131,7 +131,15 @@ export default function Shell({ children }: { children: ReactNode }) {
   // Szklane podświetlenie, które płynnie jedzie za kursorem po pozycjach menu.
   const [hover, setHover] = useState<{ top: number; height: number } | null>(null);
   const showTip = (label: string, el: HTMLElement) => {
-    setHover({ top: el.offsetTop, height: el.offsetHeight });
+    // Pastylka jeździ tylko po pozycjach menu (nie po profilu czy wylogowaniu) i tylko pod myszką —
+    // na dotyku zostawałaby w przypadkowym miejscu.
+    const nav = el.closest('.side-nav') as HTMLElement | null;
+    const mouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (nav && mouse) {
+      const r = el.getBoundingClientRect();
+      const n = nav.getBoundingClientRect();
+      setHover({ top: r.top - n.top + nav.scrollTop, height: r.height });
+    } else setHover(null);
     if (!collapsed) return;
     const r = el.getBoundingClientRect();
     setTip({ label, top: r.top + r.height / 2, left: r.right + 14 });
@@ -142,7 +150,10 @@ export default function Shell({ children }: { children: ReactNode }) {
     onMouseLeave: () => setTip(null),
     onBlur: () => setTip(null),
   });
-  useEffect(() => setTip(null), [path]);
+  useEffect(() => {
+    setTip(null);
+    setHover(null);
+  }, [path]);
   useEffect(() => setMounted(true), []);
 
   // Gdy telefon nic nie robi — dociągamy dane głównych zakładek, żeby otwierały się od razu.
@@ -183,7 +194,7 @@ export default function Shell({ children }: { children: ReactNode }) {
             </button>
           </div>
 
-          <Link href="/profil" className="side-me" {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
+          <Link href="/profil" className="side-me" aria-current={isActive(path, '/profil') ? 'page' : undefined} {...tipProps(me ? `${me.firstName} ${me.lastName}` : 'Profil')}>
             <span className="avatar">{initials || '·'}</span>
             <span className="me-letter" aria-hidden="true">{me?.firstName?.[0] ?? '·'}</span>
             <span className="who lbl">

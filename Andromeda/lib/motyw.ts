@@ -24,17 +24,30 @@ export function useMotyw(): [Motyw, () => void] {
   const toggle = () => {
     const next: Motyw = motyw === 'jasny' ? 'ciemny' : 'jasny';
     const root = document.documentElement;
-    root.classList.add('motyw-zmiana');
-    if (next === 'jasny') root.dataset.motyw = 'jasny';
-    else delete root.dataset.motyw;
-    window.setTimeout(() => root.classList.remove('motyw-zmiana'), 450);
+    const apply = () => {
+      if (next === 'jasny') root.dataset.motyw = 'jasny';
+      else delete root.dataset.motyw;
+      setBarColor(next);
+    };
     try {
       localStorage.setItem(KEY, next);
     } catch {
       /* brak pamięci — działa do odświeżenia */
     }
-    setBarColor(next);
     setMotyw(next);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Płynne przenikanie całej strony naraz: tła, napisy i kolory zmieniają się w tym samym momencie.
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (doc.startViewTransition && !reduce) {
+      root.classList.add('motyw-vt');
+      const vt = doc.startViewTransition(apply) as { finished?: Promise<void> };
+      vt.finished?.finally(() => root.classList.remove('motyw-vt'));
+      return;
+    }
+    // Starsze przeglądarki: wszystkie kolory przechodzą razem w tym samym czasie.
+    root.classList.add('motyw-zmiana');
+    apply();
+    window.setTimeout(() => root.classList.remove('motyw-zmiana'), 600);
   };
   return [motyw, toggle];
 }

@@ -1286,3 +1286,14 @@ html:has(.shell), body:has(.shell) { background: #080C1C; }
   .side .me-letter { font-family: 'Inter Variable', Inter, system-ui, sans-serif; font-style: normal; font-weight: 600; font-size: 26px; letter-spacing: -0.02em; }
 }
 @media (min-width: 900px) { .side.mini .side-me { gap: 0; } .side.mini .me-letter { width: auto; } }
+
+/* płynna zmiana motywu — cała strona przenika naraz */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.55s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+.motyw-zmiana, .motyw-zmiana *, .motyw-zmiana *::before, .motyw-zmiana *::after {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, fill 0.5s ease, stroke 0.5s ease !important;
+  transition-delay: 0s !important;
+}
+/* profil zaznaczony w pasku, gdy jesteś w swojej zakładce */
+@media (min-width: 900px) {
+  .side .side-me[aria-current='page'] { background: rgba(255, 255, 255, 0.07) !important; }
+}
