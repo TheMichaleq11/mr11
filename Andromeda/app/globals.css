@@ -1350,3 +1350,19 @@ html[data-motyw='jasny'] .main .slot .s1 { color: color-mix(in srgb, var(--c) 70
 }
 /* zdjęcia osób: portret 4:5 w pełnej rozdzielczości */
 .photo { width: 84px; height: 105px; border-radius: 16px; object-fit: cover; object-position: 50% 20%; image-rendering: auto; }
+
+/* logowanie: spokojnie — biała nazwa w jednym kolorze, płaski przycisk bez poświaty */
+.login .gcard { background: linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)); filter: none; }
+.login .gcard-body { padding: 42px 34px 34px; }
+.login-mark { width: 110px; filter: none; margin-bottom: 10px; }
+.login-title { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #fff; font-size: 34px; font-weight: 700; letter-spacing: -0.03em; }
+.login .actions { margin-top: 28px; }
+.btn-login { height: 48px; border-radius: 12px; color: #fff; background: #2F6BFF; font-size: 15px; font-weight: 600; box-shadow: none; transition: background 0.2s; }
+.btn-login:hover { color: #fff; background: #4079FF; }
+
+/* zwinięty pasek: mniejsza karta z „M”; zajmuje to samo miejsce, więc nic poniżej nie skacze */
+@media (min-width: 900px) {
+  .side .side-me { height: 76px; padding: 10px 16px; }
+  .side.mini .side-me { width: 48px; height: 48px; margin: 26px auto 16px; padding: 0; border-radius: 14px; }
+  .side.mini .me-letter { font-size: 17px; font-weight: 600; }
+}
