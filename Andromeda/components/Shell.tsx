@@ -105,10 +105,11 @@ export default function Shell({ children }: { children: ReactNode }) {
   // Podpis ikony w pływającym dymku (rysowany poza paskiem, więc pasek może się przewijać).
   const [tip, setTip] = useState<{ label: string; top: number; left: number } | null>(null);
   // Pasek boczny: rozwinięty (z podpisami) albo zwinięty do ikon — zapamiętane na urządzeniu.
-  const [collapsed, setCollapsed] = useState(false);
+  // Domyślnie wąski pasek z ikonami; rozwinięcie zapamiętujemy na urządzeniu.
+  const [collapsed, setCollapsed] = useState(true);
   useEffect(() => {
     try {
-      setCollapsed(localStorage.getItem('andro:side') === 'mini');
+      setCollapsed(localStorage.getItem('andro:side') !== 'full');
     } catch {
       /* brak dostępu do pamięci — zostaje rozwinięty */
     }

@@ -934,3 +934,14 @@ a.slot:hover { background: rgba(255, 255, 255, 0.72) !important; }
   .side.mini .side-toggle { transform: rotate(180deg); }
   .side.mini .side-toggle:hover { transform: rotate(180deg) scale(1.08); }
 }
+
+/* wąski pasek: inicjały na dole, nad wylogowaniem (jak w pierwszej wersji) */
+@media (min-width: 900px) {
+  .side.mini .side-top { order: 0; }
+  .side.mini .side-nav { order: 1; }
+  .side.mini .side-me { order: 2; margin-top: auto; padding: 0; }
+  .side.mini .side-me .avatar { width: 44px; height: 44px; border-radius: 14px; }
+  .side.mini .side-bottom { order: 3; margin-top: 0; border-top: none; padding-top: 0; }
+  .side.mini .side-group + .side-group { border-top: none; padding-top: 6px; margin-top: 0; }
+  .side.mini .side-nav { gap: 2px; }
+}
