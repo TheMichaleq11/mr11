@@ -1317,3 +1317,11 @@ html[data-motyw='jasny'] body:has(.login) { background: #080C1C; }
   .side .side-link { transition: color 0.3s ease; }
 }
 @media (min-width: 900px) and (prefers-reduced-motion: reduce) { .side-active { transition: none; } }
+
+/* plan: kolor paska = typ zajęć (jak w USOS); podpis typu w odcieniu tego koloru */
+.slot .s1 { color: color-mix(in srgb, var(--c) 55%, #fff); }
+html[data-motyw='jasny'] .main .slot .s1 { color: color-mix(in srgb, var(--c) 70%, #161C38); }
+.slot.exam .s1 { color: var(--warn-ink); }
+.type-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; font-size: 12.5px; color: var(--muted); }
+.type-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.type-legend i { width: 10px; height: 10px; border-radius: 3px; display: block; }

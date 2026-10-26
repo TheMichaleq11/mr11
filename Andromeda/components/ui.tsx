@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { courseColor, gradeTone } from '@/lib/colors';
+import { courseColor, gradeTone, typeColor } from '@/lib/colors';
 import { addDays, dayNumber, dayOf, hhmm, shortWeekday, today } from '@/lib/dates';
 import type { ClassEvent, CourseSummary, Grade } from '@/lib/types';
 import { MapPin } from './Icons';
@@ -96,14 +96,13 @@ export function GradeChip({ grade }: { grade: Grade | null }) {
 }
 
 export function EventRow({ e }: { e: ClassEvent }) {
-  const c = courseColor(e.courseId ?? e.courseName);
   return (
     <Link href={courseHref(e.courseId)} className="row">
       <div className="times num">
         <b>{hhmm(e.start)}</b>
         <span>{hhmm(e.end)}</span>
       </div>
-      <span className="dot" style={{ background: c.dot }} />
+      <span className="dot" style={{ background: e.kind === 'exam' ? 'var(--warn)' : typeColor(e.classType) }} />
       <div className="grow">
         <span className="t1">{e.courseName}</span>
         <span className="t2">{[e.classType, roomLabel(e.room)].filter(Boolean).join(' · ')}</span>
@@ -113,7 +112,6 @@ export function EventRow({ e }: { e: ClassEvent }) {
 }
 
 export function EventCard({ e }: { e: ClassEvent }) {
-  const c = courseColor(e.courseId ?? e.courseName);
   return (
     <div className="event-card" style={{ alignItems: 'flex-start' }}>
       <Link href={courseHref(e.courseId)} style={{ display: 'flex', gap: 14, flexGrow: 1, minWidth: 0, color: 'inherit' }}>
@@ -123,7 +121,7 @@ export function EventCard({ e }: { e: ClassEvent }) {
         </div>
         <div className="body">
           <div className="kind">
-            <span className="dot" style={{ background: e.kind === 'exam' ? 'var(--warn)' : c.dot }} />
+            <span className="dot" style={{ background: e.kind === 'exam' ? 'var(--warn)' : typeColor(e.classType) }} />
             {e.classType ?? 'Zajęcia'}
             {e.group ? ` · gr. ${e.group}` : ''}
           </div>
@@ -163,15 +161,15 @@ export function WeekGrid({ monday, events }: { monday: string; events: ClassEven
               </div>
               {evs.length === 0 && <div className="free">Wolne</div>}
               {evs.map((e) => {
-                const c = courseColor(e.courseId ?? e.courseName);
+                const tc = e.kind === 'exam' ? 'var(--warn)' : typeColor(e.classType);
                 return (
                   <Link
                     key={e.id}
                     href={courseHref(e.courseId)}
                     className={`slot${e.kind === 'exam' ? ' exam' : ''}`}
-                    style={{ '--c': c.dot } as React.CSSProperties}
+                    style={{ '--c': tc } as React.CSSProperties}
                   >
-                    <span className="s1 num" style={{ color: c.ink }}>
+                    <span className="s1 num">
                       {hhmm(e.start)} · {e.classType ?? 'Zajęcia'}
                     </span>
                     <span className="s2">{e.courseName}</span>
@@ -182,6 +180,23 @@ export function WeekGrid({ monday, events }: { monday: string; events: ClassEven
           );
         })}
       </div>
+      <TypeLegend types={events.filter((e) => e.kind !== 'exam').map((e) => e.classType)} />
+    </div>
+  );
+}
+
+/** Legenda kolorów typów zajęć, które występują na planie. */
+export function TypeLegend({ types }: { types: (string | null)[] }) {
+  const uniq = [...new Set(types.map((t) => t ?? 'Zajęcia'))];
+  if (uniq.length < 2) return null;
+  return (
+    <div className="type-legend">
+      {uniq.map((t) => (
+        <span key={t}>
+          <i style={{ background: typeColor(t) }} />
+          {t}
+        </span>
+      ))}
     </div>
   );
 }

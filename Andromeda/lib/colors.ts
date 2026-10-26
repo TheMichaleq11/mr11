@@ -37,3 +37,23 @@ export function gradeTone(numeric: number | null, passes: boolean | null): 'good
   if (numeric >= 3) return 'ok';
   return 'bad';
 }
+
+// Kolor typu zajęć — jak w aplikacji USOS: każdy typ ma swój kolor paska.
+const TYPE_COLORS: [RegExp, string][] = [
+  [/wyk/i, '#3D8BFF'], // wykład
+  [/ćwicz|cwicz/i, '#A06BF0'], // ćwiczenia
+  [/konwers/i, '#34B26A'], // konwersatorium
+  [/fizycz|wf|wychowanie/i, '#14A89A'], // zajęcia fizyczne / WF
+  [/lektor|język/i, '#F0A23A'], // lektorat
+  [/labor/i, '#EC6FA8'], // laboratorium
+  [/semin|prosemin/i, '#F07A5A'], // seminarium, proseminarium
+  [/projekt/i, '#4FC3E8'], // projekt
+  [/warszt/i, '#B9CC3F'], // warsztaty
+];
+
+/** Kolor paska dla typu zajęć (np. „Wykład”, „Ćwiczenia”). */
+export function typeColor(classType: string | null | undefined): string {
+  const t = classType ?? '';
+  for (const [re, c] of TYPE_COLORS) if (re.test(t)) return c;
+  return '#8A96B8';
+}
