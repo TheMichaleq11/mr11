@@ -166,7 +166,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         <aside className={`side${collapsed ? ' mini' : ''}`} aria-label="Menu">
           <div className="side-top">
             <Link href="/" className="brand" aria-label="Andromeda — strona główna">
-              <span className="brand-mark"><img src="/logo-ikona.png" alt="" width={40} height={40} /></span>
+              <span className="brand-mark"><img src="/logo-znak.png" alt="" width={44} height={30} /></span>
               <span className="brand-name lbl">Andromeda</span>
             </Link>
             <button className="side-toggle" onClick={toggleSide} aria-label={collapsed ? 'Rozwiń menu' : 'Zwiń menu'} aria-expanded={!collapsed}>
