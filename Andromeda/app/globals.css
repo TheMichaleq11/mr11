@@ -673,10 +673,10 @@ textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0
 
 /* =========================================================================
    JASNE SZKŁO — mleczne, matowe panele na miękkim kolorowym tle (jak w aplikacjach visionOS).
-   Kolor tła wybiera atrybut data-tlo na <html>: lawenda (domyślnie), piasek, blekit, szalwia.
+   Kolor tła wybiera atrybut data-tlo na <html>: błękit (domyślnie), lawenda, piasek, szalwia.
    ========================================================================= */
 :root {
-  --base: #E4E1F4; --b1: #9C8FF0; --b2: #7F9DFB; --b3: #EFA7D6; --b4: #C3B9F7;
+  --base: #DEE7F4; --b1: #85A9EE; --b2: #C8DDF8; --b3: #5F8CE2; --b4: #A9C6F1;
   --bg: var(--base);
   --surface: rgba(255, 255, 255, 0.42);
   --surface-2: rgba(255, 255, 255, 0.34);
@@ -686,10 +686,10 @@ textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0
   --ink-2: #2C3349;
   --muted: rgba(18, 23, 43, 0.6);
   --faint: rgba(18, 23, 43, 0.42);
-  --accent: #2F48B8;
-  --accent-ink: #20348E;
-  --accent-soft: rgba(47, 72, 184, 0.12);
-  --focus: #2F48B8;
+  --accent: #1F55B8;
+  --accent-ink: #163E8A;
+  --accent-soft: rgba(31, 85, 184, 0.12);
+  --focus: #1F55B8;
   --hero: #12172B;
   --hero-ink: #F6F7FB;
   --hero-muted: rgba(240, 242, 252, 0.7);
@@ -707,6 +707,7 @@ textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0
   --shadow: 0 24px 60px -30px rgba(40, 40, 90, 0.35);
   color-scheme: light;
 }
+:root[data-tlo='lawenda'] { --base: #E4E1F4; --b1: #9C8FF0; --b2: #7F9DFB; --b3: #EFA7D6; --b4: #C3B9F7; --accent: #2F48B8; --accent-ink: #20348E; --accent-soft: rgba(47, 72, 184, 0.12); --focus: #2F48B8; }
 :root[data-tlo='piasek'] { --base: #E8DDD0; --b1: #C59D78; --b2: #F4E4D0; --b3: #A9835F; --b4: #DDC3A6; --accent: #6B4A2E; --accent-ink: #4E3520; --accent-soft: rgba(107, 74, 46, 0.12); --focus: #6B4A2E; --ok-bg: rgba(107, 74, 46, 0.11); --ok-ink: #5A3D24; }
 :root[data-tlo='blekit'] { --base: #DEE7F4; --b1: #85A9EE; --b2: #C8DDF8; --b3: #5F8CE2; --b4: #A9C6F1; --accent: #1F55B8; --accent-ink: #163E8A; --accent-soft: rgba(31, 85, 184, 0.12); --focus: #1F55B8; }
 :root[data-tlo='szalwia'] { --base: #E0E7DD; --b1: #94B693; --b2: #D6E4CE; --b3: #739F84; --b4: #B9CFB3; --accent: #2F6A50; --accent-ink: #1F4E3A; --accent-soft: rgba(47, 106, 80, 0.12); --focus: #2F6A50; --ok-bg: rgba(47, 106, 80, 0.11); --ok-ink: #24563F; }
