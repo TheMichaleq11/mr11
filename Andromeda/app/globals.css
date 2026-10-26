@@ -672,140 +672,159 @@ textarea.input:focus { outline: none; border-color: var(--accent); box-shadow: 0
 }
 
 /* =========================================================================
-   SZKŁO NA KOSMOSIE — matowe, półprzezroczyste panele na tle mgławicy z Andromedą.
-   Jeden rozmyty „ekran” (main), w środku jaśniejsze tafle bez dodatkowego rozmycia (wydajność).
+   JASNE SZKŁO — mleczne, matowe panele na miękkim kolorowym tle (jak w aplikacjach visionOS).
+   Kolor tła wybiera atrybut data-tlo na <html>: lawenda (domyślnie), piasek, blekit, szalwia.
    ========================================================================= */
 :root {
-  --bg: #070a16;
-  --surface: rgba(255, 255, 255, 0.075);
-  --surface-2: rgba(255, 255, 255, 0.055);
-  --line: rgba(255, 255, 255, 0.09);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --ink: #F3F5FB;
-  --ink-2: rgba(236, 240, 252, 0.86);
-  --muted: rgba(225, 230, 248, 0.64);
-  --faint: rgba(225, 230, 248, 0.42);
-  --accent: #9DB2FF;
-  --accent-ink: #C3D0FF;
-  --accent-soft: rgba(157, 178, 255, 0.16);
-  --focus: #B4C3FF;
-  --hero: rgba(12, 18, 44, 0.55);
-  --hero-ink: #F4F6FB;
-  --hero-muted: rgba(220, 226, 248, 0.7);
-  --hero-accent: #A9BCFF;
-  --hero-line: rgba(255, 255, 255, 0.10);
-  --side: rgba(10, 14, 32, 0.42);
-  --side-active: rgba(255, 255, 255, 0.08);
-  --warn-bg: rgba(224, 154, 82, 0.16); --warn-ink: #F6C894; --warn: #E8A35C;
-  --good-bg: rgba(90, 210, 160, 0.15); --good-ink: #9BE6C7;
-  --ok-bg: rgba(157, 178, 255, 0.16);  --ok-ink: #C3D0FF;
-  --bad-bg: rgba(245, 110, 140, 0.16); --bad-ink: #FFB0C1;
-  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
-  color-scheme: dark;
+  --base: #E4E1F4; --b1: #9C8FF0; --b2: #7F9DFB; --b3: #EFA7D6; --b4: #C3B9F7;
+  --bg: var(--base);
+  --surface: rgba(255, 255, 255, 0.42);
+  --surface-2: rgba(255, 255, 255, 0.34);
+  --line: rgba(20, 26, 50, 0.08);
+  --line-strong: rgba(20, 26, 50, 0.14);
+  --ink: #12172B;
+  --ink-2: #2C3349;
+  --muted: rgba(18, 23, 43, 0.6);
+  --faint: rgba(18, 23, 43, 0.42);
+  --accent: #2F48B8;
+  --accent-ink: #20348E;
+  --accent-soft: rgba(47, 72, 184, 0.12);
+  --focus: #2F48B8;
+  --hero: #12172B;
+  --hero-ink: #F6F7FB;
+  --hero-muted: rgba(240, 242, 252, 0.7);
+  --hero-accent: #B4C3FF;
+  --hero-line: rgba(255, 255, 255, 0.12);
+  --side: rgba(255, 255, 255, 0.3);
+  --side-ink: #12172B;
+  --side-muted: rgba(18, 23, 43, 0.62);
+  --side-active: rgba(255, 255, 255, 0.5);
+  --warn-bg: rgba(214, 128, 50, 0.14); --warn-ink: #8A4B12; --warn: #D07F35;
+  --good-bg: rgba(40, 150, 110, 0.14); --good-ink: #146046;
+  --ok-bg: rgba(47, 72, 184, 0.11);    --ok-ink: #263FA6;
+  --bad-bg: rgba(200, 60, 90, 0.12);   --bad-ink: #9B2440;
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  --shadow: 0 24px 60px -30px rgba(40, 40, 90, 0.35);
+  color-scheme: light;
 }
+:root[data-tlo='piasek'] { --base: #E8DDD0; --b1: #C59D78; --b2: #F4E4D0; --b3: #A9835F; --b4: #DDC3A6; --accent: #6B4A2E; --accent-ink: #4E3520; --accent-soft: rgba(107, 74, 46, 0.12); --focus: #6B4A2E; --ok-bg: rgba(107, 74, 46, 0.11); --ok-ink: #5A3D24; }
+:root[data-tlo='blekit'] { --base: #DEE7F4; --b1: #85A9EE; --b2: #C8DDF8; --b3: #5F8CE2; --b4: #A9C6F1; --accent: #1F55B8; --accent-ink: #163E8A; --accent-soft: rgba(31, 85, 184, 0.12); --focus: #1F55B8; }
+:root[data-tlo='szalwia'] { --base: #E0E7DD; --b1: #94B693; --b2: #D6E4CE; --b3: #739F84; --b4: #B9CFB3; --accent: #2F6A50; --accent-ink: #1F4E3A; --accent-soft: rgba(47, 106, 80, 0.12); --focus: #2F6A50; --ok-bg: rgba(47, 106, 80, 0.11); --ok-ink: #24563F; }
 
-html { background: #070a16; }
+html { background: var(--base); }
 body {
-  background: #070a16 url('/tlo.webp') center / cover no-repeat fixed;
+  background: transparent;
   min-height: 100dvh;
 }
-/* iOS nie wspiera background-attachment: fixed — tło jako osobna warstwa */
+/* miękkie plamy koloru, które szkło rozmywa */
 body::before {
-  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: url('/tlo.webp') center / cover no-repeat;
+  content: ''; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 34%, var(--b1) 0, var(--b1) 9vmax, transparent 17vmax),
+    radial-gradient(circle at 74% 22%, var(--b3) 0, var(--b3) 7vmax, transparent 14vmax),
+    radial-gradient(circle at 62% 78%, var(--b2) 0, var(--b2) 10vmax, transparent 19vmax),
+    radial-gradient(circle at 14% 82%, var(--b4) 0, var(--b4) 6vmax, transparent 13vmax),
+    radial-gradient(circle at 92% 60%, var(--b1) 0, transparent 11vmax),
+    var(--base);
+  filter: saturate(1.05);
 }
-::selection { background: rgba(157, 178, 255, 0.35); color: #fff; }
+/* delikatne ziarno, żeby kolor nie był plastikowy */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.22; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+::selection { background: var(--accent-soft); color: var(--ink); }
 
-/* wspólna "tafla szkła" */
 .side, .main, .tabbar, .login-card {
-  -webkit-backdrop-filter: blur(28px) saturate(1.5);
-  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.7);
+  backdrop-filter: blur(22px) saturate(1.7);
 }
 
-/* główny ekran = jedna duża szyba */
 @media (min-width: 900px) {
   .shell { padding: 14px; gap: 14px; }
   .side {
     margin: 0; top: 14px; height: calc(100dvh - 28px);
-    background: var(--side); background-image: none;
+    background: var(--side); background-image: none; color: var(--side-ink);
     border: none; box-shadow: var(--glass-edge), var(--shadow);
   }
   .main {
     margin: 0; border-radius: 28px; min-height: calc(100dvh - 28px);
-    background: rgba(14, 20, 46, 0.38);
+    background: rgba(255, 255, 255, 0.16);
     box-shadow: var(--glass-edge), var(--shadow);
     padding: 36px clamp(24px, 3.5vw, 52px) 56px;
   }
-  .side-link[aria-current='page'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; }
-  .side-link[aria-current='page'] svg { color: #0D1428; }
-  .side-link:hover { background: rgba(255, 255, 255, 0.10); }
-  .brand-mark { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 18px -6px rgba(120, 150, 255, 0.6); }
-  .tip { background: rgba(12, 16, 36, 0.78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
-  .tip::before { border-right-color: rgba(12, 16, 36, 0.78); }
+  .side-link { color: var(--side-muted); }
+  .side-link:hover { background: rgba(255, 255, 255, 0.55); color: var(--ink); }
+  .side-link[aria-current='page'] { background: #12172B; color: #fff; box-shadow: 0 6px 16px -6px rgba(18, 23, 43, 0.5); }
+  .side-link[aria-current='page'] svg { color: #fff; }
+  .side-group + .side-group { border-top-color: rgba(18, 23, 43, 0.08); }
+  .side .icon-btn { color: var(--side-muted); }
+  .side .icon-btn:hover { color: var(--ink); background: rgba(255, 255, 255, 0.55); }
+  .brand-mark { box-shadow: 0 6px 16px -6px rgba(30, 40, 90, 0.45); }
+  .tip { background: #12172B; color: #fff; }
+  .tip::before { border-right-color: #12172B; }
 }
 
-/* tafle w środku: jaśniejsze szkło z jasną krawędzią u góry */
+/* tafle w środku: mleczne szkło z jasną krawędzią */
 .card, .list, .tile, .event-card, .more-grid, .q, .skeleton, .day-btn, .icon-btn, .select, .searchbox, .seg, .course-chip, .btn-ghost, .choice span, textarea.input, .map-frame {
   background: var(--surface);
   border-color: transparent;
-  box-shadow: var(--glass-edge);
+  box-shadow: var(--glass-edge), 0 8px 24px -18px rgba(40, 40, 90, 0.35);
 }
-.card:hover, a.tile:hover, .event-card:hover { border-color: transparent; background: rgba(255, 255, 255, 0.10); }
+.card:hover, a.tile:hover, .event-card:hover { border-color: transparent; background: rgba(255, 255, 255, 0.62); }
 .more-grid { overflow: hidden; }
 .more-tile { border-bottom-color: var(--line); }
-.more-tile:hover { background: rgba(255, 255, 255, 0.06); }
-.more-tile .ico { background: rgba(255, 255, 255, 0.08); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
-.select option { background: #141a33; color: #F3F5FB; }
-.seg button[aria-pressed='true'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; box-shadow: none; }
-.day-btn[aria-selected='true'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; border-color: transparent; }
-.btn-primary { background: #F3F5FB; color: #0D1428; box-shadow: 0 8px 24px -10px rgba(160, 180, 255, 0.6); }
-.btn-primary:hover { background: #fff; color: #0D1428; }
+.more-tile:hover { background: rgba(255, 255, 255, 0.4); }
+.more-tile .ico { background: rgba(255, 255, 255, 0.7); color: var(--ink); box-shadow: var(--glass-edge); }
+.seg { background: rgba(255, 255, 255, 0.3); }
+.seg button[aria-pressed='true'] { background: #12172B; color: #fff; box-shadow: none; }
+.day-btn[aria-selected='true'] { background: #12172B; color: #fff; }
+.btn-primary { background: #12172B; color: #fff; box-shadow: 0 8px 20px -10px rgba(18, 23, 43, 0.6); }
+.btn-primary:hover { background: #1F2640; color: #fff; }
 .btn-ghost { color: var(--ink); }
-.btn-ghost:hover { color: var(--ink); background: rgba(255, 255, 255, 0.12); }
-.choice input:checked + span { background: #F3F5FB; color: #0D1428; }
+.btn-ghost:hover { color: var(--ink); background: rgba(255, 255, 255, 0.65); }
+.choice input:checked + span { background: #12172B; color: #fff; }
+.demo-badge { background: rgba(255, 255, 255, 0.5); border-color: rgba(208, 127, 53, 0.35); }
+.avatar { background: #12172B; color: #fff; }
+a.avatar, a.avatar:hover { color: #fff; }
 
-/* wyróżnione pasy: przyciemnione, przydymione szkło */
+/* wyróżnione pasy: ciemne, przydymione szkło (kontrast jak na karcie z wykresem w filmiku) */
 .band, .summary, .hero, .course-hero {
-  background: rgba(10, 16, 40, 0.5) !important;
-  box-shadow: var(--glass-edge), 0 20px 50px -30px rgba(0, 0, 0, 0.7);
+  background: rgba(18, 23, 43, 0.86) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 24px 50px -28px rgba(18, 23, 43, 0.6);
 }
-.band::after, .hero::after { opacity: 0.35; }
-.glass { background: rgba(10, 16, 40, 0.35); }
-.glass-grid { background: var(--hero-line); }
+.glass { background: rgba(18, 23, 43, 0.6); }
 
-/* kalendarz tygodnia na szkle */
-.slot { background: rgba(255, 255, 255, 0.07) !important; box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, 0.05); }
-a.slot:hover { background: rgba(255, 255, 255, 0.12) !important; }
-.slot.exam { background: rgba(224, 154, 82, 0.16) !important; }
-.free { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 255, 255, 0.06) 6px 7px); }
-.week-head { border-bottom-color: var(--line); }
+/* kalendarz tygodnia */
+.slot { background: rgba(255, 255, 255, 0.5) !important; box-shadow: inset 3px 0 0 var(--c), var(--glass-edge); }
+a.slot:hover { background: rgba(255, 255, 255, 0.72) !important; }
+.slot.exam { background: rgba(255, 236, 214, 0.7) !important; }
+.free { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(18, 23, 43, 0.05) 6px 7px); }
 .week-head.is-today { color: var(--accent); border-bottom-color: var(--accent); }
-
-/* plakietki i oceny */
 .chip.none { box-shadow: inset 0 0 0 1px var(--line-strong); }
-.demo-badge { background: rgba(224, 154, 82, 0.14); border-color: rgba(232, 163, 92, 0.4); }
-.avatar { background: rgba(255, 255, 255, 0.9); color: #0D1428; }
-.id-card { background: radial-gradient(90% 120% at 100% 0%, rgba(140, 165, 255, 0.45), transparent 55%), linear-gradient(160deg, rgba(40, 56, 120, 0.75) 0%, rgba(13, 20, 46, 0.8) 70%); box-shadow: var(--glass-edge), 0 24px 50px -24px rgba(0, 0, 0, 0.7); }
-.html td, .html th { border-color: var(--line-strong); }
-.html a { color: var(--accent); }
+.id-card { box-shadow: 0 24px 50px -24px rgba(18, 23, 43, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 
-/* logowanie: pojedyncza tafla na środku kosmosu */
+/* logowanie */
 .login { background: transparent; }
 .login-card {
   max-width: 440px; padding: 34px 32px 28px; border-radius: 28px;
-  background: rgba(14, 20, 46, 0.42); box-shadow: var(--glass-edge), var(--shadow);
+  background: rgba(255, 255, 255, 0.42); box-shadow: var(--glass-edge), var(--shadow);
 }
+.login .fine { border-top-color: var(--line); }
 
-/* telefon: pływająca szklana pigułka zamiast paska przyklejonego do dołu */
+/* telefon: pływająca szklana pigułka */
 @media (max-width: 899px) {
-  .main { padding-bottom: calc(110px + env(safe-area-inset-bottom)); -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(7, 10, 22, 0.35); min-height: 100dvh; }
+  .main { padding-bottom: calc(110px + env(safe-area-inset-bottom)); -webkit-backdrop-filter: none; backdrop-filter: none; background: transparent; min-height: 100dvh; }
   .tabbar {
     left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); border-radius: 26px;
-    padding: 6px; background: rgba(14, 20, 46, 0.55); border: none; box-shadow: var(--glass-edge), 0 18px 40px -16px rgba(0, 0, 0, 0.7);
+    padding: 6px; background: rgba(255, 255, 255, 0.5); border: none; box-shadow: var(--glass-edge), 0 18px 40px -18px rgba(40, 40, 90, 0.45);
   }
   .tab { border-radius: 20px; color: var(--muted); transition: background 0.2s var(--ease), color 0.2s var(--ease); }
-  .tab[aria-current='page'] { background: rgba(255, 255, 255, 0.92); color: #0D1428; }
+  .tab[aria-current='page'] { background: #12172B; color: #fff; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: light; }
 }
 
 /* przejście ekranów: mocniejsze rozmycie jak w szkle */
