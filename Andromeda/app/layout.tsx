@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   applicationName: 'Andromeda',
   appleWebApp: { capable: true, title: 'Andromeda', statusBarStyle: 'black-translucent' },
   icons: {
-    icon: [{ url: '/icons/favicon-32.png?v=3', sizes: '32x32', type: 'image/png' }],
-    apple: [{ url: '/icons/apple-touch-icon.png?v=3', sizes: '180x180' }],
+    icon: [
+      { url: '/icons/favicon.svg?v=4', type: 'image/svg+xml' },
+      { url: '/icons/favicon-32.png?v=4', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png?v=4', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
 };
