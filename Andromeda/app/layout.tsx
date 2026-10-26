@@ -15,10 +15,13 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: 'Andromeda', statusBarStyle: 'black-translucent' },
   icons: {
     icon: [
-      { url: '/icons/favicon.svg?v=4', type: 'image/svg+xml' },
-      { url: '/icons/favicon-32.png?v=4', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/favicon.svg?v=5', type: 'image/svg+xml' },
+      { url: '/icons/favicon-32.png?v=5', sizes: '32x32', type: 'image/png' },
+      // większe ikonki bez tła — Chrome i Safari na iPadzie/iPhonie biorą największą, więc w karcie nie będzie tła
+      { url: '/icons/icon-192.png?v=5', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png?v=5', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: '/icons/apple-touch-icon.png?v=4', sizes: '180x180' }],
+    apple: [{ url: '/icons/apple-touch-icon.png?v=5', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
 };
