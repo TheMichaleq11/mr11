@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import ClearCache from '@/components/ClearCache';
 import { usosConfigured } from '@/lib/session';
+import GlassCard from '@/components/GlassCard';
+
+const ArrowRight = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+);
+const Lock = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
+);
 
 export const metadata: Metadata = { title: 'Andromeda' };
 export const dynamic = 'force-dynamic';
@@ -18,14 +26,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="login">
       <ClearCache />
-      <div className="login-card">
-        <span className="login-logo">
-          <img src="/logo-ikona.png" alt="" width={64} height={64} />
-        </span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <h1>Andromeda</h1>
-          <p>Twój plan zajęć, oceny i przedmioty z USOS UJ — w końcu czytelnie.</p>
-        </div>
+      <GlassCard className="login-card2">
+        <img className="login-mark" src="/logo-znak.png" alt="" width={150} height={103} />
+        <h1 className="login-title">Andromeda</h1>
 
         {blad && errors[blad] && (
           <div className="error" role="alert">
@@ -35,24 +38,25 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
         <div className="actions">
           {ready ? (
-            <a href="/api/auth/login" className="btn btn-primary">
-              Zaloguj przez USOS UJ
+            <a href="/api/auth/login" className="btn btn-glow">
+              Zaloguj przez USOS UJ <ArrowRight />
             </a>
           ) : (
-            <span className="btn btn-ghost" aria-disabled="true" style={{ opacity: 0.6 }}>
+            <span className="btn btn-glow" aria-disabled="true" style={{ opacity: 0.55 }}>
               Logowanie do USOS — wkrótce
             </span>
           )}
+          <div className="or">albo</div>
           <a href="/api/auth/demo" className="btn btn-ghost">
             Zobacz wersję demo
           </a>
         </div>
 
         <p className="fine">
-          Logujesz się na oficjalnej stronie USOS — Andromeda nigdy nie widzi Twojego hasła. Dostaje tylko dostęp do
-          odczytu planu i ocen, który możesz w każdej chwili cofnąć w USOSweb.
+          <Lock />
+          <span>Hasło wpisujesz na oficjalnej stronie USOS — Andromeda go nie widzi. Dostęp możesz cofnąć w USOSweb.</span>
         </p>
-      </div>
+      </GlassCard>
     </main>
   );
 }

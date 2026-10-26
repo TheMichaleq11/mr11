@@ -17,5 +17,6 @@ const out = [
 for (const [src, name, size] of out) {
   await sharp(src).resize(size, size, { kernel: 'lanczos3' }).png().toFile(`public/icons/${name}`);
 }
-await sharp(MASTER).resize(64, 64, { kernel: 'lanczos3' }).png().toFile('app/icon.png');
+await sharp('assets/logo/favicon-64.png').png().toFile('app/icon.png');
+await sharp('assets/logo/favicon-64.png').resize(32, 32).png().toFile('public/icons/favicon-32.png');
 console.log('ikony gotowe');

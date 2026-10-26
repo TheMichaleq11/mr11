@@ -15,5 +15,5 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   // wszystko poza API, logowaniem i plikami statycznymi
-  matcher: ['/((?!api|zaloguj|_next|icons|sw\\.js|manifest\\.webmanifest|icon\\.png|favicon\\.ico|logo-ikona\\.png).*)'],
+  matcher: ['/((?!api|zaloguj|_next|icons|sw\\.js|manifest\\.webmanifest|icon\\.png|favicon\\.ico|logo-ikona\\.png|logo-znak\\.png).*)'],
 };
