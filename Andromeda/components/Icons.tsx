@@ -119,3 +119,9 @@ export const Sun = ({ size = 20 }: P) => (
 export const Moon = ({ size = 20 }: P) => (
   <svg {...base(size)}><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z" /></svg>
 );
+export const Clock = ({ size = 16 }: P) => (
+  <svg {...base(size)}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+);
+export const Close = ({ size = 16 }: P) => (
+  <svg {...base(size)}><path d="M6 6l12 12M18 6 6 18" /></svg>
+);

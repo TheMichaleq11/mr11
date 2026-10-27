@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import EventDialog from './EventDialog';
 import { gradeTone, typeColor } from '@/lib/colors';
 import { addDays, dayNumber, dayOf, hhmm, shortWeekday, today } from '@/lib/dates';
 import type { ClassEvent, CourseSummary, Grade } from '@/lib/types';
@@ -185,8 +186,9 @@ export function TimeGrid({ days, events, pph = 56, showHead = true, details = fa
   const hours = Array.from({ length: to - from }, (_, i) => from + i);
   const height = (to - from) * pph;
   const y = (m: number) => ((m - from * 60) / 60) * pph;
-  const now = new Date();
+ const now = new Date();
   const nowM = now.getHours() * 60 + now.getMinutes();
+  const [open, setOpen] = useState<ClassEvent | null>(null);
   return (
     <div className="tg" style={{ '--pph': `${pph}px` } as React.CSSProperties}>
       <div className="tg-grid" style={{ gridTemplateColumns: `40px repeat(${days.length}, minmax(0, 1fr))` }}>
@@ -222,9 +224,10 @@ export function TimeGrid({ days, events, pph = 56, showHead = true, details = fa
                 const top = y(mins(e.start));
                 const h = Math.max(y(mins(e.end)) - top, 26);
                 return (
-                  <Link
+                  <button
+                    type="button"
                     key={e.id}
-                    href={courseHref(e.courseId)}
+                    onClick={() => setOpen(e)}
                     className={`slot tg-slot${e.kind === 'exam' ? ' exam' : ''}${h < 52 ? ' short' : ''}`}
                     style={{ '--c': tc, top, height: h - 3, left: `calc(${(l.lane / l.of) * 100}% + 2px)`, width: `calc(${100 / l.of}% - 4px)` } as React.CSSProperties}
                   >
@@ -233,13 +236,14 @@ export function TimeGrid({ days, events, pph = 56, showHead = true, details = fa
                     </span>
                     <span className="s2">{e.courseName}</span>
                     {details && where(e) && <span className="s3">{where(e)}</span>}
-                  </Link>
+                  </button>
                 );
               })}
             </div>
           );
         })}
       </div>
+      {open && <EventDialog e={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }
