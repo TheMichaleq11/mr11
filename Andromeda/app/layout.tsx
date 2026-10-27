@@ -44,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=6" />
       </head>
       <body>
+        <div className="gl-bg" aria-hidden="true" />
         {children}
         <RegisterSW />
       </body>

@@ -1511,3 +1511,65 @@ html[data-paleta='noc'] .btn-primary { background: #0040FF; box-shadow: none; }
 }
 /* w Błękicie i Nocy logo w pasku holograficzne (niebieskie zlewałoby się z tłem) */
 html[data-paleta='blekit'] .side .brand-mark img, html[data-paleta='noc'] .side .brand-mark img { content: url('/logo-holo.svg'); }
+
+/* =========================================================================
+   SZKŁO we wszystkich motywach — w tle miękkie plamy światła, panele je rozmywają
+   ========================================================================= */
+.gl-bg { position: fixed; inset: -10%; z-index: -1; pointer-events: none; filter: blur(30px); }
+body, body:has(.shell), html[data-paleta] body, html[data-paleta] body:has(.shell), html[data-motyw] body:has(.shell) { background: transparent !important; }
+@media (min-width: 900px) {
+  .main, .side { -webkit-backdrop-filter: blur(36px) saturate(1.6) !important; backdrop-filter: blur(36px) saturate(1.6) !important; }
+}
+.band, .summary, .hero, .course-hero, .slot, .side-me { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+
+/* — Ciemny — */
+html:not([data-motyw]):not([data-paleta]), html:not([data-motyw]):not([data-paleta]):has(.shell) { background: #070B1F !important; }
+html:not([data-motyw]):not([data-paleta]) .gl-bg { background: radial-gradient(28% 34% at 18% 22%, rgba(74, 108, 255, 0.55), transparent 70%), radial-gradient(30% 36% at 82% 78%, rgba(150, 90, 255, 0.45), transparent 70%), radial-gradient(24% 30% at 70% 12%, rgba(40, 190, 255, 0.35), transparent 70%); }
+@media (min-width: 900px) {
+  html:not([data-motyw]):not([data-paleta]) .main { background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 30px 60px -30px rgba(0, 0, 0, 0.7) !important; }
+  html:not([data-motyw]):not([data-paleta]) .side { background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important; }
+}
+html:not([data-motyw]):not([data-paleta]) .band, html:not([data-motyw]):not([data-paleta]) .summary, html:not([data-motyw]):not([data-paleta]) .hero, html:not([data-motyw]):not([data-paleta]) .course-hero { background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important; }
+html:not([data-motyw]):not([data-paleta]) .slot { background: rgba(255, 255, 255, 0.08) !important; }
+
+/* — Jasny — */
+html[data-motyw='jasny']:not([data-paleta]), html[data-motyw='jasny']:not([data-paleta]):has(.shell) { background: #E9EEFC !important; }
+html[data-motyw='jasny']:not([data-paleta]) .gl-bg { background: radial-gradient(30% 36% at 15% 20%, rgba(110, 150, 255, 0.55), transparent 70%), radial-gradient(30% 36% at 85% 80%, rgba(190, 150, 255, 0.5), transparent 70%), radial-gradient(26% 30% at 75% 10%, rgba(120, 220, 255, 0.5), transparent 70%); }
+@media (min-width: 900px) {
+  html[data-motyw='jasny']:not([data-paleta]) .main { background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.5)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 30px 60px -36px rgba(40, 50, 120, 0.4) !important; }
+  html[data-motyw='jasny']:not([data-paleta]) .side { background: rgba(16, 21, 46, 0.72) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important; }
+}
+html[data-motyw='jasny']:not([data-paleta]) .main .band, html[data-motyw='jasny']:not([data-paleta]) .main .summary, html[data-motyw='jasny']:not([data-paleta]) .main .hero, html[data-motyw='jasny']:not([data-paleta]) .main .course-hero { background: rgba(255, 255, 255, 0.62) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 18px 40px -28px rgba(40, 50, 120, 0.35) !important; }
+html[data-motyw='jasny']:not([data-paleta]) .main .slot { background: rgba(255, 255, 255, 0.7) !important; }
+@media (max-width: 899px) { html[data-motyw='jasny']:not([data-paleta]), html[data-motyw='jasny']:not([data-paleta]) body { background: #E9EEFC !important; } }
+
+/* — Błękit — */
+html[data-paleta='blekit'], html[data-paleta='blekit']:has(.shell) { background: #0040FF !important; }
+html[data-paleta='blekit'] .gl-bg { background: radial-gradient(34% 40% at 85% 12%, rgba(120, 225, 255, 0.7), transparent 70%), radial-gradient(36% 44% at 12% 95%, rgba(0, 20, 150, 0.9), transparent 70%), radial-gradient(26% 30% at 45% 55%, rgba(170, 130, 255, 0.45), transparent 70%); }
+@media (min-width: 900px) {
+  html[data-paleta='blekit'] .side { background: linear-gradient(160deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important; }
+  html[data-paleta='blekit'] .main { background: linear-gradient(160deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.74)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 30px 60px -30px rgba(0, 20, 120, 0.55) !important; }
+}
+html[data-paleta='blekit'] .main .band, html[data-paleta='blekit'] .main .hero, html[data-paleta='blekit'] .main .summary, html[data-paleta='blekit'] .main .course-hero { background: radial-gradient(70% 90% at 90% 0%, rgba(120, 220, 255, 0.55), transparent 60%), rgba(0, 64, 255, 0.9) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important; }
+html[data-paleta='blekit'] .main .slot { background: rgba(255, 255, 255, 0.75) !important; box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(10, 30, 120, 0.08) !important; }
+@media (max-width: 899px) {
+  /* telefon: treść na jasnym szkle, żeby tekst był czytelny */
+  html[data-paleta='blekit'] .main .container { background: rgba(255, 255, 255, 0.86); border-radius: 22px; padding-top: 16px; padding-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); }
+}
+
+/* — Noc — */
+html[data-paleta='noc'], html[data-paleta='noc']:has(.shell) { background: #020A3A !important; }
+html[data-paleta='noc'] .gl-bg { background: radial-gradient(30% 38% at 82% 15%, rgba(0, 90, 255, 0.75), transparent 70%), radial-gradient(30% 36% at 15% 85%, rgba(60, 40, 200, 0.6), transparent 70%), radial-gradient(22% 26% at 55% 50%, rgba(80, 200, 255, 0.3), transparent 70%); }
+@media (min-width: 900px) {
+  html[data-paleta='noc'] .main { background: linear-gradient(160deg, rgba(10, 30, 110, 0.62), rgba(6, 20, 80, 0.72)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 30px 60px -30px rgba(0, 0, 0, 0.7) !important; }
+  html[data-paleta='noc'] .side { background: linear-gradient(160deg, rgba(10, 30, 110, 0.55), rgba(6, 20, 80, 0.65)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important; }
+}
+html[data-paleta='noc'] .band, html[data-paleta='noc'] .hero, html[data-paleta='noc'] .summary, html[data-paleta='noc'] .course-hero { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; }
+html[data-paleta='noc'] .slot { background: rgba(255, 255, 255, 0.08) !important; box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important; }
+html[data-paleta='noc'] .side .side-me { background: rgba(255, 255, 255, 0.08) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18) !important; }
+
+/* telefon: szklany dolny pasek we wszystkich motywach */
+@media (max-width: 899px) { .tabbar { -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); } }
+/* logowanie ma własne niebieskie tło */
+body:has(.login) .gl-bg { display: none; }
+@media (max-width: 899px) { html[data-paleta='blekit'] .main .container { padding-left: 14px; padding-right: 14px; margin-left: 10px; margin-right: 10px; width: auto; } }
