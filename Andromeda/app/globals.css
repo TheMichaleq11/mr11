@@ -1395,3 +1395,24 @@ html[data-motyw='jasny'] .main .slot .s1 { color: color-mix(in srgb, var(--c) 70
   .side.mini .side-group:first-child .side-title { height: 0; padding: 0; }
 }
 @media (min-width: 900px) { .side.mini .side-nav { gap: 0; } }
+
+/* logowanie: elektryczny niebieski z błękitną smugą światła, holograficzne logo, szklany przycisk */
+html:has(.login), body:has(.login) { background: #0040FF; }
+.login {
+  background:
+    radial-gradient(70% 60% at 78% 18%, rgba(120, 220, 255, 0.55), transparent 60%),
+    radial-gradient(90% 80% at 20% 100%, #0020B8, transparent 70%),
+    #0040FF;
+}
+.login-box { width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.login .login-mark { width: 130px; margin-bottom: 14px; filter: none; }
+.login .login-title { color: #fff; font-size: 38px; }
+.login .actions { margin-top: 30px; width: 100%; }
+.login .btn-login {
+  height: 50px; border-radius: 13px; color: #fff; font-weight: 600;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.login .btn-login:hover { background: rgba(255, 255, 255, 0.24); color: #fff; }
+.login .error { background: rgba(255, 255, 255, 0.14); color: #fff; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 12px 14px; margin-top: 18px; text-align: left; font-size: 13.5px; }
