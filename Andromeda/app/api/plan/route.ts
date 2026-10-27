@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { withSession } from '@/lib/api';
 import { demoPlan } from '@/lib/demo';
 import { fetchPlan, localDate } from '@/lib/usos';
+import { applyPlanOverrides } from '@/lib/plan-overrides';
 import type { PlanResponse } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,6 @@ export function GET(req: NextRequest) {
   return withSession(async ({ creds }): Promise<PlanResponse> => ({
     start,
     days,
-    events: creds ? await fetchPlan(creds, start, days) : demoPlan(start, days),
+    events: creds ? await applyPlanOverrides(creds, await fetchPlan(creds, start, days), start, days) : demoPlan(start, days),
   }));
 }
