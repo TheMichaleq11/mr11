@@ -1,5 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "regions": ["fra1"],
-  "git": { "deploymentEnabled": { "*": false, "main": true } }
+  "regions": [
+    "fra1"
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
+  },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "andromeda-uj.vercel.app"
+        }
+      ],
+      "destination": "https://andromeda-usos.vercel.app/:path*",
+      "permanent": true
+    }
+  ]
 }
