@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { courseColor, gradeTone, typeColor } from '@/lib/colors';
+import { gradeTone, typeColor } from '@/lib/colors';
 import { addDays, dayNumber, dayOf, hhmm, shortWeekday, today } from '@/lib/dates';
 import type { ClassEvent, CourseSummary, Grade } from '@/lib/types';
 import { MapPin } from './Icons';
@@ -201,13 +201,24 @@ export function TypeLegend({ types }: { types: (string | null)[] }) {
   );
 }
 
+/** Kropki w kolorach typów zajęć przedmiotu (np. wykład + ćwiczenia = dwie kropki). */
+export function TypeDots({ types }: { types: string[] }) {
+  const list = types.length ? types : [null];
+  return (
+    <span className="type-dots" aria-hidden="true">
+      {list.map((t, i) => (
+        <span key={i} className="dot" style={{ background: typeColor(t) }} />
+      ))}
+    </span>
+  );
+}
+
 export function CourseGradeRow({ c }: { c: CourseSummary }) {
-  const col = courseColor(c.courseId);
   const g = bestGrade(c);
   const sub = g ? g.label : c.classTypes.join(', ') || 'Brak ocen';
   return (
     <Link href={courseHref(c.courseId, c.termId)} className="row">
-      <span className="dot" style={{ background: col.dot }} />
+      <TypeDots types={c.classTypes} />
       <div className="grow">
         <span className="t1">{c.name}</span>
         <span className="t2">{g ? sub : `Brak ocen · ${sub}`}</span>

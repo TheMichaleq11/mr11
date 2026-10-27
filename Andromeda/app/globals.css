@@ -1573,3 +1573,5 @@ html[data-paleta='noc'] .side .side-me { background: rgba(255, 255, 255, 0.08) !
 /* logowanie ma własne niebieskie tło */
 body:has(.login) .gl-bg { display: none; }
 @media (max-width: 899px) { html[data-paleta='blekit'] .main .container { padding-left: 14px; padding-right: 14px; margin-left: 10px; margin-right: 10px; width: auto; } }
+.type-dots { display: inline-flex; gap: 3px; flex-shrink: 0; }
+.type-dots { width: 27px; justify-content: flex-start; }

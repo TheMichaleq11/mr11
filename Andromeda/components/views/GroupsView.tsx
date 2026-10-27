@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useApi } from '@/lib/client';
-import { courseColor } from '@/lib/colors';
+import { typeColor } from '@/lib/colors';
 import type { GroupDetail, GroupSummary } from '@/lib/usos-studies';
 import MailForm from '../MailForm';
 import { ChevronLeft, ChevronRight, Mail } from '../Icons';
@@ -20,10 +20,9 @@ export function GroupsList() {
       ) : api.data?.groups.length ? (
         <div className="list">
           {api.data.groups.map((g) => {
-            const col = courseColor(g.courseId ?? g.courseName);
             return (
               <Link key={g.key} href={`/grupy/${encodeURIComponent(g.key)}`} className="row">
-                <span className="dot" style={{ background: col.dot }} />
+                <span className="dot" style={{ background: typeColor(g.classType) }} />
                 <div className="grow">
                   <span className="t1">{g.courseName}</span>
                   <span className="t2">{[`${g.classType}, gr. ${g.number}`, g.lecturers[0]?.name].filter(Boolean).join(' · ')}</span>

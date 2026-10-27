@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useApi } from '@/lib/client';
-import { courseColor } from '@/lib/colors';
+
 import { dayOf, hhmm, relativeDay, today } from '@/lib/dates';
 import type { Exam, ExamsResponse } from '@/lib/usos-studies';
 import { External, MapPin } from '../Icons';
@@ -18,14 +18,13 @@ function regState(e: Exam): [string, string] | null {
 }
 
 function ExamCard({ e }: { e: Exam }) {
-  const col = courseColor(e.courseId ?? e.courseName);
   const reg = regState(e);
   return (
     <section className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
           <Link href={courseHref(e.courseId, e.termId)} style={{ color: 'var(--ink)', display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span className="dot" style={{ background: col.dot }} />
+            <span className="dot" style={{ background: 'var(--warn)' }} />
             <h2 className="h2">{e.courseName}</h2>
           </Link>
           <span className="meta-line">{e.name}</span>

@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useApi } from '@/lib/client';
-import { courseColor } from '@/lib/colors';
 import { activeMonday, addDays, dayNumber, dayOf, longDate, mondayOf, shortWeekday, today, weekRangeLabel } from '@/lib/dates';
 import type { PlanResponse } from '@/lib/types';
 import { ChevronLeft, ChevronRight } from '../Icons';
@@ -87,23 +86,6 @@ export default function PlanView() {
         {data ? <WeekGrid monday={monday} events={events} /> : <Skeleton h={320} />}
       </section>
 
-      {data && events.length > 0 && (
-        <section className="section desktop-only">
-          <h2 className="h2">Przedmioty w tym tygodniu</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {[...new Map(events.map((e) => [e.courseId ?? e.courseName, e])).values()].map((e) => {
-              const c = courseColor(e.courseId ?? e.courseName);
-              return (
-                <span key={e.id} className="course-chip">
-                  <span className="dot" style={{ background: c.dot }} />
-                  {e.courseName}
-                </span>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
       <CalendarSubscribe />
     </>
   );
@@ -125,19 +107,12 @@ function CalendarSubscribe() {
       setState({ busy: false, url: null, err: e instanceof Error ? e.message : String(e) });
     }
   }
-  const https = state.url?.replace(/^webcal:/, 'https:') ?? null;
   return (
     <section className="callout">
       <b>Plan w kalendarzu telefonu</b>
-      <span className="meta-line" style={{ lineHeight: 1.5 }}>
-        Zajęcia pojawią się w aplikacji Kalendarz i będą się same aktualizować. Na iPhonie potwierdź „Subskrybuj”.
-      </span>
       {state.err && <div className="notice warn">{state.err}</div>}
       {state.url ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <a href={state.url} className="btn btn-primary">Dodaj do Kalendarza</a>
-          <span className="meta-line" style={{ overflowWrap: 'anywhere' }}>Google / Outlook — wklej ten adres jako „Dodaj z adresu URL”: {https}</span>
-        </div>
+        <a href={state.url} className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>Dodaj do Kalendarza</a>
       ) : (
         <button className="btn btn-primary" disabled={state.busy} onClick={get} style={{ alignSelf: 'flex-start' }}>
           {state.busy ? 'Chwila…' : 'Dodaj plan do kalendarza'}
