@@ -1592,3 +1592,46 @@ body:has(.login) .gl-bg { display: none; }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes reveal-text { from { opacity: 0; } to { opacity: 1; } }
 .page-in > * { animation-duration: 0.4s; }
+
+/* telefon: we wszystkich motywach ten sam układ — treść na zaokrąglonym szklanym panelu z marginesem (jak w Błękicie) */
+@media (max-width: 899px) {
+  .main .container {
+    margin-left: 10px; margin-right: 10px; width: auto; padding: 16px 14px; border-radius: 22px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  html[data-motyw='jasny']:not([data-paleta]) .main .container { background: rgba(255, 255, 255, 0.72); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 20px 40px -30px rgba(40, 50, 120, 0.4); }
+  html[data-paleta='noc'] .main .container { background: linear-gradient(160deg, rgba(10, 30, 110, 0.62), rgba(6, 20, 80, 0.72)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.22); }
+  html[data-paleta='blekit'] .main .container { background: rgba(255, 255, 255, 0.86); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95); }
+}
+
+/* Błękit na telefonie — ten sam układ co w ciemnych motywach: treść prosto na niebieskim tle,
+   nagłówki białe, karty i listy z jasnego szkła z ciemnym tekstem */
+@media (max-width: 899px) {
+  html[data-paleta='blekit'] .main .container { background: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; width: auto !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  html[data-paleta='blekit'] .main {
+    --ink: #fff; --ink-2: rgba(255, 255, 255, 0.92); --muted: rgba(255, 255, 255, 0.8); --faint: rgba(255, 255, 255, 0.6);
+    --accent: #fff; --accent-ink: #fff; --line: rgba(255, 255, 255, 0.25); --line-strong: rgba(255, 255, 255, 0.4); color: #fff;
+  }
+  html[data-paleta='blekit'] .main :is(.list, .card, .more-grid, .tile, .event-card, .motyw-opt, .btn-ghost, .seg, .select, .searchbox, .day-btn, .q, .callout, .notice, .reg-row, .ledger) {
+    --ink: #0B1440; --ink-2: #1E2A5C; --muted: #55608A; --faint: #8A93B8; --accent: #0040FF; --accent-ink: #0036E0;
+    --line: rgba(10, 30, 120, 0.1); --line-strong: rgba(10, 30, 120, 0.18); color: #0B1440;
+  }
+  html[data-paleta='blekit'] .main :is(.list, .card, .more-grid, .tile, .event-card, .motyw-opt, .btn-ghost, .seg, .select, .searchbox, .callout) {
+    background: rgba(255, 255, 255, 0.9) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 14px 30px -20px rgba(0, 20, 120, 0.5) !important;
+  }
+  html[data-paleta='blekit'] .main .more-tile .ico { background: rgba(0, 64, 255, 0.1); color: #0036E0; }
+  html[data-paleta='blekit'] .main .motyw-opt[aria-pressed='true'] { box-shadow: inset 0 0 0 2px #0040FF, 0 14px 30px -20px rgba(0, 20, 120, 0.5) !important; }
+  html[data-paleta='blekit'] .main .day-btn[aria-selected='true'], html[data-paleta='blekit'] .main .seg button[aria-pressed='true'] { background: #0040FF !important; color: #fff !important; }
+  html[data-paleta='blekit'] .main .demo-badge { background: rgba(255, 255, 255, 0.92); }
+  html[data-paleta='blekit'] .main .band { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 14px 30px -20px rgba(0, 20, 120, 0.6) !important; }
+}
+@media (max-width: 899px) {
+  html[data-paleta='blekit'] .main .callout { background: none !important; box-shadow: none !important; --ink: #fff; --muted: rgba(255, 255, 255, 0.8); color: #fff; padding: 0; }
+  html[data-paleta='blekit'] .main :is(.ledger, .icon-btn) {
+    --ink: #0B1440; --muted: #55608A; --line: rgba(10, 30, 120, 0.1); color: #0B1440;
+    background: rgba(255, 255, 255, 0.9) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 14px 30px -20px rgba(0, 20, 120, 0.5) !important;
+  }
+  html[data-paleta='blekit'] .main .ledger { border-radius: 16px; padding: 0 14px; }
+}
+@media (max-width: 899px) { html[data-paleta='blekit'] .main .callout .btn-primary { background: #fff !important; color: #0036E0 !important; } }
