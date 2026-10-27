@@ -167,6 +167,11 @@ export default function Shell({ children }: { children: ReactNode }) {
   const [hover, setHover] = useState<{ top: number; height: number } | null>(null);
   // Szklane zaznaczenie aktywnej zakładki — przejeżdża płynnie do nowo wybranej pozycji.
   const navRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  // Na komputerze przewija się sam panel — po zmianie zakładki wracamy na górę.
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [path]);
   const [active, setActive] = useState<{ top: number; height: number; anim: boolean; path: string } | null>(null);
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -314,7 +319,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           </span>
         )}
 
-        <main className="main">
+        <main className="main" ref={mainRef}>
           <div className="container page-in" key={`${palette}-${path}`}>
             {mounted ? children : <div className="skeleton" style={{ minHeight: 180 }} aria-hidden="true" />}
           </div>

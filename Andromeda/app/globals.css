@@ -1575,3 +1575,20 @@ body:has(.login) .gl-bg { display: none; }
 @media (max-width: 899px) { html[data-paleta='blekit'] .main .container { padding-left: 14px; padding-right: 14px; margin-left: 10px; margin-right: 10px; width: auto; } }
 .type-dots { display: inline-flex; gap: 3px; flex-shrink: 0; }
 .type-dots { width: 27px; justify-content: flex-start; }
+
+/* =========================================================================
+   PŁYNNOŚĆ — pasek i strona nie szarpią przy przechodzeniu między zakładkami
+   ========================================================================= */
+/* komputer: okno się nie przewija (nie pojawia się/znika pasek przewijania), przewija się tylko panel */
+@media (min-width: 900px) {
+  html:has(.shell), body:has(.shell) { height: 100%; overflow: hidden; }
+  .shell { height: 100dvh; min-height: 0; overflow: hidden; }
+  .main { min-height: 0 !important; height: calc(100dvh - 28px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: rgba(127, 140, 180, 0.35) transparent; }
+}
+/* tło jest już miękkie i nieruchome — rozmywanie go na żywo tylko spowalniało przewijanie i przejścia */
+.main, .side, .band, .summary, .hero, .course-hero, .slot, .side-me, .tabbar, .card, .list, .row, .chip { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.gl-bg { filter: none !important; inset: 0; }
+/* wejście strony: tylko przenikanie i lekki ruch (bez rozmycia, które obciążało przeglądarkę) */
+@keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes reveal-text { from { opacity: 0; } to { opacity: 1; } }
+.page-in > * { animation-duration: 0.4s; }
