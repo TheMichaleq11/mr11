@@ -34,7 +34,7 @@ import {
   Sun,
   Moon,
 } from './Icons';
-import { useMotyw } from '@/lib/motyw';
+import { MOTYWY, useMotyw } from '@/lib/motyw';
 
 /** „Ekonomia, stacjonarne pierwszego stopnia” → kierunek „Ekonomia” + „stacjonarne · I stopień”. */
 function splitProgramme(p: string): { field: string; detail: string } {
@@ -118,8 +118,25 @@ export default function Shell({ children }: { children: ReactNode }) {
   const { data: me } = useApi<Me>('/api/me');
   const { data: grades } = useApi<GradesResponse>('/api/grades');
   const [palette, setPalette] = useState(0);
-  const [motyw, toggleMotyw] = useMotyw();
-  const motywLabel = motyw === 'jasny' ? 'Motyw ciemny' : 'Motyw jasny';
+  const [motyw, chooseMotyw] = useMotyw();
+  const motywNazwa = MOTYWY.find((m) => m.id === motyw)?.nazwa ?? 'Ciemny';
+  const motywLabel = `Motyw: ${motywNazwa}`;
+  // Wybór motywu — mała lista obok przycisku (pozycja „fixed”, bo pasek ucina to, co wystaje).
+  const [picker, setPicker] = useState<{ left: number; bottom: number } | null>(null);
+  const openPicker = (el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    setTip(null);
+    setPicker((p) => (p ? null : { left: collapsed ? r.right + 12 : r.left, bottom: window.innerHeight - (collapsed ? r.bottom : r.top - 8) }));
+  };
+  useEffect(() => {
+    if (!picker) return;
+    const close = (e: Event) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest('.motyw-pick') && !t.closest('.side-motyw')) setPicker(null);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [picker]);
   useEffect(() => {
     if (grades && registerCourses(grades.courses.map((c) => c.courseId))) setPalette((v) => v + 1);
   }, [grades]);
@@ -187,6 +204,7 @@ export default function Shell({ children }: { children: ReactNode }) {
   useEffect(() => {
     setTip(null);
     setHover(null);
+    setPicker(null);
   }, [path]);
   useEffect(() => setMounted(true), []);
 
@@ -260,8 +278,8 @@ export default function Shell({ children }: { children: ReactNode }) {
           </nav>
 
           <form action="/api/auth/logout" method="post" className="side-bottom">
-            <button type="button" className="side-link side-motyw" onClick={toggleMotyw} aria-label={collapsed ? motywLabel : undefined} {...tipProps(motywLabel)}>
-              {motyw === 'jasny' ? <Moon size={20} /> : <Sun size={20} />}
+            <button type="button" className="side-link side-motyw" onClick={(e) => openPicker(e.currentTarget)} aria-haspopup="true" aria-expanded={!!picker} aria-label={collapsed ? motywLabel : undefined} {...tipProps(motywLabel)}>
+              {motyw === 'jasny' || motyw === 'blekit' ? <Sun size={20} /> : <Moon size={20} />}
               <span className="lbl">{motywLabel}</span>
             </button>
             <button className="side-link side-out" aria-label={collapsed ? 'Wyloguj' : undefined} {...tipProps('Wyloguj')}>
@@ -270,7 +288,27 @@ export default function Shell({ children }: { children: ReactNode }) {
             </button>
           </form>
         </aside>
-        {tip && (
+        {picker && (
+          <div className="motyw-pick" role="menu" style={{ left: picker.left, bottom: picker.bottom }}>
+            {MOTYWY.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                role="menuitemradio"
+                aria-checked={motyw === m.id}
+                onClick={() => {
+                  chooseMotyw(m.id);
+                  setPicker(null);
+                }}
+              >
+                <span className="sw" style={{ background: `linear-gradient(135deg, ${m.kolory[0]} 50%, ${m.kolory[1]} 50%)` }} />
+                {m.nazwa}
+                {motyw === m.id && <span className="ok">✓</span>}
+              </button>
+            ))}
+          </div>
+        )}
+        {tip && !picker && (
           <span className="tip on" role="tooltip" style={{ top: tip.top, left: tip.left }}>
             {tip.label}
           </span>

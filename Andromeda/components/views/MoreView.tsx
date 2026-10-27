@@ -1,15 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { sections, useMe } from '../Shell';
-import { LogOut, Moon, Sun } from '../Icons';
-import { useMotyw } from '@/lib/motyw';
+import { LogOut } from '../Icons';
+import { MOTYWY, useMotyw } from '@/lib/motyw';
 import { PageHead } from '../ui';
 
 const onTabbar = new Set(['/', '/plan', '/oceny', '/zapisy']);
 
 export default function MoreView() {
   const me = useMe();
-  const [motyw, toggleMotyw] = useMotyw();
+  const [motyw, chooseMotyw] = useMotyw();
   return (
     <>
       <PageHead eyebrow={me ? `${me.firstName} ${me.lastName}` : undefined} title="Więcej" />
@@ -31,9 +31,17 @@ export default function MoreView() {
           </section>
         );
       })}
-      <button type="button" className="btn btn-ghost motyw-btn" style={{ width: '100%', marginBottom: 10 }} onClick={toggleMotyw}>
-        {motyw === 'jasny' ? <Moon size={18} /> : <Sun size={18} />} {motyw === 'jasny' ? 'Motyw ciemny' : 'Motyw jasny'}
-      </button>
+      <section className="section">
+        <h2 className="h2">Motyw</h2>
+        <div className="motyw-grid">
+          {MOTYWY.map((m) => (
+            <button key={m.id} type="button" className="motyw-opt" aria-pressed={motyw === m.id} onClick={() => chooseMotyw(m.id)}>
+              <span className="sw" style={{ background: `linear-gradient(135deg, ${m.kolory[0]} 50%, ${m.kolory[1]} 50%)` }} />
+              {m.nazwa}
+            </button>
+          ))}
+        </div>
+      </section>
       <form action="/api/auth/logout" method="post">
         <button className="btn btn-ghost" style={{ width: '100%' }}><LogOut /> Wyloguj</button>
       </form>

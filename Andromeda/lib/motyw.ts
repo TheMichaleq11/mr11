@@ -1,32 +1,58 @@
 'use client';
-// Motyw jasny / ciemny — zapamiętany na urządzeniu, ustawiany na <html data-motyw>.
+// Motywy aplikacji — zapamiętane na urządzeniu.
+// Na <html> ustawiamy dwa atrybuty: data-motyw="jasny" (jasna baza) i data-paleta="blekit|noc" (kolorystyka).
 import { useEffect, useState } from 'react';
 
-export type Motyw = 'ciemny' | 'jasny';
+export type Motyw = 'ciemny' | 'jasny' | 'blekit' | 'noc';
 const KEY = 'andro:motyw';
 
+export const MOTYWY: { id: Motyw; nazwa: string; kolory: [string, string] }[] = [
+  { id: 'ciemny', nazwa: 'Ciemny', kolory: ['#10152E', '#282E5C'] },
+  { id: 'jasny', nazwa: 'Jasny', kolory: ['#10152E', '#E9EEFC'] },
+  { id: 'blekit', nazwa: 'Błękit', kolory: ['#0040FF', '#FFFFFF'] },
+  { id: 'noc', nazwa: 'Noc', kolory: ['#061553', '#0A5BFF'] },
+];
+
+const ATTR: Record<Motyw, { motyw?: 'jasny'; paleta?: 'blekit' | 'noc' }> = {
+  ciemny: {},
+  jasny: { motyw: 'jasny' },
+  blekit: { motyw: 'jasny', paleta: 'blekit' },
+  noc: { paleta: 'noc' },
+};
+
 /** Skrypt wstawiany do <head>, żeby motyw był ustawiony zanim strona się narysuje (bez mignięcia). */
-export const motywScript = `try{if(localStorage.getItem('${KEY}')==='jasny')document.documentElement.dataset.motyw='jasny'}catch(e){}`;
+export const motywScript = `try{var m=localStorage.getItem('${KEY}'),d=document.documentElement;if(m==='jasny'||m==='blekit')d.dataset.motyw='jasny';if(m==='blekit'||m==='noc')d.dataset.paleta=m}catch(e){}`;
+
+function current(): Motyw {
+  const d = document.documentElement.dataset;
+  if (d.paleta === 'blekit') return 'blekit';
+  if (d.paleta === 'noc') return 'noc';
+  return d.motyw === 'jasny' ? 'jasny' : 'ciemny';
+}
 
 // Kolor paska przeglądarki (Safari na iPhonie) dopasowany do motywu.
 function setBarColor(m: Motyw) {
-  const color = m === 'jasny' && window.innerWidth < 900 ? '#E9EEFC' : '#050812';
+  const phone = window.innerWidth < 900;
+  const color = !phone ? '#050812' : m === 'jasny' ? '#E9EEFC' : m === 'blekit' ? '#EEF2FF' : m === 'noc' ? '#061553' : '#050812';
   document.querySelectorAll('meta[name="theme-color"]').forEach((el) => el.setAttribute('content', color));
 }
 
-export function useMotyw(): [Motyw, () => void] {
+export function useMotyw(): [Motyw, (m: Motyw) => void] {
   const [motyw, setMotyw] = useState<Motyw>('ciemny');
   useEffect(() => {
-    const m: Motyw = document.documentElement.dataset.motyw === 'jasny' ? 'jasny' : 'ciemny';
+    const m = current();
     setMotyw(m);
     setBarColor(m);
   }, []);
-  const toggle = () => {
-    const next: Motyw = motyw === 'jasny' ? 'ciemny' : 'jasny';
+  const choose = (next: Motyw) => {
+    if (next === current()) return;
     const root = document.documentElement;
     const apply = () => {
-      if (next === 'jasny') root.dataset.motyw = 'jasny';
+      const a = ATTR[next];
+      if (a.motyw) root.dataset.motyw = a.motyw;
       else delete root.dataset.motyw;
+      if (a.paleta) root.dataset.paleta = a.paleta;
+      else delete root.dataset.paleta;
       setBarColor(next);
     };
     try {
@@ -39,15 +65,12 @@ export function useMotyw(): [Motyw, () => void] {
     // Płynne przenikanie całej strony naraz: tła, napisy i kolory zmieniają się w tym samym momencie.
     const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
     if (doc.startViewTransition && !reduce) {
-      root.classList.add('motyw-vt');
-      const vt = doc.startViewTransition(apply) as { finished?: Promise<void> };
-      vt.finished?.finally(() => root.classList.remove('motyw-vt'));
+      doc.startViewTransition(apply);
       return;
     }
-    // Starsze przeglądarki: wszystkie kolory przechodzą razem w tym samym czasie.
     root.classList.add('motyw-zmiana');
     apply();
     window.setTimeout(() => root.classList.remove('motyw-zmiana'), 600);
   };
-  return [motyw, toggle];
+  return [motyw, choose];
 }
