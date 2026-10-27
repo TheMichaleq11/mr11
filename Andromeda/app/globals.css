@@ -1593,16 +1593,20 @@ body:has(.login) .gl-bg { display: none; }
 @keyframes reveal-text { from { opacity: 0; } to { opacity: 1; } }
 .page-in > * { animation-duration: 0.4s; }
 
-/* telefon: we wszystkich motywach ten sam układ — treść na zaokrąglonym szklanym panelu z marginesem (jak w Błękicie) */
+/* telefon: we wszystkich motywach ten sam układ co w Błękicie — treść prosto na tle, bez dużego panelu;
+   karty, listy i przyciski to szklane kafelki */
 @media (max-width: 899px) {
-  .main .container {
-    margin-left: 10px; margin-right: 10px; width: auto; padding: 16px 14px; border-radius: 22px;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  .main .container { background: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; width: auto !important; box-shadow: none !important; }
+  html[data-motyw='jasny']:not([data-paleta]) .main :is(.list, .card, .more-grid, .tile, .event-card, .motyw-opt, .btn-ghost, .seg, .select, .searchbox, .ledger, .icon-btn) {
+    background: rgba(255, 255, 255, 0.85) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 14px 30px -22px rgba(40, 50, 120, 0.45) !important;
   }
-  html[data-motyw='jasny']:not([data-paleta]) .main .container { background: rgba(255, 255, 255, 0.72); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 20px 40px -30px rgba(40, 50, 120, 0.4); }
-  html[data-paleta='noc'] .main .container { background: linear-gradient(160deg, rgba(10, 30, 110, 0.62), rgba(6, 20, 80, 0.72)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.22); }
-  html[data-paleta='blekit'] .main .container { background: rgba(255, 255, 255, 0.86); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95); }
+  html[data-paleta='noc'] .main :is(.list, .card, .more-grid, .tile, .event-card, .motyw-opt, .btn-ghost, .seg, .select, .searchbox, .ledger, .icon-btn) {
+    background: linear-gradient(160deg, rgba(20, 45, 150, 0.7), rgba(10, 30, 110, 0.75)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  }
+  html:not([data-motyw]):not([data-paleta]) .main :is(.list, .card, .more-grid, .tile, .event-card, .motyw-opt, .btn-ghost, .seg, .select, .searchbox, .ledger, .icon-btn) {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  }
+  .main .ledger { border-radius: 16px; padding: 0 14px; }
 }
 
 /* Błękit na telefonie — ten sam układ co w ciemnych motywach: treść prosto na niebieskim tle,
