@@ -100,11 +100,9 @@ export default function CalendarView() {
               <div className="list">
                 {list.map((e) => {
                   const info = typeInfo[e.type] ?? [e.dayOff ? 'Dzień wolny' : 'Wydarzenie', e.dayOff ? '#34B26A' : '#8A96B8'];
-                  const label = e.dayOff && info[0] !== 'Święto' && info[0] !== 'Przerwa' ? 'Wolne' : info[0];
                   return (
                     <div className="row cal-row" key={e.id} style={{ '--k': info[1] } as React.CSSProperties}>
                       <div className="grow">
-                        <span className="cal-lab"><i />{label}</span>
                         <span className="t1">{e.name}</span>
                         <span className="t2">{[range(e), e.faculty].filter(Boolean).join(' · ')}</span>
                       </div>
