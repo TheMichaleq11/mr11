@@ -1738,3 +1738,29 @@ button.tg-slot { border: none; font: inherit; text-align: left; cursor: pointer;
 @keyframes evd-up { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes evd-down { to { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) { .evd-card, .evd-bk { animation: none !important; } }
+
+/* okienko zajęć — wariant B: kolorowy nagłówek */
+.evd-card { padding: 0 !important; overflow: hidden; }
+.evd-head {
+  position: relative; padding: 26px 64px 20px 26px; color: #fff;
+  background:
+    linear-gradient(125deg, transparent 45%, rgba(170, 235, 255, 0.35) 60%, transparent 75%),
+    radial-gradient(90% 130% at 15% 0%, color-mix(in srgb, var(--c) 88%, #fff 12%), color-mix(in srgb, var(--c) 68%, #001060) 85%);
+}
+.evd-head .evd-type { color: rgba(255, 255, 255, 0.92); }
+.evd-head .evd-type i { background: #fff; }
+.evd-head .evd-title { margin: 0 0 12px; }
+.evd-head .evd-prog { margin: 0; color: rgba(255, 255, 255, 0.88); }
+.evd-head .evd-prog .track { background: rgba(255, 255, 255, 0.28); }
+.evd-head .evd-prog .track i { background: #fff; }
+.evd-body { padding: 6px 26px 22px; }
+.evd-body > .evd-row:first-child { border-top: none; }
+.evd-x { z-index: 2; background: rgba(255, 255, 255, 0.22) !important; }
+.evd-x:hover { background: rgba(255, 255, 255, 0.32) !important; }
+.evd-bar { display: none; }
+@media (max-width: 899px) {
+  .evd-card { padding: 0 !important; }
+  .evd-head { padding: 12px 22px 18px; }
+  .evd-grip { background: rgba(255, 255, 255, 0.55); margin-bottom: 14px; }
+  .evd-body { padding: 4px 22px calc(26px + env(safe-area-inset-bottom)); }
+}

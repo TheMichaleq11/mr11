@@ -55,18 +55,21 @@ export default function EventDialog({ e, onClose }: { e: ClassEvent; onClose: ()
           startY.current = null;
         }}
       >
-        <span className="evd-grip" aria-hidden="true" />
         <button className="evd-x" onClick={close} aria-label="Zamknij">
           <Close />
         </button>
-        <span className="evd-bar" aria-hidden="true" />
-        <span className="evd-type"><i />{e.kind === 'exam' ? 'Egzamin' : e.classType ?? 'Zajęcia'}</span>
-        <h3 className="evd-title">{e.courseName}</h3>
-        <div className="evd-prog">
-          <span className="num">{hhmm(e.start)}</span>
-          <span className="track"><i style={{ width: `${progress * 100}%` }} /></span>
-          <span className="num">{hhmm(e.end)}</span>
+        {/* kolorowy nagłówek w kolorze typu zajęć, ze smugą światła jak karta „Teraz” */}
+        <div className="evd-head">
+          <span className="evd-grip" aria-hidden="true" />
+          <span className="evd-type"><i />{e.kind === 'exam' ? 'Egzamin' : e.classType ?? 'Zajęcia'}</span>
+          <h3 className="evd-title">{e.courseName}</h3>
+          <div className="evd-prog">
+            <span className="num">{hhmm(e.start)}</span>
+            <span className="track"><i style={{ width: `${progress * 100}%` }} /></span>
+            <span className="num">{hhmm(e.end)}</span>
+          </div>
         </div>
+        <div className="evd-body">
         <div className="evd-row">
           <span className="ic"><Clock /></span>
           <div>
@@ -103,6 +106,7 @@ export default function EventDialog({ e, onClose }: { e: ClassEvent; onClose: ()
               {e.roomId ? 'Sala na mapie' : 'Mapa budynku'}
             </Link>
           )}
+        </div>
         </div>
       </div>
     </div>,
