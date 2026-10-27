@@ -1764,3 +1764,11 @@ button.tg-slot { border: none; font: inherit; text-align: left; cursor: pointer;
   .evd-grip { background: rgba(255, 255, 255, 0.55); margin-bottom: 14px; }
   .evd-body { padding: 4px 22px calc(26px + env(safe-area-inset-bottom)); }
 }
+
+/* kalendarz akademicki: kolorowy pasek + etykieta typu + odliczanie */
+.cal-row { position: relative; padding-left: 18px !important; }
+.cal-row::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 4px; background: var(--k); }
+.cal-lab { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: color-mix(in srgb, var(--k) 70%, var(--ink)); margin-bottom: 2px; }
+.cal-lab i { width: 7px; height: 7px; border-radius: 50%; background: var(--k); }
+.cal-when { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; text-align: right; flex-shrink: 0; }
+.cal-when small { display: block; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-top: 1px; }

@@ -4,15 +4,30 @@ import { today } from '@/lib/dates';
 import type { CalendarResponse, CalEvent } from '@/lib/types-more';
 import { Empty, LoadError, PageHead, Skeleton } from '../ui';
 
+// Nazwa i kolor typu dnia (kolorowy pasek i etykieta — jak typy zajęć w planie).
 const typeInfo: Record<string, [string, string]> = {
-  exam_session: ['Sesja', 'warn'],
-  rector: ['Dzień rektorski', 'ok'],
-  dean: ['Dzień dziekański', 'ok'],
-  holidays: ['Przerwa', 'good'],
-  public_holidays: ['Święto', 'good'],
-  break: ['Przerwa', 'good'],
-  academic_year: ['Rok akademicki', 'none'],
+  exam_session: ['Sesja', '#F0A23A'],
+  rector: ['Dzień rektorski', '#A06BF0'],
+  dean: ['Dzień dziekański', '#A06BF0'],
+  holidays: ['Przerwa', '#34B26A'],
+  public_holidays: ['Święto', '#F07A5A'],
+  break: ['Przerwa', '#34B26A'],
+  academic_year: ['Rok akademicki', '#8A96B8'],
 };
+
+function lengthLabel(e: CalEvent): string {
+  const n = Math.round((new Date(e.end.slice(0, 10) + 'T12:00:00').getTime() - new Date(e.start.slice(0, 10) + 'T12:00:00').getTime()) / 86400000) + 1;
+  return n === 1 ? '1 dzień' : `${n} dni`;
+}
+
+function whenLabel(e: CalEvent, t: string): string {
+  const a = e.start.slice(0, 10);
+  const b = e.end.slice(0, 10);
+  if (a <= t && b >= t) return 'trwa';
+  if (b < t) return 'minęło';
+  const d = daysUntil(a);
+  return d === 1 ? 'jutro' : `za ${d} dni`;
+}
 
 const monthName = (iso: string) => {
   const s = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' }).format(new Date(iso.slice(0, 10) + 'T12:00:00'));
@@ -84,14 +99,19 @@ export default function CalendarView() {
               <h2 className="h2">{monthName(month + '-01')}</h2>
               <div className="list">
                 {list.map((e) => {
-                  const info = typeInfo[e.type] ?? [e.dayOff ? 'Dzień wolny' : 'Wydarzenie', e.dayOff ? 'good' : 'none'];
+                  const info = typeInfo[e.type] ?? [e.dayOff ? 'Dzień wolny' : 'Wydarzenie', e.dayOff ? '#34B26A' : '#8A96B8'];
+                  const label = e.dayOff && info[0] !== 'Święto' && info[0] !== 'Przerwa' ? 'Wolne' : info[0];
                   return (
-                    <div className="row" key={e.id}>
+                    <div className="row cal-row" key={e.id} style={{ '--k': info[1] } as React.CSSProperties}>
                       <div className="grow">
+                        <span className="cal-lab"><i />{label}</span>
                         <span className="t1">{e.name}</span>
                         <span className="t2">{[range(e), e.faculty].filter(Boolean).join(' · ')}</span>
                       </div>
-                      <span className={`tag ${info[1]}`}>{e.dayOff && info[0] !== 'Święto' && info[0] !== 'Przerwa' ? 'Wolne' : info[0]}</span>
+                      <span className="cal-when">
+                        {whenLabel(e, t)}
+                        <small>{lengthLabel(e)}</small>
+                      </span>
                     </div>
                   );
                 })}
