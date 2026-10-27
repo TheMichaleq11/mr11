@@ -1640,3 +1640,18 @@ body:has(.login) .gl-bg { display: none; }
 }
 @media (max-width: 899px) { html[data-paleta='blekit'] .main .callout .btn-primary { background: #fff !important; color: #0036E0 !important; } }
 .wersja-app { text-align: center; font-size: 12px; color: var(--faint); margin-top: 16px; }
+
+/* iPad/iPhone z ekranu głównego: nic nie wchodzi pod pasek z godziną i baterią
+   (system rozmywa to, co jest pod nim — stąd rozmyta góra panelu) */
+@media (min-width: 900px) {
+  .shell { padding-top: calc(env(safe-area-inset-top) + 14px); padding-left: calc(env(safe-area-inset-left) + 14px); padding-right: calc(env(safe-area-inset-right) + 14px); padding-bottom: calc(env(safe-area-inset-bottom) + 14px); }
+  .side { top: calc(env(safe-area-inset-top) + 14px); height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .main { height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+@media (max-width: 899px) {
+  /* telefon: przy przewijaniu treść chowa się pod jednolitym paskiem w kolorze tła, a nie pod rozmyciem */
+  .shell::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top); z-index: 20; pointer-events: none; background: var(--statusbar, #070B1F); }
+  html[data-motyw='jasny']:not([data-paleta]) { --statusbar: #E9EEFC; }
+  html[data-paleta='blekit'] { --statusbar: #0040FF; }
+  html[data-paleta='noc'] { --statusbar: #020A3A; }
+}
