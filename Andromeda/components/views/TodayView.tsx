@@ -154,7 +154,7 @@ export default function TodayView() {
             <h2 className="h2">{isNextWeek ? 'Nadchodzący tydzień' : 'Ten tydzień'}</h2>
             <Link href="/plan" className="link-sm">Cały plan</Link>
           </div>
-          {week.data ? <WeekGrid monday={monday} events={week.data.events} /> : <Skeleton h={220} />}
+          {week.data ? <WeekGrid monday={monday} events={week.data.events} pph={44} /> : <Skeleton h={220} />}
         </section>
         <section className="narrow section plain">
           <div className="section-head ruled">

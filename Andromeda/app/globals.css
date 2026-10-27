@@ -1655,3 +1655,37 @@ body:has(.login) .gl-bg { display: none; }
   html[data-paleta='blekit'] { --statusbar: #0040FF; }
   html[data-paleta='noc'] { --statusbar: #020A3A; }
 }
+
+/* =========================================================================
+   PLAN NA OSI GODZIN
+   ========================================================================= */
+.tg-grid { display: grid; column-gap: 6px; row-gap: 6px; align-items: start; }
+.tg-axis { position: relative; }
+.tg-axis span { position: absolute; right: 6px; transform: translateY(-50%); font-size: 11px; color: var(--faint); line-height: 1; }
+.tg-axis span:first-child { transform: none; }
+.tg-day { position: relative; border-radius: 10px; }
+.tg-day.is-today { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.tg-line { position: absolute; left: 0; right: 0; height: 1px; background: var(--line); }
+.tg-now { position: absolute; left: -3px; right: 0; height: 2px; background: #FF5A5F; z-index: 3; border-radius: 2px; }
+.tg-now::before { content: ''; position: absolute; left: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #FF5A5F; }
+.tg-free { position: absolute; top: 8px; left: 0; right: 0; text-align: center; font-size: 12.5px; color: var(--faint); }
+.tg-slot { position: absolute; z-index: 2; overflow: hidden; padding: 6px 8px 6px 10px !important; gap: 2px !important; }
+.tg-slot .s1 { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-slot .s2 { font-size: 12.5px; line-height: 1.2; }
+.tg-slot .s3 { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-slot.short { flex-direction: row; align-items: center; gap: 6px !important; padding-top: 3px !important; padding-bottom: 3px !important; }
+.tg-slot.short .s1 { display: none; }
+.tg-slot.short .s2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-in .tg-slot { animation: reveal 0.4s var(--ease) both; animation-delay: 150ms; }
+@media (max-width: 899px) {
+  html[data-paleta='blekit'] .main .tg-slot { --ink: #0B1440; --muted: #55608A; color: #0B1440; background: rgba(255, 255, 255, 0.94) !important; box-shadow: inset 4px 0 0 var(--c), 0 10px 24px -18px rgba(0, 20, 120, 0.6) !important; }
+  html[data-paleta='blekit'] .main .tg-slot.exam { background: #FFF1E2 !important; }
+  html[data-paleta='blekit'] .main .day-btn[aria-selected='true'] { background: #0B1440 !important; color: #fff !important; box-shadow: none !important; }
+}
+/* na osi godzin karty zajęć są pełne, żeby linie godzin nie prześwitywały */
+.tg-slot { background: color-mix(in srgb, var(--c) 10%, var(--tg-bg, #1A2140)) !important; }
+html[data-motyw='jasny'] .tg-slot { --tg-bg: #FFFFFF; }
+html[data-paleta='noc'] .tg-slot { --tg-bg: #0C2070; }
+html[data-paleta='blekit'] .tg-slot { --tg-bg: #FFFFFF; }
+.tg-slot.exam { background: var(--warn-bg) !important; }
+html:not([data-motyw]):not([data-paleta]) .tg-slot.exam, html[data-paleta='noc'] .tg-slot.exam { background: #3A2B2A !important; }

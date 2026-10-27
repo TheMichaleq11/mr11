@@ -4,7 +4,7 @@ import { useApi } from '@/lib/client';
 import { activeMonday, addDays, dayNumber, dayOf, longDate, mondayOf, shortWeekday, today, weekRangeLabel } from '@/lib/dates';
 import type { PlanResponse } from '@/lib/types';
 import { ChevronLeft, ChevronRight } from '../Icons';
-import { Empty, ErrorBox, EventCard, Skeleton, WeekGrid } from '../ui';
+import { ErrorBox, Skeleton, TimeGrid, WeekGrid } from '../ui';
 
 export default function PlanView() {
   const [monday, setMonday] = useState(() => activeMonday());
@@ -72,13 +72,7 @@ export default function PlanView() {
 
         <section className="section">
           <h2 className="eyebrow" style={{ fontWeight: 600 }}>{longDate(selDay)}</h2>
-          {loading && !data ? (
-            <Skeleton n={3} h={96} />
-          ) : dayEvents.length ? (
-            dayEvents.map((e) => <EventCard key={e.id} e={e} />)
-          ) : (
-            <Empty title="Wolne">Brak zajęć w tym dniu</Empty>
-          )}
+          {loading && !data ? <Skeleton n={3} h={96} /> : <TimeGrid days={[selDay]} events={dayEvents} pph={72} showHead={false} details />}
         </section>
       </div>
 

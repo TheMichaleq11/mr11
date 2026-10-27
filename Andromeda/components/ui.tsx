@@ -143,42 +143,115 @@ export function EventCard({ e }: { e: ClassEvent }) {
   );
 }
 
-/** Siatka tygodnia (pon–pt, plus weekend jeśli są zajęcia). */
-export function WeekGrid({ monday, events }: { monday: string; events: ClassEvent[] }) {
+/** Minuty od północy z godziny zajęć („08:15” → 495). */
+const mins = (iso: string) => {
+  const [h, m] = hhmm(iso).split(':').map(Number);
+  return h * 60 + m;
+};
+
+/** Rozkład zajęć jednego dnia na kolumny, gdy nachodzą na siebie. */
+function lanes(evs: ClassEvent[]) {
+  const sorted = [...evs].sort((a, b) => mins(a.start) - mins(b.start));
+  const out = new Map<string, { lane: number; of: number }>();
+  let group: ClassEvent[] = [];
+  let groupEnd = -1;
+  const flush = () => {
+    const ends: number[] = [];
+    const assigned: [ClassEvent, number][] = [];
+    for (const e of group) {
+      let l = ends.findIndex((end) => end <= mins(e.start));
+      if (l === -1) l = ends.length;
+      ends[l] = mins(e.end);
+      assigned.push([e, l]);
+    }
+    for (const [e, l] of assigned) out.set(e.id, { lane: l, of: ends.length });
+    group = [];
+  };
+  for (const e of sorted) {
+    if (group.length && mins(e.start) >= groupEnd) flush();
+    group.push(e);
+    groupEnd = Math.max(groupEnd, mins(e.end));
+  }
+  if (group.length) flush();
+  return out;
+}
+
+/** Plan na osi godzin: każde zajęcia stoją na wysokości swojej godziny i mają długość swojego czasu trwania. */
+export function TimeGrid({ days, events, pph = 56, showHead = true, details = false }: { days: string[]; events: ClassEvent[]; pph?: number; showHead?: boolean; details?: boolean }) {
   const t = today();
-  const all = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
-  const days = all.filter((d, i) => i < 5 || events.some((e) => dayOf(e.start) === d));
+  const list = events.filter((e) => days.includes(dayOf(e.start)));
+  const from = Math.min(8, ...list.map((e) => Math.floor(mins(e.start) / 60)));
+  const to = Math.max(from + 6, ...list.map((e) => Math.ceil(mins(e.end) / 60)));
+  const hours = Array.from({ length: to - from }, (_, i) => from + i);
+  const height = (to - from) * pph;
+  const y = (m: number) => ((m - from * 60) / 60) * pph;
+  const now = new Date();
+  const nowM = now.getHours() * 60 + now.getMinutes();
   return (
-    <div className="week-scroll">
-      <div className="week" style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}>
-        {days.map((d) => {
-          const evs = events.filter((e) => dayOf(e.start) === d);
-          return (
-            <div className="week-day" key={d}>
-              <div className={`week-head${d === t ? ' is-today' : ''}`}>
+    <div className="tg" style={{ '--pph': `${pph}px` } as React.CSSProperties}>
+      <div className="tg-grid" style={{ gridTemplateColumns: `40px repeat(${days.length}, minmax(0, 1fr))` }}>
+        {showHead && (
+          <>
+            <span />
+            {days.map((d) => (
+              <div key={d} className={`week-head${d === t ? ' is-today' : ''}`}>
                 <span>{shortWeekday(d)}</span>
                 <span className="num">{dayNumber(d)}</span>
               </div>
-              {evs.length === 0 && <div className="free">Wolne</div>}
+            ))}
+          </>
+        )}
+        <div className="tg-axis" style={{ height }}>
+          {hours.map((h) => (
+            <span key={h} className="num" style={{ top: y(h * 60) }}>{String(h).padStart(2, '0')}:00</span>
+          ))}
+        </div>
+        {days.map((d) => {
+          const evs = list.filter((e) => dayOf(e.start) === d);
+          const lay = lanes(evs);
+          return (
+            <div key={d} className={`tg-day${d === t ? ' is-today' : ''}`} style={{ height }}>
+              {hours.map((h) => (
+                <span key={h} className="tg-line" style={{ top: y(h * 60) }} />
+              ))}
+              {d === t && nowM > from * 60 && nowM < to * 60 && <span className="tg-now" style={{ top: y(nowM) }} />}
+              {evs.length === 0 && <div className="tg-free">Wolne</div>}
               {evs.map((e) => {
                 const tc = e.kind === 'exam' ? 'var(--warn)' : typeColor(e.classType);
+                const l = lay.get(e.id) ?? { lane: 0, of: 1 };
+                const top = y(mins(e.start));
+                const h = Math.max(y(mins(e.end)) - top, 26);
                 return (
                   <Link
                     key={e.id}
                     href={courseHref(e.courseId)}
-                    className={`slot${e.kind === 'exam' ? ' exam' : ''}`}
-                    style={{ '--c': tc } as React.CSSProperties}
+                    className={`slot tg-slot${e.kind === 'exam' ? ' exam' : ''}${h < 52 ? ' short' : ''}`}
+                    style={{ '--c': tc, top, height: h - 3, left: `calc(${(l.lane / l.of) * 100}% + 2px)`, width: `calc(${100 / l.of}% - 4px)` } as React.CSSProperties}
                   >
                     <span className="s1 num">
-                      {hhmm(e.start)} · {e.classType ?? 'Zajęcia'}
+                      {hhmm(e.start)}–{hhmm(e.end)} · {e.classType ?? 'Zajęcia'}
                     </span>
                     <span className="s2">{e.courseName}</span>
+                    {details && where(e) && <span className="s3">{where(e)}</span>}
                   </Link>
                 );
               })}
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/** Siatka tygodnia (pon–pt, plus weekend jeśli są zajęcia) — na osi godzin. */
+export function WeekGrid({ monday, events, pph }: { monday: string; events: ClassEvent[]; pph?: number }) {
+  const all = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+  const days = all.filter((d, i) => i < 5 || events.some((e) => dayOf(e.start) === d));
+  return (
+    <div className="week-scroll">
+      <div style={{ minWidth: 600 }}>
+        <TimeGrid days={days} events={events} pph={pph} />
       </div>
       <TypeLegend types={events.filter((e) => e.kind !== 'exam').map((e) => e.classType)} />
     </div>
