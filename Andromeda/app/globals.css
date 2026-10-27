@@ -1635,3 +1635,4 @@ body:has(.login) .gl-bg { display: none; }
   html[data-paleta='blekit'] .main .ledger { border-radius: 16px; padding: 0 14px; }
 }
 @media (max-width: 899px) { html[data-paleta='blekit'] .main .callout .btn-primary { background: #fff !important; color: #0036E0 !important; } }
+.wersja-app { text-align: center; font-size: 12px; color: var(--faint); margin-top: 16px; }

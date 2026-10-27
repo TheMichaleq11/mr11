@@ -45,6 +45,7 @@ export default function MoreView() {
       <form action="/api/auth/logout" method="post">
         <button className="btn btn-ghost" style={{ width: '100%' }}><LogOut /> Wyloguj</button>
       </form>
+      <p className="wersja-app">Wersja {(process.env.NEXT_PUBLIC_WERSJA ?? '').slice(0, 7) || 'lokalna'}</p>
     </>
   );
 }
