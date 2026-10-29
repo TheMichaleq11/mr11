@@ -1775,14 +1775,13 @@ button.tg-slot { border: none; font: inherit; text-align: left; cursor: pointer;
 
 /* =========================================================================
    OKNO WINDOWS (aplikacja Andromeda na komputer, Electron)
-   data-okno="zwykle" — zwykłe okno: miejsce na przyciski okna, przeciąganie za odstępy między panelami
-   data-okno="szklo"  — Windows 11: tło okna to rozmyty pulpit (akryl), panele są półprzezroczyste
+   data-okno="ostre"  — okno przezroczyste: widać tylko panele, w odstępach prawdziwy pulpit
+   data-okno="szklo"  — Windows 11: tło okna to rozmyty pulpit (akryl), panele półprzezroczyste
+   data-okno="zwykle" — zwykłe tło
+   We wszystkich: własne przyciski okna w rogu panelu, przeciąganie za górę panelu i za odstępy.
    ========================================================================= */
-html[data-okno] { --okno-pasek: 36px; }
-html[data-okno] .shell {
-  -webkit-app-region: drag; app-region: drag;
-  padding-top: var(--okno-pasek) !important;
-}
+html[data-okno] { --okno-pasek: 14px; }
+html[data-okno] .shell { -webkit-app-region: drag; app-region: drag; padding-top: var(--okno-pasek) !important; }
 html[data-okno] .side, html[data-okno] .main, html[data-okno] .evd, html[data-okno] .motyw-pick, html[data-okno] .tip {
   -webkit-app-region: no-drag; app-region: no-drag;
 }
@@ -1790,12 +1789,65 @@ html[data-okno] .side, html[data-okno] .main, html[data-okno] .evd, html[data-ok
   html[data-okno] .side { top: var(--okno-pasek) !important; height: calc(100dvh - var(--okno-pasek) - 14px) !important; }
   html[data-okno] .main { height: calc(100dvh - var(--okno-pasek) - 14px) !important; }
 }
-/* logowanie: całe tło przeciąga okno, karta i przyciski klikają się normalnie */
-html[data-okno] .login { -webkit-app-region: drag; app-region: drag; }
-html[data-okno] .login-box, html[data-okno] .login a, html[data-okno] .login button { -webkit-app-region: no-drag; app-region: no-drag; }
 /* panel główny bez widocznego paska przewijania (przewija się kółkiem/gładzikiem jak dotąd) */
 html[data-okno] .main { scrollbar-width: none !important; }
 html[data-okno] .main::-webkit-scrollbar { display: none; }
+/* górny pasek panelu i góra paska bocznego przeciągają okno (dwuklik = maksymalizuj) */
+.okno-uchwyt { display: none; }
+html[data-okno] .okno-uchwyt {
+  display: block; position: sticky; top: 0; height: 30px; margin: -36px 120px 6px 0; z-index: 4;
+  -webkit-app-region: drag; app-region: drag;
+}
+html[data-okno] .side-top { -webkit-app-region: drag; app-region: drag; }
+html[data-okno] .side-top a, html[data-okno] .side-top button { -webkit-app-region: no-drag; app-region: no-drag; }
+/* logowanie: całe tło przeciąga okno */
+html[data-okno] .login { -webkit-app-region: drag; app-region: drag; }
+html[data-okno] .login-box, html[data-okno] .login a, html[data-okno] .login button { -webkit-app-region: no-drag; app-region: no-drag; }
+
+/* --- przyciski okna w prawym górnym rogu panelu --- */
+.okno-btns {
+  position: fixed; z-index: 95; top: 10px; right: 12px; display: flex; gap: 2px;
+  -webkit-app-region: no-drag; app-region: no-drag; color: rgba(255, 255, 255, 0.85);
+}
+html:has(.shell) .okno-btns { top: calc(var(--okno-pasek, 14px) + 12px); right: 28px; }
+.okno-btn {
+  width: 34px; height: 30px; border: none; border-radius: 9px; background: transparent; color: inherit;
+  display: grid; place-items: center; cursor: default; transition: background 0.15s, color 0.15s;
+}
+.okno-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.okno-btn:active { background: rgba(255, 255, 255, 0.2); }
+.okno-x:hover { background: #E5484D; color: #fff; }
+.okno-x:active { background: #C23B40; color: #fff; }
+/* jasny panel (Jasny, Błękit) → ciemne symbole */
+html[data-motyw='jasny']:has(.shell) .okno-btns { color: rgba(22, 28, 56, 0.72); }
+html[data-motyw='jasny']:has(.shell) .okno-btn:hover { background: rgba(22, 28, 56, 0.08); }
+html[data-motyw='jasny']:has(.shell) .okno-x:hover { background: #E5484D; color: #fff; }
+
+/* --- uchwyty do zmiany rozmiaru (tylko przezroczyste okno) — w odstępie tuż przy brzegu paneli --- */
+.okno-rozmiar { position: fixed; z-index: 96; -webkit-app-region: no-drag; app-region: no-drag; }
+.okno-rozmiar.r-n { top: 2px; left: 24px; right: 24px; height: 9px; cursor: ns-resize; }
+.okno-rozmiar.r-s { bottom: 2px; left: 24px; right: 24px; height: 9px; cursor: ns-resize; }
+.okno-rozmiar.r-e { right: 2px; top: 24px; bottom: 24px; width: 9px; cursor: ew-resize; }
+.okno-rozmiar.r-w { left: 2px; top: 24px; bottom: 24px; width: 9px; cursor: ew-resize; }
+.okno-rozmiar.r-nw { top: 0; left: 0; width: 24px; height: 24px; cursor: nwse-resize; }
+.okno-rozmiar.r-se { bottom: 0; right: 0; width: 24px; height: 24px; cursor: nwse-resize; }
+.okno-rozmiar.r-ne { top: 0; right: 0; width: 24px; height: 24px; cursor: nesw-resize; }
+.okno-rozmiar.r-sw { bottom: 0; left: 0; width: 24px; height: 24px; cursor: nesw-resize; }
+
+/* --- ostre: okno przezroczyste, panele pełne (przez nie pulpitu nie widać, żeby tekst był czytelny) --- */
+html[data-okno='ostre'][data-okno][data-okno], html[data-okno='ostre'][data-okno][data-okno] body { background: transparent !important; }
+html[data-okno='ostre'] .gl-bg, html[data-okno='ostre'] .space, html[data-okno='ostre'] body::after { display: none !important; }
+html[data-okno='ostre'] .side, html[data-okno='ostre'] .main { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 12px 32px -14px rgba(0, 0, 0, 0.55) !important; }
+html[data-okno='ostre']:not([data-motyw]):not([data-paleta]) .main { background: linear-gradient(160deg, #262C58, #1A1F44) !important; }
+html[data-okno='ostre']:not([data-motyw]):not([data-paleta]) .side { background: linear-gradient(160deg, #1A1F44, #11152F) !important; }
+html[data-okno='ostre'][data-motyw='jasny']:not([data-paleta]) .main { background: linear-gradient(160deg, #F6F8FF, #ECEFFC) !important; box-shadow: inset 0 0 0 1px rgba(30, 40, 90, 0.1), 0 12px 32px -14px rgba(0, 0, 0, 0.4) !important; }
+html[data-okno='ostre'][data-motyw='jasny']:not([data-paleta]) .side { background: #141A36 !important; }
+html[data-okno='ostre'][data-paleta='blekit'] .side { background: radial-gradient(120% 45% at 100% 0%, rgba(120, 220, 255, 0.5), transparent 60%), #0040FF !important; }
+html[data-okno='ostre'][data-paleta='blekit'] .main { background: #FFFFFF !important; box-shadow: inset 0 0 0 1px rgba(10, 30, 120, 0.1), 0 12px 32px -14px rgba(0, 0, 0, 0.4) !important; }
+html[data-okno='ostre'][data-paleta='noc'] .main { background: linear-gradient(160deg, #0B2178, #061553) !important; }
+html[data-okno='ostre'][data-paleta='noc'] .side { background: linear-gradient(160deg, #0A1C66, #05124A) !important; }
+/* logowanie w przezroczystym oknie: zaokrąglona niebieska tafla */
+html[data-okno='ostre'] .login { margin: 14px; min-height: calc(100dvh - 28px); border-radius: 26px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); }
 
 /* --- szkło: przez tło okna widać rozmyty pulpit --- */
 html[data-okno='szklo'][data-okno][data-okno], html[data-okno='szklo'][data-okno][data-okno] body { background: transparent !important; }
@@ -1821,3 +1873,4 @@ html[data-okno='szklo'] .login {
     radial-gradient(90% 80% at 20% 100%, rgba(0, 32, 184, 0.7), transparent 70%),
     rgba(0, 64, 255, 0.55);
 }
+html[data-okno='ostre'] body:has(.login) .okno-btns { top: 24px; right: 26px; }

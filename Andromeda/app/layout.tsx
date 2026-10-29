@@ -5,6 +5,7 @@ import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import RegisterSW from '@/components/RegisterSW';
+import OknoPrzyciski from '@/components/OknoPrzyciski';
 import { motywScript } from '@/lib/motyw';
 import './globals.css';
 
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="gl-bg" aria-hidden="true" />
         {children}
         <RegisterSW />
+        <OknoPrzyciski />
       </body>
     </html>
   );

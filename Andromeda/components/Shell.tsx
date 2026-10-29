@@ -320,6 +320,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         )}
 
         <main className="main" ref={mainRef}>
+          <div className="okno-uchwyt" aria-hidden="true" />
           <div className="container page-in" key={`${palette}-${path}`}>
             {mounted ? children : <div className="skeleton" style={{ minHeight: 180 }} aria-hidden="true" />}
           </div>

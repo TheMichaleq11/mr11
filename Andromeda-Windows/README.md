@@ -5,19 +5,22 @@ Treść zawsze jest aktualna — każda zmiana wdrożona na Vercel od razu jest 
 
 Co dodaje okno:
 
-- **Szkło** — na Windows 11 (22H2 i nowszy) tło okna to rozmyty pulpit (akryl Windows). Panele Andromedy są półprzezroczyste,
-  a w odstępach między nimi widać pulpit. Jasne motywy (Jasny, Błękit) dają jasny akryl, ciemne (Ciemny, Noc) — ciemny.
-  Na Windows 10 okno ma zwykłe tło. Gdy okno nie jest aktywne, Windows sam zamienia akryl na jednolity kolor.
-- Natywne przyciski okna (minimalizuj / maksymalizuj / zamknij) w kolorze pasującym do motywu; okno przeciąga się
-  za odstępy między panelami.
-- Logowanie do USOS w oknie aplikacji; obce linki otwierają się w przeglądarce.
+- **Trzy tryby tła** — `Ctrl+Shift+B` przełącza po kolei (aplikacja uruchamia się wtedy ponownie, wybór zostaje zapamiętany):
+  - **ostre** (domyślny) — okno jest w pełni przezroczyste, widać tylko dwa panele, a w odstępach prawdziwy pulpit.
+    Klik w odstęp trafia w to, co jest pod spodem. Okno przesuwa się za górę panelu i za pole z logo,
+    rozmiar zmienia się za brzegi (niewidoczne uchwyty tuż przy panelach).
+  - **akryl** — systemowe szkło Windows 11 (rozmyty pulpit z odcieniem narzuconym przez Windows).
+  - **rozmycie** — eksperymentalne rozmycie z prawie przezroczystym odcieniem (może nie działać na każdym Windowsie).
+- Własne przyciski okna (zminimalizuj / zmaksymalizuj / zamknij) w prawym górnym rogu panelu.
+- Logowanie do USOS/UJ w osobnym, zwykłym okienku; obce linki otwierają się w przeglądarce.
 - Zapamiętany rozmiar i położenie okna, jedna kopia aplikacji naraz.
 - Skróty: `F5` / `Ctrl+R` odśwież, `Ctrl` `+` `-` `0` powiększenie, `Alt+←` / `Alt+→` (i boczne przyciski myszy) wstecz/dalej,
   prawy przycisk — kopiuj/wklej.
 - Ekran „Brak połączenia”, który sam wraca, gdy pojawi się internet.
 
-Strona wie, że jest w oknie, po znaczniku w user-agencie `AndromedaOkno/<wersja> (szklo|zwykle)` —
-ustawia wtedy `<html data-okno="…">` (`lib/motyw.ts`), a style są na końcu `app/globals.css` (sekcja „OKNO WINDOWS”).
+Strona wie, że jest w oknie, po znaczniku w user-agencie `AndromedaOkno/<wersja> (ostre|szklo|zwykle)` —
+ustawia wtedy `<html data-okno="…">` (`lib/motyw.ts`), style są na końcu `app/globals.css` (sekcja „OKNO WINDOWS”),
+a przyciski okna w `components/OknoPrzyciski.tsx`.
 
 ## Instalator
 

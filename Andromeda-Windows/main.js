@@ -1,18 +1,31 @@
-// Andromeda na Windowsa — okno z prawdziwym szkłem (akryl Windows 11), w którym działa Andromeda z Vercela.
-// Treść zawsze jest aktualna (ładuje się z sieci), a aplikacja dodaje: szkło, natywne przyciski okna,
-// pamięć rozmiaru okna, skróty klawiszowe i otwieranie obcych linków w przeglądarce.
-const { app, BrowserWindow, shell, ipcMain, nativeTheme, Menu, session } = require('electron');
+// Andromeda na Windowsa — okno, w którym działa Andromeda z Vercela.
+// Treść zawsze jest aktualna (ładuje się z sieci), a aplikacja dodaje: przezroczyste okno (same panele na pulpicie)
+// albo szkło, własne przyciski okna w panelu, pamięć rozmiaru okna, skróty i otwieranie obcych linków w przeglądarce.
+//
+// Tryby tła (Ctrl+Shift+B przełącza po kolei, aplikacja uruchamia się wtedy ponownie):
+//   ostre    — okno w pełni przezroczyste: widać tylko panele, a w odstępach prawdziwy pulpit; klik w odstęp trafia w pulpit
+//   akryl    — systemowe szkło Windows 11 (rozmyty pulpit z szarym odcieniem)
+//   rozmycie — eksperymentalne rozmycie z prawie przezroczystym odcieniem
+const { app, BrowserWindow, shell, ipcMain, nativeTheme, Menu, session, screen } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
 
 const START = process.env.ANDROMEDA_URL || 'https://andromeda-usos.vercel.app/';
 const APP_HOST = new URL(START).host;
-const PASEK = 36; // wysokość paska z przyciskami okna (taka sama jak --okno-pasek w CSS)
 
 // Akryl (backgroundMaterial) działa od Windows 11 22H2 (kompilacja 22621). Starszy Windows: zwykłe tło.
 const kompilacja = Number(os.release().split('.')[2] || 0);
 const SZKLO = process.platform === 'win32' && kompilacja >= 22621 && process.env.ANDROMEDA_BEZ_SZKLA !== '1';
+const TRYBY = ['ostre', 'akryl', 'rozmycie'];
+function trybStartowy(zapisany) {
+  if (process.env.ANDROMEDA_BEZ_SZKLA === '1') return 'zwykle';
+  const t = TRYBY.includes(zapisany) ? zapisany : 'ostre';
+  return t !== 'ostre' && !SZKLO ? 'ostre' : t;
+}
+let TRYB = 'ostre'; // ustalany przy starcie z okno.json
+/** Znacznik dla strony (CSS): ostre | szklo | zwykle */
+const znacznik = () => (TRYB === 'ostre' ? 'ostre' : TRYB === 'zwykle' ? 'zwykle' : 'szklo');
 
 // ---------- czyste rozmycie pulpitu (bez szarego odcienia akrylu) ----------
 // Akryl Windowsa nakłada mocny szary odcień, przez który pulpitu prawie nie widać. Tryb „rozmycie” wyłącza
@@ -102,38 +115,25 @@ function wczytajOkno() {
     return {};
   }
 }
-function zapiszOkno(win, tlo) {
+function zapiszOkno(win, tryb = TRYB) {
   try {
-    const stan = { ...win.getNormalBounds(), max: win.isMaximized(), tlo };
+    const stan = { ...win.getNormalBounds(), max: win.isMaximized(), tryb };
     fs.writeFileSync(plikOkna(), JSON.stringify(stan));
   } catch {
     /* nie szkodzi */
   }
 }
 
-// ---------- kolory przycisków okna zależnie od motywu Andromedy ----------
-// jasne motywy → jasny akryl i ciemne symbole; ciemne → ciemny akryl i białe symbole
-const MOTYWY = {
-  ciemny: { jasny: false },
-  noc: { jasny: false },
-  jasny: { jasny: true },
-  blekit: { jasny: true },
-};
+// ---------- odcień szkła zależnie od motywu Andromedy ----------
+// jasne motywy → jasny akryl, ciemne → ciemny (w trybie ostrym nie ma znaczenia)
+const JASNE = new Set(['jasny', 'blekit']);
 let motyw = 'ciemny';
-function ustawMotyw(win, m, naLogowaniu = false) {
-  if (MOTYWY[m]) motyw = m;
-  // bez szkła Błękit ma pod spodem pełny niebieski — wtedy białe symbole
-  const jasnyPasek = !naLogowaniu && MOTYWY[motyw].jasny && (SZKLO || motyw === 'jasny');
-  nativeTheme.themeSource = SZKLO ? (MOTYWY[motyw].jasny && !naLogowaniu ? 'light' : 'dark') : 'system';
-  try {
-    win.setTitleBarOverlay({ color: '#00000000', symbolColor: jasnyPasek ? '#161C38' : '#FFFFFF', height: PASEK });
-  } catch {
-    /* system bez nakładki przycisków */
-  }
+function ustawMotyw(_win, m) {
+  if (typeof m === 'string') motyw = m;
+  nativeTheme.themeSource = TRYB === 'akryl' || TRYB === 'rozmycie' ? (JASNE.has(motyw) ? 'light' : 'dark') : 'system';
 }
 
 let okno = null;
-let przelaczTlo = () => {};
 let oknoLogowania = null;
 
 function jestLogowaniem(url) {
@@ -197,8 +197,43 @@ function otworzLogowanie(rodzic, url) {
   lw.loadURL(url);
 }
 
+/** Następny tryb tła; zmiana przezroczystości wymaga nowego okna, więc aplikacja uruchamia się ponownie. */
+function przelaczTryb(win) {
+  if (TRYB === 'zwykle') return;
+  const dostepne = SZKLO ? TRYBY : ['ostre'];
+  const nastepny = dostepne[(dostepne.indexOf(TRYB) + 1) % dostepne.length];
+  if (nastepny === TRYB) return;
+  zapiszOkno(win, nastepny);
+  app.relaunch();
+  app.exit(0);
+}
+
+// ---------- zmiana rozmiaru przezroczystego okna (własne uchwyty na brzegach) ----------
+const MIN_W = 960;
+const MIN_H = 620;
+let rozmiar = null;
+function rozmiarStart(win, krawedz) {
+  if (win.isMaximized()) return;
+  rozmiar = { krawedz: String(krawedz), b: win.getBounds(), p: screen.getCursorScreenPoint() };
+}
+function rozmiarRuch(win) {
+  if (!rozmiar) return;
+  const c = screen.getCursorScreenPoint();
+  const dx = c.x - rozmiar.p.x;
+  const dy = c.y - rozmiar.p.y;
+  let { x, y, width, height } = rozmiar.b;
+  const k = rozmiar.krawedz;
+  if (k.includes('e')) width = Math.max(MIN_W, rozmiar.b.width + dx);
+  if (k.includes('s')) height = Math.max(MIN_H, rozmiar.b.height + dy);
+  if (k.includes('w')) { width = Math.max(MIN_W, rozmiar.b.width - dx); x = rozmiar.b.x + rozmiar.b.width - width; }
+  if (k.includes('n')) { height = Math.max(MIN_H, rozmiar.b.height - dy); y = rozmiar.b.y + rozmiar.b.height - height; }
+  win.setBounds({ x, y, width, height });
+}
+
 function utworzOkno() {
   const s = wczytajOkno();
+  const ostre = TRYB === 'ostre';
+  const szklo = TRYB === 'akryl' || TRYB === 'rozmycie';
   const win = new BrowserWindow({
     width: s.width || 1320,
     height: s.height || 860,
@@ -209,10 +244,10 @@ function utworzOkno() {
     show: false,
     title: 'Andromeda',
     icon: path.join(__dirname, 'build', 'icon.ico'),
-    backgroundColor: SZKLO ? '#00000000' : '#070B1F',
-    ...(SZKLO ? { backgroundMaterial: 'acrylic' } : {}),
-    titleBarStyle: 'hidden',
-    titleBarOverlay: { color: '#00000000', symbolColor: '#FFFFFF', height: PASEK },
+    // ostre: okno bez ramki i w pełni przezroczyste; szkło/zwykłe: ukryty pasek tytułu (zostają systemowe krawędzie do zmiany rozmiaru)
+    ...(ostre
+      ? { frame: false, transparent: true, backgroundColor: '#00000000', hasShadow: false, thickFrame: false }
+      : { titleBarStyle: 'hidden', backgroundColor: szklo ? '#00000000' : '#070B1F', ...(szklo ? { backgroundMaterial: 'acrylic' } : {}) }),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -224,18 +259,16 @@ function utworzOkno() {
   });
   okno = win;
   if (s.max) win.maximize();
-  // domyślnie systemowy akryl — działa zawsze; eksperymentalne rozmycie włącza się Ctrl+Shift+B
-  let tlo = s.tlo === 'rozmycie2' ? 'rozmycie' : 'akryl';
   win.once('ready-to-show', () => {
-    if (tlo === 'rozmycie' && !ustawTlo(win, 'rozmycie')) tlo = 'akryl';
+    if (TRYB === 'rozmycie' && !ustawTlo(win, 'rozmycie')) ustawTlo(win, 'akryl');
     win.show();
   });
-  win.on('close', () => zapiszOkno(win, tlo === 'rozmycie' ? 'rozmycie2' : 'akryl'));
-  przelaczTlo = () => {
-    tlo = tlo === 'rozmycie' ? 'akryl' : 'rozmycie';
-    if (!ustawTlo(win, tlo)) { tlo = 'akryl'; ustawTlo(win, 'akryl'); }
-    zapiszOkno(win, tlo === 'rozmycie' ? 'rozmycie2' : 'akryl');
-  };
+  win.on('close', () => zapiszOkno(win));
+  // stan okna dla własnych przycisków (ikona „przywróć” przy zmaksymalizowanym)
+  const stan = () => { if (!win.isDestroyed()) win.webContents.send('andromeda:stan', { max: win.isMaximized() }); };
+  win.on('maximize', stan);
+  win.on('unmaximize', stan);
+  win.webContents.on('did-finish-load', stan);
 
   const wc = win.webContents;
 
@@ -272,15 +305,8 @@ function utworzOkno() {
   // brak internetu przy starcie → ekran „Brak połączenia” z przyciskiem „Spróbuj ponownie”
   wc.on('did-fail-load', (_e, kod, _opis, url, glowna) => {
     if (!glowna || kod === -3 /* przerwane — np. przekierowanie */) return;
-    win.loadFile(path.join(__dirname, 'offline.html'), { query: { u: url || START, szklo: SZKLO ? '1' : '0' } });
+    win.loadFile(path.join(__dirname, 'offline.html'), { query: { u: url || START, tryb: znacznik() } });
   });
-
-  // na ekranie logowania niebieskie tło → białe przyciski okna
-  wc.on('did-navigate', (_e, url) => {
-    const login = /\/zaloguj(\b|\/|\?|$)/.test(url) || !url.startsWith('https://' + APP_HOST);
-    ustawMotyw(win, motyw, login);
-  });
-  wc.on('did-navigate-in-page', (_e, url) => ustawMotyw(win, motyw, /\/zaloguj/.test(url)));
 
   // skróty: odświeżanie, powiększenie, wstecz/dalej
   wc.on('before-input-event', (e, input) => {
@@ -294,7 +320,7 @@ function utworzOkno() {
     else if (input.alt && k === 'arrowleft') { if (wc.navigationHistory.canGoBack()) wc.navigationHistory.goBack(); e.preventDefault(); }
     else if (input.alt && k === 'arrowright') { if (wc.navigationHistory.canGoForward()) wc.navigationHistory.goForward(); e.preventDefault(); }
     else if (k === 'f12' && input.shift) { wc.toggleDevTools(); e.preventDefault(); }
-    else if (ctrl && input.shift && k === 'b') { przelaczTlo(); e.preventDefault(); }
+    else if (ctrl && input.shift && k === 'b') { przelaczTryb(win); e.preventDefault(); }
   });
   // boczne przyciski myszy (wstecz / dalej)
   win.on('app-command', (_e, cmd) => {
@@ -340,7 +366,8 @@ if (!app.requestSingleInstanceLock()) {
 
   app.whenReady().then(() => {
     // znacznik w user-agencie — strona po nim wie, że jest w oknie Windows (i czy ma szkło)
-    const ua = `${session.defaultSession.getUserAgent()} AndromedaOkno/${app.getVersion()} (${SZKLO ? 'szklo' : 'zwykle'})`;
+    TRYB = trybStartowy(wczytajOkno().tryb);
+    const ua = `${session.defaultSession.getUserAgent()} AndromedaOkno/${app.getVersion()} (${znacznik()})`;
     session.defaultSession.setUserAgent(ua);
     app.userAgentFallback = ua;
     session.defaultSession.setSpellCheckerLanguages(['pl', 'en-US']);
@@ -348,6 +375,26 @@ if (!app.requestSingleInstanceLock()) {
     ipcMain.on('andromeda:motyw', (e, m) => {
       const win = BrowserWindow.fromWebContents(e.sender);
       if (win && typeof m === 'string') ustawMotyw(win, m);
+    });
+    // własne przyciski okna w panelu
+    ipcMain.on('andromeda:okno', (e, akcja) => {
+      const win = BrowserWindow.fromWebContents(e.sender);
+      if (!win) return;
+      if (akcja === 'min') win.minimize();
+      else if (akcja === 'max') (win.isMaximized() ? win.unmaximize() : win.maximize());
+      else if (akcja === 'zamknij') win.close();
+    });
+    // tryb ostry: klik w przezroczysty odstęp przechodzi na pulpit
+    ipcMain.on('andromeda:przez', (e, przez) => {
+      const win = BrowserWindow.fromWebContents(e.sender);
+      if (win && TRYB === 'ostre') win.setIgnoreMouseEvents(!!przez, { forward: true });
+    });
+    ipcMain.on('andromeda:rozmiar', (e, faza, krawedz) => {
+      const win = BrowserWindow.fromWebContents(e.sender);
+      if (!win) return;
+      if (faza === 'start') rozmiarStart(win, krawedz);
+      else if (faza === 'ruch') rozmiarRuch(win);
+      else rozmiar = null;
     });
     ipcMain.on('andromeda:ponow', (e, url) => {
       const win = BrowserWindow.fromWebContents(e.sender);
