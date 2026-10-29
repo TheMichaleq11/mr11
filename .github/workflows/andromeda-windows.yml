@@ -1,0 +1,46 @@
+# Buduje instalator Andromedy na Windowsa (Andromeda-Setup-<wersja>.exe) na prawdziwym Windowsie
+# i wrzuca go do „Releases” na GitHubie. Uruchamia się przy zmianach w Andromeda-Windows/
+# albo ręcznie: Actions → „Andromeda na Windowsa” → Run workflow.
+name: Andromeda na Windowsa
+
+on:
+  push:
+    branches: [main]
+    paths: ['Andromeda-Windows/**', '.github/workflows/andromeda-windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  instalator:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Andromeda-Windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Andromeda-Windows/package-lock.json
+      - run: npm ci
+      - run: npm run dist
+      - name: Wersja
+        id: v
+        shell: bash
+        run: echo "wersja=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Andromeda-Setup
+          path: Andromeda-Windows/dist/Andromeda-Setup-*.exe
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: windows-v${{ steps.v.outputs.wersja }}
+          name: Andromeda dla Windows ${{ steps.v.outputs.wersja }}
+          body: |
+            Instalator Andromedy na Windowsa. Pobierz `Andromeda-Setup-${{ steps.v.outputs.wersja }}.exe` i uruchom.
+            Windows może pokazać „System Windows ochronił ten komputer” (instalator nie ma płatnego podpisu) — kliknij „Więcej informacji” → „Uruchom mimo to”.
+          files: Andromeda-Windows/dist/Andromeda-Setup-*.exe
+          make_latest: true

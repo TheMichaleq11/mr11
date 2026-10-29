@@ -21,7 +21,19 @@ const ATTR: Record<Motyw, { motyw?: 'jasny'; paleta?: 'blekit' | 'noc' }> = {
 };
 
 /** Skrypt wstawiany do <head>, żeby motyw był ustawiony zanim strona się narysuje (bez mignięcia). */
-export const motywScript = `try{var m=localStorage.getItem('${KEY}'),d=document.documentElement;if(m==='jasny'||m==='blekit')d.dataset.motyw='jasny';if(m==='blekit'||m==='noc')d.dataset.paleta=m}catch(e){}`;
+// W aplikacji na Windowsa (Electron) okno dopisuje do user-agenta „AndromedaOkno/… (szklo)” albo „(zwykle)”
+// — wtedy ustawiamy data-okno, a CSS robi miejsce na przyciski okna i (przy szkle) przepuszcza pulpit.
+export const motywScript = `try{var m=localStorage.getItem('${KEY}'),d=document.documentElement,u=navigator.userAgent.match(/AndromedaOkno\\/[\\d.]+ \\((szklo|zwykle)\\)/);if(u)d.dataset.okno=u[1];if(m==='jasny'||m==='blekit')d.dataset.motyw='jasny';if(m==='blekit'||m==='noc')d.dataset.paleta=m}catch(e){}`;
+
+type Okno = { motyw?: (m: Motyw) => void };
+/** Mówi oknu Windowsa, jaki jest motyw — dopasowuje kolor przycisków okna i odcień szkła. */
+function powiedzOknu(m: Motyw) {
+  try {
+    (window as unknown as { andromedaOkno?: Okno }).andromedaOkno?.motyw?.(m);
+  } catch {
+    /* zwykła przeglądarka */
+  }
+}
 
 function current(): Motyw {
   const d = document.documentElement.dataset;
@@ -43,6 +55,7 @@ export function useMotyw(): [Motyw, (m: Motyw) => void] {
     const m = current();
     setMotyw(m);
     setBarColor(m);
+    powiedzOknu(m);
   }, []);
   const choose = (next: Motyw) => {
     if (next === current()) return;
@@ -54,6 +67,7 @@ export function useMotyw(): [Motyw, (m: Motyw) => void] {
       if (a.paleta) root.dataset.paleta = a.paleta;
       else delete root.dataset.paleta;
       setBarColor(next);
+      powiedzOknu(next);
     };
     try {
       localStorage.setItem(KEY, next);

@@ -1772,3 +1772,57 @@ button.tg-slot { border: none; font: inherit; text-align: left; cursor: pointer;
 .cal-lab i { width: 7px; height: 7px; border-radius: 50%; background: var(--k); }
 .cal-when { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; text-align: right; flex-shrink: 0; }
 .cal-when small { display: block; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+/* =========================================================================
+   OKNO WINDOWS (aplikacja Andromeda na komputer, Electron)
+   data-okno="zwykle" — zwykłe okno: miejsce na przyciski okna, przeciąganie za odstępy między panelami
+   data-okno="szklo"  — Windows 11: tło okna to rozmyty pulpit (akryl), panele są półprzezroczyste
+   ========================================================================= */
+html[data-okno] { --okno-pasek: 42px; }
+html[data-okno] .shell {
+  -webkit-app-region: drag; app-region: drag;
+  padding-top: var(--okno-pasek) !important;
+}
+html[data-okno] .side, html[data-okno] .main, html[data-okno] .evd, html[data-okno] .motyw-pick, html[data-okno] .tip {
+  -webkit-app-region: no-drag; app-region: no-drag;
+}
+@media (min-width: 900px) {
+  html[data-okno] .side { top: var(--okno-pasek) !important; height: calc(100dvh - var(--okno-pasek) - 14px) !important; }
+  html[data-okno] .main { height: calc(100dvh - var(--okno-pasek) - 14px) !important; }
+}
+/* logowanie: całe tło przeciąga okno, karta i przyciski klikają się normalnie */
+html[data-okno] .login { -webkit-app-region: drag; app-region: drag; }
+html[data-okno] .login-box, html[data-okno] .login a, html[data-okno] .login button { -webkit-app-region: no-drag; app-region: no-drag; }
+/* nazwa w odstępie nad panelami (lewy górny róg, jak tytuł okna) */
+html[data-okno] .shell::after {
+  content: 'Andromeda'; position: fixed; top: 0; left: 22px; height: var(--okno-pasek);
+  display: flex; align-items: center; pointer-events: none;
+  font: 600 12.5px/1 'Poppins', var(--font-display), sans-serif; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.72);
+}
+/* jasny akryl (motywy Jasny i Błękit) → ciemny napis; bez szkła ciemny napis tylko w Jasnym (Błękit ma pod spodem niebieski) */
+html[data-okno='szklo'][data-motyw='jasny'] .shell::after, html[data-okno='zwykle'][data-motyw='jasny']:not([data-paleta]) .shell::after { color: rgba(22, 28, 56, 0.7); }
+
+/* --- szkło: przez tło okna widać rozmyty pulpit --- */
+html[data-okno='szklo'][data-okno][data-okno], html[data-okno='szklo'][data-okno][data-okno] body { background: transparent !important; }
+html[data-okno='szklo'] .gl-bg, html[data-okno='szklo'] .space, html[data-okno='szklo'] body::after { display: none !important; }
+
+/* Ciemny */
+html[data-okno='szklo']:not([data-motyw]):not([data-paleta]) .main { background: linear-gradient(160deg, rgba(22, 28, 64, 0.5), rgba(10, 14, 36, 0.58)) !important; }
+html[data-okno='szklo']:not([data-motyw]):not([data-paleta]) .side { background: linear-gradient(160deg, rgba(16, 21, 52, 0.58), rgba(8, 12, 30, 0.66)) !important; }
+/* Jasny — mleczne szkło */
+html[data-okno='szklo'][data-motyw='jasny']:not([data-paleta]) .main { background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(240, 244, 255, 0.6)) !important; }
+html[data-okno='szklo'][data-motyw='jasny']:not([data-paleta]) .side { background: rgba(16, 21, 46, 0.66) !important; }
+/* Błękit */
+html[data-okno='szklo'][data-paleta='blekit'] .side { background: radial-gradient(120% 45% at 100% 0%, rgba(120, 220, 255, 0.35), transparent 60%), rgba(0, 64, 255, 0.66) !important; }
+html[data-okno='szklo'][data-paleta='blekit'] .main { background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.74)) !important; }
+/* Noc */
+html[data-okno='szklo'][data-paleta='noc'] .main { background: linear-gradient(160deg, rgba(10, 30, 110, 0.58), rgba(6, 20, 80, 0.68)) !important; }
+html[data-okno='szklo'][data-paleta='noc'] .side { background: linear-gradient(160deg, rgba(10, 30, 110, 0.5), rgba(6, 20, 80, 0.6)) !important; }
+
+/* logowanie na szkle: niebieska poświata zamiast pełnego koloru */
+html[data-okno='szklo'] .login {
+  background:
+    radial-gradient(70% 60% at 78% 18%, rgba(120, 220, 255, 0.35), transparent 60%),
+    radial-gradient(90% 80% at 20% 100%, rgba(0, 32, 184, 0.7), transparent 70%),
+    rgba(0, 64, 255, 0.55);
+}

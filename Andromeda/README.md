@@ -45,6 +45,10 @@ Po dodaniu zmiennych trzeba zrobić ponowne wdrożenie (Redeploy).
 - **iPhone:** Safari → przycisk Udostępnij → „Do ekranu początkowego”.
 - **Android:** Chrome → menu ⋮ → „Zainstaluj aplikację” / „Dodaj do ekranu głównego”.
 
+## Aplikacja na Windowsa
+
+Folder `../Andromeda-Windows` — okno z efektem szkła (akryl Windows 11), w którym działa ta strona. Instalator buduje się sam na GitHubie (Releases). Szczegóły w `Andromeda-Windows/README.md`.
+
 ## Rozwój lokalny (Windows)
 
 ```powershell
