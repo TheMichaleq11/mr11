@@ -1,7 +1,7 @@
 {
   "name": "andromeda-windows",
   "productName": "Andromeda",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Andromeda — czytelny USOS UJ na Windowsa",
   "author": "Michał Rosiek",
   "license": "UNLICENSED",
@@ -19,10 +19,26 @@
     "appId": "pl.andromeda.app",
     "productName": "Andromeda",
     "copyright": "© 2026 Michał Rosiek",
-    "files": ["main.js", "preload.js", "offline.html", "build/icon.ico", "build/icon.png"],
-    "directories": { "output": "dist", "buildResources": "build" },
+    "files": [
+      "main.js",
+      "preload.js",
+      "offline.html",
+      "build/icon.ico",
+      "build/icon.png"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "build/icon.ico"
     },
     "nsis": {
@@ -36,6 +52,12 @@
       "uninstallerIcon": "build/icon.ico",
       "uninstallDisplayName": "Andromeda",
       "artifactName": "Andromeda-Setup-${version}.exe"
-    }
+    },
+    "asarUnpack": [
+      "**/*.node"
+    ]
+  },
+  "dependencies": {
+    "koffi": "^3.3.5"
   }
 }

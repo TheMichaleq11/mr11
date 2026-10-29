@@ -8,11 +8,69 @@ const os = require('node:os');
 
 const START = process.env.ANDROMEDA_URL || 'https://andromeda-usos.vercel.app/';
 const APP_HOST = new URL(START).host;
-const PASEK = 42; // wysokość paska z przyciskami okna (taka sama jak --okno-pasek w CSS)
+const PASEK = 36; // wysokość paska z przyciskami okna (taka sama jak --okno-pasek w CSS)
 
 // Akryl (backgroundMaterial) działa od Windows 11 22H2 (kompilacja 22621). Starszy Windows: zwykłe tło.
 const kompilacja = Number(os.release().split('.')[2] || 0);
 const SZKLO = process.platform === 'win32' && kompilacja >= 22621 && process.env.ANDROMEDA_BEZ_SZKLA !== '1';
+
+// ---------- czyste rozmycie pulpitu (bez szarego odcienia akrylu) ----------
+// Akryl Windowsa nakłada mocny szary odcień, przez który pulpitu prawie nie widać. Tryb „rozmycie” wyłącza
+// systemowe tło i włącza rozmycie tego, co jest za oknem (SetWindowCompositionAttribute, ACCENT_ENABLE_BLURBEHIND).
+// Ctrl+Shift+B przełącza: rozmycie ↔ akryl. Wybór zapamiętuje się w okno.json.
+let natywne = null;
+function winApi() {
+  if (natywne !== null) return natywne;
+  natywne = false;
+  try {
+    const koffi = require('koffi');
+    const user32 = koffi.load('user32.dll');
+    const dwmapi = koffi.load('dwmapi.dll');
+    const ACCENT = koffi.struct('ACCENT_POLICY', { AccentState: 'int', AccentFlags: 'int', GradientColor: 'uint32_t', AnimationId: 'int' });
+    const WCAD = koffi.struct('WINCOMPATTRDATA', { Attribute: 'int', Data: 'void *', SizeOfData: 'size_t' });
+    natywne = {
+      koffi,
+      ACCENT,
+      setWCA: user32.func('bool __stdcall SetWindowCompositionAttribute(intptr_t hwnd, WINCOMPATTRDATA *data)'),
+      dwmSet: dwmapi.func('long __stdcall DwmSetWindowAttribute(intptr_t hwnd, uint32_t attr, int *value, uint32_t size)'),
+    };
+  } catch (err) {
+    console.error('Brak rozmycia (koffi):', err);
+  }
+  return natywne;
+}
+function hwnd(win) {
+  const b = win.getNativeWindowHandle();
+  return Number(b.length >= 8 ? b.readBigUInt64LE(0) : BigInt(b.readUInt32LE(0)));
+}
+/** tryb: 'rozmycie' | 'akryl'. Zwraca true, gdy się udało. */
+function ustawTlo(win, tryb) {
+  if (!SZKLO) return false;
+  if (tryb === 'akryl') {
+    const api = winApi();
+    if (api) {
+      try {
+        const acc = api.koffi.alloc(api.ACCENT, 1);
+        api.koffi.encode(acc, api.ACCENT, { AccentState: 0, AccentFlags: 0, GradientColor: 0, AnimationId: 0 });
+        api.setWCA(hwnd(win), { Attribute: 19, Data: acc, SizeOfData: api.koffi.sizeof(api.ACCENT) });
+      } catch { /* nic */ }
+    }
+    win.setBackgroundMaterial('acrylic');
+    return true;
+  }
+  const api = winApi();
+  if (!api) return false;
+  try {
+    const h = hwnd(win);
+    api.dwmSet(h, 38 /* DWMWA_SYSTEMBACKDROP_TYPE */, [1 /* brak */], 4);
+    const acc = api.koffi.alloc(api.ACCENT, 1);
+    api.koffi.encode(acc, api.ACCENT, { AccentState: 3 /* BLURBEHIND */, AccentFlags: 0, GradientColor: 0, AnimationId: 0 });
+    return api.setWCA(h, { Attribute: 19 /* WCA_ACCENT_POLICY */, Data: acc, SizeOfData: api.koffi.sizeof(api.ACCENT) });
+  } catch (err) {
+    console.error('Rozmycie nie zadziałało:', err);
+    return false;
+  }
+}
 
 /** Strony, które mają się otwierać w oknie aplikacji: sama Andromeda i logowanie UJ/USOS. */
 function wewnatrz(url) {
@@ -44,9 +102,9 @@ function wczytajOkno() {
     return {};
   }
 }
-function zapiszOkno(win) {
+function zapiszOkno(win, tlo) {
   try {
-    const stan = { ...win.getNormalBounds(), max: win.isMaximized() };
+    const stan = { ...win.getNormalBounds(), max: win.isMaximized(), tlo };
     fs.writeFileSync(plikOkna(), JSON.stringify(stan));
   } catch {
     /* nie szkodzi */
@@ -75,6 +133,7 @@ function ustawMotyw(win, m, naLogowaniu = false) {
 }
 
 let okno = null;
+let przelaczTlo = () => {};
 let oknoLogowania = null;
 
 function jestLogowaniem(url) {
@@ -165,8 +224,17 @@ function utworzOkno() {
   });
   okno = win;
   if (s.max) win.maximize();
-  win.once('ready-to-show', () => win.show());
-  win.on('close', () => zapiszOkno(win));
+  let tlo = s.tlo === 'akryl' ? 'akryl' : 'rozmycie';
+  win.once('ready-to-show', () => {
+    if (tlo === 'rozmycie' && !ustawTlo(win, 'rozmycie')) tlo = 'akryl';
+    win.show();
+  });
+  win.on('close', () => zapiszOkno(win, tlo));
+  przelaczTlo = () => {
+    tlo = tlo === 'rozmycie' ? 'akryl' : 'rozmycie';
+    if (!ustawTlo(win, tlo)) { tlo = 'akryl'; ustawTlo(win, 'akryl'); }
+    zapiszOkno(win, tlo);
+  };
 
   const wc = win.webContents;
 
@@ -225,6 +293,7 @@ function utworzOkno() {
     else if (input.alt && k === 'arrowleft') { if (wc.navigationHistory.canGoBack()) wc.navigationHistory.goBack(); e.preventDefault(); }
     else if (input.alt && k === 'arrowright') { if (wc.navigationHistory.canGoForward()) wc.navigationHistory.goForward(); e.preventDefault(); }
     else if (k === 'f12' && input.shift) { wc.toggleDevTools(); e.preventDefault(); }
+    else if (ctrl && input.shift && k === 'b') { przelaczTlo(); e.preventDefault(); }
   });
   // boczne przyciski myszy (wstecz / dalej)
   win.on('app-command', (_e, cmd) => {

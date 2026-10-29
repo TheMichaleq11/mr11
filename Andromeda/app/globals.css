@@ -1778,7 +1778,7 @@ button.tg-slot { border: none; font: inherit; text-align: left; cursor: pointer;
    data-okno="zwykle" — zwykłe okno: miejsce na przyciski okna, przeciąganie za odstępy między panelami
    data-okno="szklo"  — Windows 11: tło okna to rozmyty pulpit (akryl), panele są półprzezroczyste
    ========================================================================= */
-html[data-okno] { --okno-pasek: 42px; }
+html[data-okno] { --okno-pasek: 36px; }
 html[data-okno] .shell {
   -webkit-app-region: drag; app-region: drag;
   padding-top: var(--okno-pasek) !important;
@@ -1793,14 +1793,9 @@ html[data-okno] .side, html[data-okno] .main, html[data-okno] .evd, html[data-ok
 /* logowanie: całe tło przeciąga okno, karta i przyciski klikają się normalnie */
 html[data-okno] .login { -webkit-app-region: drag; app-region: drag; }
 html[data-okno] .login-box, html[data-okno] .login a, html[data-okno] .login button { -webkit-app-region: no-drag; app-region: no-drag; }
-/* nazwa w odstępie nad panelami (lewy górny róg, jak tytuł okna) */
-html[data-okno] .shell::after {
-  content: 'Andromeda'; position: fixed; top: 0; left: 22px; height: var(--okno-pasek);
-  display: flex; align-items: center; pointer-events: none;
-  font: 600 12.5px/1 'Poppins', var(--font-display), sans-serif; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.72);
-}
-/* jasny akryl (motywy Jasny i Błękit) → ciemny napis; bez szkła ciemny napis tylko w Jasnym (Błękit ma pod spodem niebieski) */
-html[data-okno='szklo'][data-motyw='jasny'] .shell::after, html[data-okno='zwykle'][data-motyw='jasny']:not([data-paleta]) .shell::after { color: rgba(22, 28, 56, 0.7); }
+/* panel główny bez widocznego paska przewijania (przewija się kółkiem/gładzikiem jak dotąd) */
+html[data-okno] .main { scrollbar-width: none !important; }
+html[data-okno] .main::-webkit-scrollbar { display: none; }
 
 /* --- szkło: przez tło okna widać rozmyty pulpit --- */
 html[data-okno='szklo'][data-okno][data-okno], html[data-okno='szklo'][data-okno][data-okno] body { background: transparent !important; }
