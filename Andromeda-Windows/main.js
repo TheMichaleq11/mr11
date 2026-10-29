@@ -75,6 +75,68 @@ function ustawMotyw(win, m, naLogowaniu = false) {
 }
 
 let okno = null;
+let oknoLogowania = null;
+
+function jestLogowaniem(url) {
+  try {
+    const u = new URL(url);
+    return u.host === APP_HOST && u.pathname.startsWith('/api/auth/login');
+  } catch {
+    return false;
+  }
+}
+
+/** Zwykłe okno z ramką Windowsa na czas logowania. Po powrocie do Andromedy zamyka się, a główne okno wczytuje stronę. */
+function otworzLogowanie(rodzic, url) {
+  if (oknoLogowania && !oknoLogowania.isDestroyed()) {
+    oknoLogowania.focus();
+    return;
+  }
+  const lw = new BrowserWindow({
+    parent: rodzic,
+    width: 1060,
+    height: 760,
+    minWidth: 480,
+    minHeight: 560,
+    title: 'Logowanie — USOS UJ',
+    icon: path.join(__dirname, 'build', 'icon.ico'),
+    backgroundColor: '#FFFFFF',
+    autoHideMenuBar: true,
+    show: false,
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: false },
+  });
+  oknoLogowania = lw;
+  lw.once('ready-to-show', () => lw.show());
+  lw.on('closed', () => { oknoLogowania = null; });
+  lw.setMenu(null);
+  const lwc = lw.webContents;
+  let gotowe = false;
+  const sprawdz = (adres) => {
+    if (gotowe) return;
+    try {
+      const u = new URL(adres);
+      // powrót do Andromedy po zalogowaniu (callback przekierowuje na stronę główną)
+      if (u.host === APP_HOST && !u.pathname.startsWith('/api/auth/')) {
+        gotowe = true;
+        rodzic.loadURL(adres);
+        lw.close();
+        rodzic.focus();
+      }
+    } catch { /* pomijamy */ }
+  };
+  lwc.on('did-navigate', (_e, adres) => sprawdz(adres));
+  lwc.on('did-redirect-navigation', (_e, adres) => sprawdz(adres));
+  lwc.on('before-input-event', (e, input) => {
+    if (input.type === 'keyDown' && (input.key === 'F5' || ((input.control || input.meta) && input.key.toLowerCase() === 'r'))) { lwc.reload(); e.preventDefault(); }
+  });
+  lwc.on('context-menu', (_e, p) => {
+    const items = p.isEditable
+      ? [{ role: 'cut', label: 'Wytnij' }, { role: 'copy', label: 'Kopiuj' }, { role: 'paste', label: 'Wklej' }]
+      : p.selectionText ? [{ role: 'copy', label: 'Kopiuj' }] : [];
+    if (items.length) Menu.buildFromTemplate(items).popup({ window: lw });
+  });
+  lw.loadURL(url);
+}
 
 function utworzOkno() {
   const s = wczytajOkno();
@@ -111,6 +173,13 @@ function utworzOkno() {
   // klik w link do innej strony → zwykła przeglądarka; Andromeda i logowanie UJ zostają w oknie
   wc.on('will-navigate', (e, url) => {
     if (url.startsWith('file:')) return;
+    // logowanie USOS/UJ (z weryfikacją Microsoft) w osobnym, zwykłym okienku — bez szkła i bez ukrytego paska,
+    // bo obce strony logowania źle znoszą akryl (zacinanie, niedziałające kliknięcia)
+    if (jestLogowaniem(url)) {
+      e.preventDefault();
+      otworzLogowanie(win, url);
+      return;
+    }
     // w trakcie logowania (strony USOS/UJ) nie przeszkadzamy — logowanie może przejść przez inne serwery
     let zAplikacji = true;
     try { zAplikacji = new URL(wc.getURL()).host === APP_HOST; } catch { /* pusta strona */ }
