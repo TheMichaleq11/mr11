@@ -62,9 +62,9 @@ function ustawTlo(win, tryb) {
   if (!api) return false;
   try {
     const h = hwnd(win);
-    api.dwmSet(h, 38 /* DWMWA_SYSTEMBACKDROP_TYPE */, [1 /* brak */], 4);
+    api.dwmSet(h, 38 /* DWMWA_SYSTEMBACKDROP_TYPE */, [0 /* auto */], 4);
     const acc = api.koffi.alloc(api.ACCENT, 1);
-    api.koffi.encode(acc, api.ACCENT, { AccentState: 3 /* BLURBEHIND */, AccentFlags: 0, GradientColor: 0, AnimationId: 0 });
+    api.koffi.encode(acc, api.ACCENT, { AccentState: 4 /* ACRYLICBLURBEHIND z własnym, prawie przezroczystym odcieniem */, AccentFlags: 2, GradientColor: 0x10101020, AnimationId: 0 });
     return api.setWCA(h, { Attribute: 19 /* WCA_ACCENT_POLICY */, Data: acc, SizeOfData: api.koffi.sizeof(api.ACCENT) });
   } catch (err) {
     console.error('Rozmycie nie zadziałało:', err);
@@ -224,16 +224,17 @@ function utworzOkno() {
   });
   okno = win;
   if (s.max) win.maximize();
-  let tlo = s.tlo === 'akryl' ? 'akryl' : 'rozmycie';
+  // domyślnie systemowy akryl — działa zawsze; eksperymentalne rozmycie włącza się Ctrl+Shift+B
+  let tlo = s.tlo === 'rozmycie2' ? 'rozmycie' : 'akryl';
   win.once('ready-to-show', () => {
     if (tlo === 'rozmycie' && !ustawTlo(win, 'rozmycie')) tlo = 'akryl';
     win.show();
   });
-  win.on('close', () => zapiszOkno(win, tlo));
+  win.on('close', () => zapiszOkno(win, tlo === 'rozmycie' ? 'rozmycie2' : 'akryl'));
   przelaczTlo = () => {
     tlo = tlo === 'rozmycie' ? 'akryl' : 'rozmycie';
     if (!ustawTlo(win, tlo)) { tlo = 'akryl'; ustawTlo(win, 'akryl'); }
-    zapiszOkno(win, tlo);
+    zapiszOkno(win, tlo === 'rozmycie' ? 'rozmycie2' : 'akryl');
   };
 
   const wc = win.webContents;
